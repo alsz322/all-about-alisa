@@ -1,0 +1,2263 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 方案 A: Serif (衬线体) -->
+<link href="https://fonts.googleapis.com/css2?family=Lora&family=Playfair+Display&display=swap" rel="stylesheet">
+
+<!-- 方案 B: Handwriting (手写体) -->
+<link href="https://fonts.googleapis.com/css2?family=Caveat&family=Homemade+Apple&display=swap" rel="stylesheet">
+
+<!-- 方案 C: Monospace (等宽字体) -->
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Space+Mono&display=swap" rel="stylesheet">
+    <title>Alisa Zhao's Room</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        /* 🌌 延续你主页的极简点阵背景 */
+        .dot-matrix-bg {
+            background-color: #f9f9f9;
+            background-image: radial-gradient(#e5e5e5 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #f9f9f9;
+            background-image: radial-gradient(#e5e5e5 1px, transparent 1px);
+            background-size: 24px 24px;
+            color: #1a1a1a;
+            overflow-x: hidden;
+        }
+
+        html {
+            background-color: #f9f9f9;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(26, 26, 26, 0.2) #f9f9f9;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f9f9f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(26, 26, 26, 0.18);
+            border: 2px solid transparent;
+            border-radius: 999px;
+            background-clip: content-box;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(26, 26, 26, 0.28);
+            background-clip: content-box;
+        }
+
+        #travel-map-section .map-popover img,
+        #skating-section img {
+            -webkit-user-drag: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        .site-header {
+            width: 100vw;
+            box-sizing: border-box;
+            padding: 22px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1200;
+            background: transparent;
+            backdrop-filter: blur(0);
+            -webkit-backdrop-filter: blur(0);
+            border: 1px solid transparent;
+            border-left: 0;
+            border-right: 0;
+            border-radius: 0;
+            box-shadow: none;
+            transition: background 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease, backdrop-filter 0.28s ease, -webkit-backdrop-filter 0.28s ease;
+        }
+        .site-header.is-solid {
+            background: rgba(249, 249, 249, 0.94);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-color: rgba(26, 26, 26, 0.06);
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.035);
+        }
+        .brand-name {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: #1a1a1a;
+            text-decoration: none;
+        }
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+        .nav-links a {
+            font-size: 13px;
+            text-decoration: none;
+            color: #1a1a1a;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .nav-links a[data-nav="off-record"].active {
+            color: #e85ba6;
+        }
+        .nav-links a[data-nav="about"]:hover,
+        .nav-links a[data-nav="about"]:focus-visible { color: #b55d9d; }
+        .nav-links a[data-nav="projects"]:hover,
+        .nav-links a[data-nav="projects"]:focus-visible { color: #007aff; }
+        .nav-links a[data-nav="experience"]:hover,
+        .nav-links a[data-nav="experience"]:focus-visible { color: #d6a400; }
+        .nav-links a[data-nav="off-record"]:hover,
+        .nav-links a[data-nav="off-record"]:focus-visible { color: #e85ba6; }
+        @media (max-width: 900px) {
+            .site-header {
+                padding: 26px 5% !important;
+                gap: 18px;
+                flex-wrap: wrap;
+                align-items: flex-start;
+            }
+            .nav-links {
+                gap: 18px !important;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+                max-width: 70%;
+            }
+        }
+        @media (max-width: 768px) {
+            .site-header {
+                padding: 22px 18px !important;
+            }
+            .brand-name {
+                font-size: 17px !important;
+            }
+            .nav-links {
+                gap: 10px 14px !important;
+                max-width: 100%;
+                justify-content: flex-start;
+            }
+            .nav-links a {
+                font-size: 12px !important;
+            }
+        }
+
+        /* 🎮 动森风格核心微动画 */
+        @keyframes dogBreath {
+            0%, 100% { transform: scale(1, 1); }
+            50% { transform: scale(1.03, 0.97); }
+        }
+        @keyframes birdFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        .animate-bark { animation: dogBark 0.2s 2 ease-in-out; }
+        @keyframes dogBark {
+            0%, 100% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.06) translateY(-5px); }
+        }
+        .animate-flutter { animation: birdFlutter 0.15s 3 ease-in-out; }
+        @keyframes birdFlutter {
+            0%, 100% { transform: rotate(0deg); }
+            33% { transform: rotate(-6deg); }
+            66% { transform: rotate(6deg); }
+        }
+        .animate-spin-slow { animation: spin 3s linear infinite; }
+        
+        @keyframes tissueFly {
+            0% { transform: translateY(0) scale(0.6) rotate(0deg); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translateY(-80px) translateX(20px) scale(0.3) rotate(45deg); opacity: 0; }
+        }
+        .flying-tissue { animation: tissueFly 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+        
+        /* 💡 深夜模式局部滤镜：仅作用于整个小屋图层 */
+        .night-mode-active {
+            filter: brightness(0.4) contrast(1.1) saturate(0.85);
+        }
+        /* 电视机独立抗暗滤镜（保持高亮发光） */
+        .tv-night-glow {
+            filter: brightness(2.2) saturate(1.3) drop-shadow(0 0 25px rgba(147, 197, 200, 0.6)) !important;
+        }
+
+        /* 动森风格气泡样式 */
+        .acnh-tooltip {
+            background-color: #fbfaf7;
+            color: #4a3728;
+            border: 2px solid #e6dec9;
+        }
+
+        .room-model {
+            opacity: 0;
+            transform-origin: 50% 72%;
+            animation: drop-in 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) 180ms forwards;
+            will-change: transform, opacity;
+        }
+
+        @keyframes drop-in {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .otr-reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform, opacity;
+        }
+
+        .otr-reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .otr-photo-reveal {
+            opacity: 0;
+            transform: translateY(18px) scale(0.95);
+            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform, opacity;
+        }
+
+        .otr-photo-reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .room-model,
+            .otr-reveal,
+            .otr-photo-reveal {
+                opacity: 1;
+                transform: none;
+                animation: none;
+                transition: none;
+            }
+            .base-map-svg,
+            .map-marker {
+                opacity: 1;
+                transition: none;
+            }
+            .base-map-svg {
+                transform: none;
+            }
+            .map-marker {
+                --marker-scale: 1;
+            }
+        }
+    </style>
+</head>
+<body class="dot-matrix-bg text-stone-800 antialiased">
+
+    <!-- 🌐 1. HEADER NAV -->
+    <header class="site-header">
+        <a href="index.html" class="brand-name">Alisa Zhao</a>
+        <nav class="nav-links">
+            <a href="about.html" data-nav="about">About Me</a>
+            <a href="projects.html" data-nav="projects">Projects</a>
+            <a href="experience.html" data-nav="experience">Experience</a>
+            <a href="off-the-record.html" class="active" data-nav="off-record">Off the Record</a>
+        </nav>
+    </header>
+
+    <!-- 🎮 2. HERO SECTION: PURE TRANSPARENT ISOMETRIC STAGE -->
+    <section class="w-full min-h-screen flex flex-col items-center justify-center pt-32 pb-12 px-4 relative">
+        
+        <!-- Room Wrapper: Removed backgrounds & borders, completely transparent floating over dot matrix -->
+        <div id="roomStage" class="room-model relative w-full max-w-5xl aspect-video select-none transition-all duration-700 ease-in-out">
+            
+            <!-- Base Layer: Shell Background (Corrected Path) -->
+            <img src="assets/house/外壳.png" class="absolute inset-0 w-full h-full object-contain pointer-events-none" alt="Room Shell">
+            
+            <!-- ==================== FUNCTIONAL PORTALS ==================== -->
+            
+            <!-- 1. 左墙世界地图 -->
+            <div onclick="document.getElementById('travel-map-section').scrollIntoView({behavior: 'smooth'})" 
+                 class="absolute left-[31.5%] top-[26.5%] w-[9.5%] cursor-pointer group z-10">
+                <img src="assets/house/地图.png" class="w-full transition-transform duration-300 group-hover:-translate-y-1" alt="Map">
+                <div class="acnh-tooltip absolute -top-12 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none text-xs font-medium px-3 py-1.5 rounded-xl shadow-md whitespace-nowrap z-50">
+                    Travel Map: Places I've Been
+                </div>
+            </div>
+            <!-- 2. 桌上红色唱片机（改用下方弹出气泡，彻底避开吊灯区域） -->
+            <div onclick="document.getElementById('music-playlist-section').scrollIntoView({behavior: 'smooth'})" 
+            class="absolute left-[44.1%] top-[38.2%] w-[6.8%] cursor-pointer group z-10">
+           <img src="assets/house/黑胶播放器.png" class="w-full transition-transform duration-300 group-hover:-translate-y-1" alt="Record Player">
+           <div class="acnh-tooltip absolute -bottom-14 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none text-xs font-medium px-3 py-1.5 rounded-xl shadow-md whitespace-nowrap z-50">
+            A Song for Each Page
+        </div>
+       </div>
+
+
+        
+
+            <!-- 3. 墙上黑色电视 -->
+            <div onclick="document.getElementById('animal-crossing').scrollIntoView({behavior: 'smooth'})" 
+                 id="roomTV" class="absolute left-[57.8%] top-[30.5%] w-[10.5%] cursor-pointer group z-10 transition-all duration-700">
+                <img src="assets/house/电视.png" class="w-full transition-transform duration-300 group-hover:-translate-y-1" alt="TV">
+                <div class="acnh-tooltip absolute -top-12 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none text-xs font-medium px-3 py-1.5 rounded-xl shadow-md whitespace-nowrap z-50">
+                    Animal Crossing Interior Design
+                </div>
+            </div>
+
+            <!-- 4. 茶几金色奖杯 -->
+            <div onclick="document.getElementById('shorttrack').scrollIntoView({behavior: 'smooth'})" 
+                 class="absolute left-[56%] top-[51%] w-[4.2%] cursor-pointer group z-10">
+                <img src="assets/house/奖杯.png" class="w-full transition-transform duration-300 group-hover:-translate-y-1" alt="Trophy">
+                <div class="acnh-tooltip absolute -top-12 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none text-xs font-medium px-3 py-1.5 rounded-xl shadow-md whitespace-nowrap z-50">
+                    Photos with Gold Medalists 
+                </div>
+            </div>
+
+            <!-- ==================== EASTER EGGS ==================== -->
+
+            <!-- 5. 小狗 -->
+            <div id="dogBtn" class="absolute left-[54.5%] top-[72%] w-[5.5%] cursor-pointer group z-20">
+                <img src="assets/house/狗.png" class="w-full animate-[dogBreath_2.5s_infinite_ease-in-out] origin-bottom" alt="Dog">
+                <div class="acnh-tooltip absolute -top-12 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none text-xs font-medium px-3 py-1.5 rounded-xl shadow-md whitespace-nowrap z-50">
+                    Woof! (Pet Me)
+                </div>
+            </div>
+
+            <!-- 6. 桌上的小鸟 -->
+            <div id="birdBtn" class="absolute left-[43.5%] top-[65.5%] w-[5.2%] cursor-pointer group z-20">
+                <img src="assets/house/小鸟.png" class="w-full animate-[birdFloat_3.5s_infinite_ease-in-out]" alt="Bird">
+                <div class="acnh-tooltip absolute -top-12 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none text-xs font-medium px-3 py-1.5 rounded-xl shadow-md whitespace-nowrap z-50">
+                    Chirp! (Click to Sing)
+                </div>
+            </div>
+
+            <!-- 7. 抽纸盒 -->
+            <div id="tissueBox" class="absolute left-[66.3%] top-[53.5%] w-[5.2%] cursor-pointer group z-20">
+                <img src="assets/house/抽纸盒.png" class="w-full transition-transform duration-300 group-hover:scale-105" alt="Tissue Box">
+                <div class="acnh-tooltip absolute -bottom-14 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none text-xs font-medium px-3 py-1.5 rounded-xl shadow-md whitespace-nowrap z-50">
+                    Need a Tissue?
+                </div>
+            </div>
+
+          
+
+<!-- ==================== ENVIRONMENT SWITCH ==================== -->
+
+<!-- 8. 吊灯控制区（统一挪位置，独立调大小） -->
+<!-- 💡 只要改下面这行的 left-[XX%] 和 top-[XX%]，两盏灯就会【一起移动】，永远不散架 -->
+<div id="lightSwitch" class="absolute left-[44.3%] top-[10.5%] w-[13%] aspect-square cursor-pointer group z-30">
+    
+    <!-- 【开灯状态】因为带光晕，让它稍微大一点，撑满或者超出容器（比如 w-[100%] 或 w-[110%]） -->
+    <img id="lightOnImg" src="assets/house/发光吊灯.png" 
+         class="absolute top-0 left-1/2 transform -translate-x-1/2 w-[68%] max-w-none object-contain transition-opacity duration-500 ease-in-out pointer-events-none" 
+         alt="Light On">
+    
+    <!-- 【关灯状态】因为没光晕，你可以自由把它缩得小一点（比如 w-[60%]），让它里面的灯泡本体和开灯时等大 -->
+    <img id="lightOffImg" src="assets/house/吊灯.png" 
+         class="absolute top-0 left-1/2 transform -translate-x-1/2 w-[60%] max-w-none object-contain opacity-0 transition-opacity duration-500 ease-in-out pointer-events-none" 
+         alt="Light Off">
+    
+    <!-- 文字气泡：在父容器下方居中弹出 -->
+    <div id="lightTooltip" class="acnh-tooltip absolute -bottom-12 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none text-xs font-medium px-3 py-1.5 rounded-xl shadow-md whitespace-nowrap z-50">
+        Shhh... Lights Off
+    </div>
+</div>
+
+        </div>
+        
+        <div class="mt-12 text-stone-400 text-xs font-mono tracking-widest animate-bounce">
+            CLICK AROUND MY ROOM
+        </div>
+<!-- Off the Record - Music Section (With Title & Artist Below Vinyl) -->
+<section id="music-playlist-section" class="music-playlist-section otr-reveal">
+    <div class="music-container">
+      
+      <!-- Header -->
+      <header class="music-header">
+        <span class="section-num">01 / PLAYLIST</span>
+        <h2 class="main-title">A song for each page</h2>
+        <p class="subtitle">Every page sounds a little different in my head.</p>
+      </header>
+  
+      <!-- Playlist Items -->
+      <div class="playlist-tracks">
+  
+        <!-- 1. Landing Page -->
+        <div class="track-card" id="card-21century">
+          <audio id="audio-21century" src="assets/audio/21century.mp3" preload="metadata"></audio>
+          
+          <!-- 左侧：黑胶盘 + 下方歌名歌手 -->
+          <div class="vinyl-meta-container">
+            <div class="vinyl-wrapper" onclick="togglePlay('21century')">
+              <div class="vinyl-sleeve">
+                <img src="assets/songcover_21century.jpeg" alt="LUCY Cover" class="cover-img">
+                <div class="play-overlay-icon"></div>
+              </div>
+              <div class="vinyl-disk">
+                <img src="assets/songcover_21century.jpeg" alt="Vinyl Label" class="disk-label">
+              </div>
+            </div>
+            <div class="vinyl-credits">
+              <span class="song-title-display">21세기의 어떤 날</span>
+              <span class="artist-display">LUCY</span>
+            </div>
+          </div>
+          
+          <!-- 右侧：歌词与控制条 -->
+          <div class="track-info">
+            <div class="track-text-meta" onclick="togglePlay('21century')">
+              <span class="page-label">for the landing page</span>
+              <p class="lyrics-kr">오늘 지금 바로 여기 / 이 멋진 우주 한복판에서 / 너를 만나 정말 기뻤다</p>
+              <p class="lyrics-en">"Right here, right now, today, in the center of this beautiful universe, I was so happy to meet you."</p>
+            </div>
+            <div class="custom-player-bar">
+              <button class="play-btn" onclick="togglePlay('21century')"></button>
+              <div class="progress-container" onclick="seekAudio(event, '21century')">
+                <div class="progress-bar" id="progress-21century"></div>
+              </div>
+              <span class="time-display" id="time-21century">00:00</span>
+            </div>
+          </div>
+        </div>
+  
+        <!-- 2. About Me -->
+        <div class="track-card" id="card-answer">
+          <audio id="audio-answer" src="assets/audio/Answer.mp3" preload="metadata"></audio>
+          <div class="vinyl-meta-container">
+            <div class="vinyl-wrapper" onclick="togglePlay('answer')">
+              <div class="vinyl-sleeve">
+                <img src="assets/songcover_answer.png" alt="BTS Cover" class="cover-img">
+                <div class="play-overlay-icon"></div>
+              </div>
+              <div class="vinyl-disk">
+                <img src="assets/songcover_answer.png" alt="Vinyl Label" class="disk-label">
+              </div>
+            </div>
+            <div class="vinyl-credits">
+              <span class="song-title-display">Answer: Love Myself</span>
+              <span class="artist-display">BTS</span>
+            </div>
+          </div>
+          <div class="track-info">
+            <div class="track-text-meta" onclick="togglePlay('answer')">
+              <span class="page-label">for about me</span>
+              <p class="lyrics-kr">어쩌면 누군가를 사랑하는 것보다 더 어려운 게 나 자신을 사랑하는 거야</p>
+              <p class="lyrics-en">"Maybe the thing that's even harder than loving someone else is loving myself."</p>
+            </div>
+            <div class="custom-player-bar">
+              <button class="play-btn" onclick="togglePlay('answer')"></button>
+              <div class="progress-container" onclick="seekAudio(event, 'answer')">
+                <div class="progress-bar" id="progress-answer"></div>
+              </div>
+              <span class="time-display" id="time-answer">00:00</span>
+            </div>
+          </div>
+        </div>
+  
+        <!-- 3. Projects -->
+        <div class="track-card" id="card-try">
+          <audio id="audio-try" src="assets/audio/try.mp3" preload="metadata"></audio>
+          <div class="vinyl-meta-container">
+            <div class="vinyl-wrapper" onclick="togglePlay('try')">
+              <div class="vinyl-sleeve">
+                <img src="assets/songcover_try.jpg" alt="Shakira Cover" class="cover-img">
+                <div class="play-overlay-icon"></div>
+              </div>
+              <div class="vinyl-disk">
+                <img src="assets/songcover_try.jpg" alt="Vinyl Label" class="disk-label">
+              </div>
+            </div>
+            <div class="vinyl-credits">
+              <span class="song-title-display">Try Everything</span>
+              <span class="artist-display">Shakira</span>
+            </div>
+          </div>
+          <div class="track-info">
+            <div class="track-text-meta" onclick="togglePlay('try')">
+              <span class="page-label">for projects</span>
+              <p class="lyrics-en">"I wanna try everything, I wanna try even though I could fail."</p>
+            </div>
+            <div class="custom-player-bar">
+              <button class="play-btn" onclick="togglePlay('try')"></button>
+              <div class="progress-container" onclick="seekAudio(event, 'try')">
+                <div class="progress-bar" id="progress-try"></div>
+              </div>
+              <span class="time-display" id="time-try">00:00</span>
+            </div>
+          </div>
+        </div>
+  
+        <!-- 4. Experiences -->
+        <div class="track-card" id="card-quarter">
+          <audio id="audio-quarter" src="assets/audio/quarter.mp3" preload="metadata"></audio>
+          <div class="vinyl-meta-container">
+            <div class="vinyl-wrapper" onclick="togglePlay('quarter')">
+              <div class="vinyl-sleeve">
+                <img src="assets/songcover_quarter.jpg" alt="TXT Cover" class="cover-img">
+                <div class="play-overlay-icon"></div>
+              </div>
+              <div class="vinyl-disk">
+                <img src="assets/songcover_quarter.jpg" alt="Vinyl Label" class="disk-label">
+              </div>
+            </div>
+            <div class="vinyl-credits">
+              <span class="song-title-display">Quarter Life</span>
+              <span class="artist-display">TOMORROW X TOGETHER</span>
+            </div>
+          </div>
+          <div class="track-info">
+            <div class="track-text-meta" onclick="togglePlay('quarter')">
+              <span class="page-label">for experience</span>
+              <p class="lyrics-kr">어디로 가야 하는 건지 모르겠지만 걷는 거지</p>
+              <p class="lyrics-en">"I don't know where I'm supposed to go, but I keep on walking anyway."</p>
+            </div>
+            <div class="custom-player-bar">
+              <button class="play-btn" onclick="togglePlay('quarter')"></button>
+              <div class="progress-container" onclick="seekAudio(event, 'quarter')">
+                <div class="progress-bar" id="progress-quarter"></div>
+              </div>
+              <span class="time-display" id="time-quarter">00:00</span>
+            </div>
+          </div>
+        </div>
+  
+        <!-- 5. Off the Record -->
+        <div class="track-card" id="card-lost">
+          <audio id="audio-lost" src="assets/audio/Lost.mp3" preload="metadata"></audio>
+          <div class="vinyl-meta-container">
+            <div class="vinyl-wrapper" onclick="togglePlay('lost')">
+              <div class="vinyl-sleeve">
+                <img src="assets/songcover_lost.jpeg" alt="Keira Knightley Cover" class="cover-img">
+                <div class="play-overlay-icon"></div>
+              </div>
+              <div class="vinyl-disk">
+                <img src="assets/songcover_lost.jpeg" alt="Vinyl Label" class="disk-label">
+              </div>
+            </div>
+            <div class="vinyl-credits">
+              <span class="song-title-display">Lost Stars</span>
+              <span class="artist-display">Keira Knightley</span>
+            </div>
+          </div>
+          <div class="track-info">
+            <div class="track-text-meta" onclick="togglePlay('lost')">
+              <span class="page-label">for off the record</span>
+              <p class="lyrics-en">"But are we all lost stars, trying to light up the dark?"</p>
+            </div>
+            <div class="custom-player-bar">
+              <button class="play-btn" onclick="togglePlay('lost')"></button>
+              <div class="progress-container" onclick="seekAudio(event, 'lost')">
+                <div class="progress-bar" id="progress-lost"></div>
+              </div>
+              <span class="time-display" id="time-lost">00:00</span>
+            </div>
+          </div>
+        </div>
+  
+      </div>
+    </div>
+  </section>
+  
+  <section id="travel-map-section" class="travel-map-section otr-reveal">
+    <div class="travel-container">
+      
+      <header class="travel-header">
+        <span class="section-num">02 / TRAVEL</span>
+        <h2 class="main-title">Places I've been</h2>
+        <p class="subtitle">A map of where I've lived, studied, and wandered. <br class="hidden md:block" />The pink cities have stories, take a closer look.</p>
+      </header>
+  
+      <div class="map-wrapper">
+        <img src="assets/world-map.svg" alt="World Map" class="base-map-svg">
+  
+        <div class="map-marker core-pink-marker" style="top: 55.4%; left: 79.6%;" onclick="togglePopover('pop-hefei', this)">
+            <div class="marker-dot pink-pulse"></div>
+            <div class="map-popover">
+              <div class="popover-img-wrapper"><img src="assets/travel_hefei.JPG" alt="Hefei"></div>
+              <div class="popover-content">
+                <h4>Hefei</h4>
+                <p>Where I was born and grew up.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="map-marker core-pink-marker" style="top: 50.1%; left: 22.7%;" onclick="togglePopover('pop-chicago', this)">
+            <div class="marker-dot pink-pulse"></div>
+            <div class="map-popover">
+              <div class="popover-img-wrapper"><img src="assets/travel_chicago.jpg" alt="Chicago"></div>
+              <div class="popover-content">
+                <h4>Chicago</h4>
+                <p>Where I'm based now.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="map-marker core-pink-marker" style="top: 53.3%; left: 25.0%;" onclick="togglePopover('pop-chapel', this)">
+            <div class="marker-dot pink-pulse"></div>
+            <div class="marker-ring-dashed"></div>
+            <div class="map-popover">
+              <div class="popover-img-wrapper"><img src="assets/travel_chapel_hill.JPG" alt="Chapel Hill"></div>
+              <div class="popover-content">
+                <h4>Chapel Hill</h4>
+                <p>I first lived here at two. Sixteen years later, I came back for my first summer studying in the US.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="map-marker core-pink-marker" style="top: 50.7%; left: 26.4%;" onclick="togglePopover('pop-ny', this)">
+            <div class="marker-dot pink-pulse"></div>
+            <div class="map-popover">
+              <div class="popover-img-wrapper"><img src="assets/travel_newyork.JPG" alt="New York"></div>
+              <div class="popover-content">
+                <h4>New York</h4>
+                <p>Where I spent my first New Year in the US.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="map-marker core-pink-marker" style="top: 49.8%; left: 27.3%;" onclick="togglePopover('pop-boston', this)">
+            <div class="marker-dot pink-pulse"></div>
+            <div class="map-popover">
+              <div class="popover-img-wrapper"><img src="assets/travel_boston.jpg" alt="Boston"></div>
+              <div class="popover-content">
+                <h4>Boston</h4>
+                <p>My first "home" in the US.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="map-marker core-pink-marker" style="top: 54.2%; left: 14.1%;" onclick="togglePopover('pop-la', this)">
+            <div class="marker-dot pink-pulse"></div>
+            <div class="map-popover">
+              <div class="popover-img-wrapper"><img src="assets/travel_la.JPG" alt="Los Angeles"></div>
+              <div class="popover-content">
+                <h4>Los Angeles</h4>
+                <p>Where my first internship began.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="map-marker core-pink-marker" style="top: 52.4%; left: 82.3%;" onclick="togglePopover('pop-seoul', this)">
+            <div class="marker-dot pink-pulse"></div>
+            <div class="map-popover">
+              <div class="popover-img-wrapper"><img src="assets/travel_seoul.JPG" alt="Seoul"></div>
+              <div class="popover-content">
+                <h4>Seoul</h4>
+                <p>Where I recharge.</p>
+              </div>
+            </div>
+          </div>
+          
+          
+          <div class="map-marker passive-yellow-marker" style="top: 46.7%; left: 13.0%;" title="Seattle"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 52.3%; left: 13.0%;" title="San Francisco"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 52.3%; left: 13.0%;" title="Oakland"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 52.5%; left: 13.1%;" title="San Jose"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 53.2%; left: 15.0%;" title="Las Vegas"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 50.7%; left: 15.9%;" title="Salt Lake City"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 56.4%; left: 20.4%;" title="Sugar Land"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 56.4%; left: 20.5%;" title="Houston"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 57.0%; left: 24.4%;" title="Orlando"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 54.4%; left: 23.6%;" title="Atlanta"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 53.6%; left: 24.5%;" title="Charlotte"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 52.1%; left: 23.2%;" title="Louisville"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 51.7%; left: 25.6%;" title="Washington DC"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 50.7%; left: 26.4%;" title="Newark"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 60.3%; left: 3.1%;" title="Honolulu"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 48.0%; left: 26.6%;" title="Montreal"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 53.3%; left: 82.8%;" title="Daegu"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 53.7%; left: 82.9%;" title="Busan"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 53.8%; left: 84.8%;" title="Kyoto"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 53.9%; left: 84.7%;" title="Osaka"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 53.6%; left: 85.6%;" title="Mount Fuji"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 53.4%; left: 85.9%;" title="Tokyo"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 68.9%; left: 75.9%;" title="Singapore"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 47.8%; left: 82.2%;" title="Harbin"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 51.2%; left: 79.4%;" title="Beijing"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 55.7%; left: 80.8%;" title="Shanghai"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 59.9%; left: 78.8%;" title="Hong Kong"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 59.9%; left: 78.6%;" title="Macau"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 58.6%; left: 80.8%;" title="Taipei"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 59.7%; left: 80.5%;" title="Kaohsiung"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 56.0%; left: 76.0%;" title="Chengdu"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 56.5%; left: 76.7%;" title="Chongqing"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 57.1%; left: 78.4%;" title="Changsha"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 59.5%; left: 78.5%;" title="Guangzhou"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 59.9%; left: 78.6%;" title="Zhuhai"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 55.6%; left: 80.6%;" title="Suzhou"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 56.1%; left: 80.4%;" title="Hangzhou"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 58.9%; left: 79.9%;" title="Xiamen"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 53.2%; left: 80.5%;" title="Qingdao"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 55.5%; left: 80.5%;" title="Wuxi"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 55.2%; left: 80.1%;" title="Nanjing"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 56.9%; left: 80.8%;" title="Taizhou, Zhejiang"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 57.8%; left: 74.9%;" title="Lijiang"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 58.6%; left: 75.6%;" title="Kunming"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 84.6%; left: 89.1%;" title="Sydney"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 86.7%; left: 87.3%;" title="Melbourne"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 89.5%; left: 88.0%;" title="Hobart"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 45.9%; left: 47.7%;" title="Paris"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 48.0%; left: 49.6%;" title="Milan"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 50.1%; left: 50.5%;" title="Rome"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 45.1%; left: 49.4%;" title="Frankfurt"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 42.7%; left: 49.8%;" title="Hamburg"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 46.3%; left: 50.2%;" title="Munich"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 47.6%; left: 51.1%;" title="Ljubljana"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 41.2%; left: 50.5%;" title="Copenhagen"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 38.3%; left: 52.1%;" title="Stockholm"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 46.8%; left: 49.4%;" title="Zurich"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 37.8%; left: 50.0%;" title="Oslo"></div>
+          <div class="map-marker passive-yellow-marker" style="top: 44.1%; left: 47.0%;" title="London"></div>
+      </div>
+    </div>
+  </section>
+<!-- 
+  [设计规约]
+  1. 彻底移除花哨的绝对定位和重叠，全部回归方正的呼吸感网格。
+  2. 短道速滑的 Collage：使用整齐的非对称网格，照片方正排列，通过“大小留白”来实现 Collage 的随意感，而不是靠旋转或重叠。
+  3. 动森 7 组图：完美对齐，每组两张 16:9 并排，保持极高的呼吸感和严谨度。
+-->
+
+<section id="shorttrack" class="page-section otr-reveal">
+    <!-- 3.1 标题层级完全对齐你的背包首屏和音乐页的极简字体 -->
+    <header class="section-header">
+        <span class="section-num">03 / SHORT TRACK SPEED SKATING</span>
+        <h2 class="section-title">The sport I can't stop watching</h2>
+        <p class="section-desc">Short track is chaos. A race can flip in the last corner, the leader can go down, and someone from the back can steal it. That unpredictability is exactly why I can't look away.</p>
+    </header>
+
+    <!-- 3.2 去过的现场：采用严格的左右分栏 (参考项目页的平铺感) -->
+    <div class="skating-live-grid">
+        <div class="live-info">
+            <p class="meta-label">RINK-SIDE EXPERIENCE</p>
+            <ul class="live-list">
+                <li>World Cup Salt Lake City, 2022–23</li>
+                <li>World Cup Seoul, 2023–24</li>
+                <li>World Cup Montreal (both stops), 2024–25</li>
+                <li>Asian Winter Games, Harbin</li>
+                <li>World Cup Montreal, 2025–26</li>
+            </ul>
+        </div>
+        
+        <!-- 干净的单张/双张写实全景，带有你网站标志性的 1px 透明边框 -->
+        <div class="live-display-photo">
+            <figure class="skating-hover-card skating-rink-card">
+                <img src="assets/skating/ice_rink_1.png" alt="Short track rink side view 1" class="clean-rect-photo">
+                <figcaption class="skating-hover-overlay">
+                    <span class="skating-hover-name">The Utah Olympic Oval</span>
+                </figcaption>
+            </figure>
+            <figure class="skating-hover-card skating-rink-card">
+                <img src="assets/skating/ice_rink_2.JPG" alt="Short track rink side view 2" class="clean-rect-photo">
+                <figcaption class="skating-hover-overlay">
+                    <span class="skating-hover-name">Maurice Richard Arena</span>
+                </figcaption>
+            </figure>
+        </div>
+    </div>
+
+    <!-- 3.3 签名与合影的克制 Collage -->
+    <!-- 抛弃大字报拼图，通过“方正、不对称、大留白”建立一个高级的相册墙 -->
+    <div class="skating-collage-container">
+        <p class="skating-collage-caption">Met a bunch of excellent skaters after the game too.</p>
+        <div class="minimal-collage-grid">
+            <div class="skating-collage-item skating-span-tall" style="--skating-order: 1;"><img src="assets/skating/skating_1.png" alt="Short track skating memory 1" class="skating-collage-photo"><div class="skating-hover-overlay"><span class="skating-hover-name">Suzanne Schulting</span><span class="skating-hover-tag">3-time Olympic gold medalist</span></div></div>
+            <div class="skating-collage-item" style="--skating-order: 2;"><img src="assets/skating/skating_2.png" alt="Short track skating memory 2" class="skating-collage-photo"><div class="skating-hover-overlay"><span class="skating-hover-name">Shim Suk-hee</span><span class="skating-hover-tag">3-time Olympic gold medalist</span></div></div>
+            <div class="skating-collage-item" style="--skating-order: 3;"><img src="assets/skating/skating_3.JPG" alt="Short track skating memory 3" class="skating-collage-photo"><div class="skating-hover-overlay"><span class="skating-hover-name">Choi Min-jeong</span><span class="skating-hover-tag">Korea's most decorated Olympian ever</span></div></div>
+            <div class="skating-collage-item" style="--skating-order: 4;"><img src="assets/skating/skating_4.JPG" alt="Short track skating memory 4" class="skating-collage-photo"><div class="skating-hover-overlay"><span class="skating-hover-name">Shim Suk-hee</span><span class="skating-hover-tag">3-time Olympic gold medalist</span></div></div>
+            <div class="skating-collage-item skating-span-tall" style="--skating-order: 5;"><img src="assets/skating/skating_5.PNG" alt="Short track skating memory 5" class="skating-collage-photo"><div class="skating-hover-overlay"><span class="skating-hover-name">Rim Jong-un</span><span class="skating-hover-tag">2026 Olympic medalist & world champion</span></div></div>
+            <div class="skating-collage-item" style="--skating-order: 6;"><img src="assets/skating/skating_6.PNG" alt="Short track skating memory 6" class="skating-collage-photo"><div class="skating-hover-overlay"><span class="skating-hover-name">Kim Gil-li</span><span class="skating-hover-tag">double gold, 2026 Winter Olympics</span></div></div>
+            <div class="skating-collage-item" style="--skating-order: 7;"><img src="assets/skating/skating_7.PNG" alt="Short track skating memory 7" class="skating-collage-photo"><div class="skating-hover-overlay"><span class="skating-hover-name">Lee So-yeon</span><span class="skating-hover-tag">2026 Olympic relay champion</span></div></div>
+            <div class="skating-collage-item" style="--skating-order: 8;"><img src="assets/skating/skating_8.JPG" alt="Short track skating memory 8" class="skating-collage-photo"><div class="skating-hover-overlay"><span class="skating-hover-name">Jang Sung-woo</span><span class="skating-hover-tag">Asian Games gold medalist</span></div></div>
+            <div class="skating-collage-item skating-span-tall" style="--skating-order: 9;"><img src="assets/skating/skating_9.JPG" alt="Short track skating memory 9" class="skating-collage-photo"><div class="skating-hover-overlay"><span class="skating-hover-name">Gong Li</span><span class="skating-hover-tag">Asian Games gold medalist</span></div></div>
+            <div class="skating-collage-item" style="--skating-order: 10;"><img src="assets/skating/skating_10.JPG" alt="Short track skating memory 10" class="skating-collage-photo"><div class="skating-hover-overlay"><span class="skating-hover-name">Park Ji-won & Kim Gun-woo</span><span class="skating-hover-tag">World champion & World Cup medalists</span></div></div>
+        </div>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+<section id="animal-crossing" class="page-section otr-reveal">
+    <!-- 4.1 动森开场 -->
+    <header class="section-header">
+        <span class="section-num">04 / ANIMAL CROSSING</span>
+        <h2 class="section-title">Where I live when I'm not in real life</h2>
+        <p class="section-desc">I've put 375 hours into Animal Crossing, and honestly half of them went into decorating rooms in the DLC. Here is the portfolio of hotel rooms interior design.</p>
+    </header>
+
+<div class="ac-interactive-container">
+    <div class="ac-tab-nav">
+        <span class="ac-nav-tag">Hotel Room Interior</span>
+    </div>
+
+    <div class="ac-display-window">
+        
+        <!-- 房间 01 (默认显示) -->
+        <div class="ac-room-group active" id="ac-room-1">
+            <button type="button" class="ac-media-tile" aria-label="Open Animal Crossing DLC room 1 view A">
+                <img src="assets/animalcrossing/Room1_A.png" alt="Animal Crossing DLC room 1 view A" class="ac-16-9-photo">
+            </button>
+            <button type="button" class="ac-media-tile" aria-label="Open Animal Crossing DLC room 1 view B">
+                <img src="assets/animalcrossing/Room1_B.png" alt="Animal Crossing DLC room 1 view B" class="ac-16-9-photo">
+            </button>
+        </div>
+
+        <!-- 房间 02 -->
+        <div class="ac-room-group" id="ac-room-2">
+            <button type="button" class="ac-media-tile" aria-label="Open Animal Crossing DLC room 2 view A">
+                <img src="assets/animalcrossing/Room2_A.png" alt="Animal Crossing DLC room 2 view A" class="ac-16-9-photo">
+            </button>
+            <button type="button" class="ac-media-tile" aria-label="Open Animal Crossing DLC room 2 view B">
+                <img src="assets/animalcrossing/Room2_B.png" alt="Animal Crossing DLC room 2 view B" class="ac-16-9-photo">
+            </button>
+        </div>
+
+        <!-- 房间 03 -->
+        <div class="ac-room-group" id="ac-room-3">
+            <button type="button" class="ac-media-tile" aria-label="Open Animal Crossing DLC room 3 view A">
+                <img src="assets/animalcrossing/Room3_A.png" alt="Animal Crossing DLC room 3 view A" class="ac-16-9-photo">
+            </button>
+            <button type="button" class="ac-media-tile" aria-label="Open Animal Crossing DLC room 3 view B">
+                <img src="assets/animalcrossing/Room3_B.png" alt="Animal Crossing DLC room 3 view B" class="ac-16-9-photo">
+            </button>
+        </div>
+
+        <!-- 房间 04 -->
+        <div class="ac-room-group" id="ac-room-4">
+            <button type="button" class="ac-media-tile" aria-label="Open Animal Crossing DLC room 4 view A">
+                <img src="assets/animalcrossing/Room4_A.png" alt="Animal Crossing DLC room 4 view A" class="ac-16-9-photo">
+            </button>
+            <button type="button" class="ac-media-tile" aria-label="Open Animal Crossing DLC room 4 view B">
+                <img src="assets/animalcrossing/Room4_B.png" alt="Animal Crossing DLC room 4 view B" class="ac-16-9-photo">
+            </button>
+        </div>
+
+        <!-- 房间 05 -->
+        <div class="ac-room-group" id="ac-room-5">
+            <button type="button" class="ac-media-tile" aria-label="Open Animal Crossing DLC room 5 view A">
+                <img src="assets/animalcrossing/Room5_A.png" alt="Animal Crossing DLC room 5 view A" class="ac-16-9-photo">
+            </button>
+            <button type="button" class="ac-media-tile" aria-label="Open Animal Crossing DLC room 5 view B">
+                <img src="assets/animalcrossing/Room5_B.png" alt="Animal Crossing DLC room 5 view B" class="ac-16-9-photo">
+            </button>
+        </div>
+
+        <!-- 房间 06 -->
+        <div class="ac-room-group" id="ac-room-6">
+            <button type="button" class="ac-media-tile" aria-label="Open Animal Crossing DLC room 6 view A">
+                <img src="assets/animalcrossing/Room6_A.png" alt="Animal Crossing DLC room 6 view A" class="ac-16-9-photo">
+            </button>
+            <button type="button" class="ac-media-tile" aria-label="Open Animal Crossing DLC room 6 view B">
+                <img src="assets/animalcrossing/Room6_B.png" alt="Animal Crossing DLC room 6 view B" class="ac-16-9-photo">
+            </button>
+        </div>
+
+        <!-- 房间 07 -->
+        <div class="ac-room-group" id="ac-room-7">
+            <button type="button" class="ac-media-tile" aria-label="Open Animal Crossing DLC room 7 view A">
+                <img src="assets/animalcrossing/Room7_A.png" alt="Animal Crossing DLC room 7 view A" class="ac-16-9-photo">
+            </button>
+            <button type="button" class="ac-media-tile" aria-label="Open Animal Crossing DLC room 7 view B">
+                <img src="assets/animalcrossing/Room7_B.png" alt="Animal Crossing DLC room 7 view B" class="ac-16-9-photo">
+            </button>
+        </div>
+
+    </div>
+</div>
+
+    <!-- 4.3 闭环收尾 -->
+    <div class="ac-closing-box">
+        <p class="closing-text">My island's still a work in progress. Someday I'll finish it.</p>
+        <!-- 沿用春晓页（image_5.png）中文本下划线的微弱透明质感 -->
+        <p class="closing-hint">(And yes, the room you've been clicking around? <a href="#roomStage" class="subtle-link">Inspired by these.</a>)</p>
+    </div>
+</section>
+
+<footer class="otr-goodbye-footer otr-reveal" aria-label="Off the Record closing note">
+    <p>
+        If any of this feels like your kind of thing,
+        <a href="mailto:azhao0322@gmail.com">come say hi</a>.
+    </p>
+</footer>
+
+<div class="ac-lightbox" id="acLightbox" aria-hidden="true">
+    <button class="ac-lightbox-close" type="button" aria-label="Close image preview">Close</button>
+    <div class="ac-lightbox-stage">
+        <img class="ac-lightbox-img" src="" alt="">
+    </div>
+</div>
+
+  <style>
+  /* 基础容器 */
+  .music-playlist-section {
+    padding: 80px 24px;
+    max-width: 900px;
+    margin: 0 auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #111;
+    user-select: none;
+  }
+  
+  .music-header {
+    text-align: center;
+    margin-bottom: 70px;
+  }
+  .music-header .section-tag {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #a0a0a0;
+    display: block;
+    margin-bottom: 12px;
+  }
+  .music-header .main-title {
+    font-size: 34px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .music-header .subtitle {
+    font-size: 13px;
+    color: #86868b;
+    font-weight: 300;
+  }
+  
+  .playlist-tracks {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+  
+  /* 单元卡片 */
+  .track-card {
+    display: flex;
+    align-items: flex-start; /* 调整为对齐顶部，方便黑胶下方文字排版 */
+    gap: 40px;
+    padding: 28px;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    border-radius: 14px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  
+  .track-card:hover {
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.02);
+  }
+  
+  /* 左侧胶片与文字组合容器 */
+  .vinyl-meta-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 125px; /* 预留滑出宽度 */
+    flex-shrink: 0;
+    gap: 12px;
+  }
+  
+  /* 黑胶盘基础 */
+  .vinyl-wrapper {
+    position: relative;
+    width: 115px;
+    height: 100px;
+    cursor: pointer;
+  }
+  
+  .vinyl-sleeve {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    background: #f5f5f7;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    z-index: 2;
+  }
+  .vinyl-sleeve .cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .play-overlay-icon {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .play-overlay-icon::after {
+    content: '';
+    width: 0; height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 14px solid #fff;
+    margin-left: 4px;
+  }
+  .vinyl-wrapper:hover .play-overlay-icon {
+    opacity: 1;
+  }
+  
+  .vinyl-disk {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 88px;
+    height: 88px;
+    background: radial-gradient(circle, #2c2c2c 4px, #111 5px, #1a1a1a 18px, #050505 100%);
+    border-radius: 50%;
+    box-shadow: inset 0 0 1px rgba(255,255,255,0.2), 2px 2px 8px rgba(0,0,0,0.15);
+    z-index: 1;
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .vinyl-disk .disk-label {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .track-card:hover .vinyl-disk,
+  .track-card.playing .vinyl-disk {
+    transform: translateX(25px);
+  }
+  
+  @keyframes vinylSpin {
+    from { transform: translateX(25px) rotate(0deg); }
+    to { transform: translateX(25px) rotate(360deg); }
+  }
+  .track-card.playing .vinyl-disk {
+    animation: vinylSpin 5s linear infinite;
+  }
+  
+  /* 新增：胶片下方歌名、歌手极简排版 */
+  .vinyl-credits {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100px; /* 与封套对齐 */
+    padding-left: 2px;
+  }
+  .song-title-display {
+    font-size: 12px;
+    font-weight: 500;
+    color: #1c1c1e;
+    line-height: 1.3;
+    word-break: break-word;
+    margin-bottom: 2px;
+  }
+  /* 如果是 Landing 页面等韩文歌名，保持极简斜体 */
+  #card-21century .song-title-display {
+    font-style: italic;
+    font-weight: 400;
+    color: #48484a;
+  }
+  .artist-display {
+    font-size: 11px;
+    color: #8e8e93;
+    font-weight: 300;
+  }
+  
+  /* 右侧面板排版 */
+  .track-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 120px; /* 稍微拉开高度适应左边两行字 */
+  }
+  .track-text-meta {
+    cursor: pointer;
+  }
+  
+  .page-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #bfbfbf;
+    display: block;
+    margin-bottom: 6px;
+  }
+  #card-21century .page-label { color: #0f9f9a; }
+  #card-answer .page-label { color: #b55d9d; }
+  #card-try .page-label { color: #007aff; }
+  #card-quarter .page-label { color: #d6a400; }
+  #card-lost .page-label { color: #e85ba6; }
+  
+  .lyrics-kr {
+    font-size: 13px;
+    font-style: italic;
+    color: #a2a2a7;
+    font-weight: 300;
+    line-height: 1.4;
+    margin: 0 0 4px 0;
+  }
+  
+  .lyrics-en {
+    font-size: 14px;
+    color: #2c2c2e;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  
+  /* 播放控制条 */
+  .custom-player-bar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: auto;
+    padding-top: 12px;
+  }
+  
+  .play-btn {
+    background: none;
+    border: none;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    position: relative;
+    padding: 0;
+    flex-shrink: 0;
+  }
+  .play-btn::before {
+    content: '';
+    position: absolute;
+    top: 2px; left: 4px;
+    width: 0; height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 10px solid #555;
+    transition: all 0.2s ease;
+  }
+  .track-card.playing .play-btn::before {
+    border: none;
+    width: 3px; height: 11px;
+    background: #111;
+    left: 3px;
+    box-shadow: 6px 0 #111;
+  }
+  
+  .progress-container {
+    flex-grow: 1;
+    height: 2px;
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 1px;
+    cursor: pointer;
+    position: relative;
+  }
+  .progress-bar {
+    height: 100%;
+    width: 0%;
+    background: #2c2c2e;
+    border-radius: 1px;
+    transition: width 0.1s linear;
+  }
+  
+  .time-display {
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    color: #86868b;
+    min-width: 34px;
+    text-align: right;
+  }
+  
+  /* 移动端降级 */
+  @media (max-width: 600px) {
+    .track-card {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 20px;
+    }
+    .vinyl-meta-container {
+      align-self: center;
+      width: 100%;
+      align-items: center;
+    }
+    .vinyl-credits {
+      align-items: center;
+      text-align: center;
+    }
+    .track-info {
+      min-height: auto;
+      width: 100%;
+      gap: 16px;
+    }
+  }
+
+/* 容器及全站氛围调和 */
+.travel-map-section {
+  padding: 90px 24px;
+  max-width: 1150px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  user-select: none;
+}
+
+.travel-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+.travel-header .section-tag {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #a0a0a0;
+  display: block;
+  margin-bottom: 12px;
+}
+.travel-header .main-title {
+  font-size: 34px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: #111;
+}
+.travel-header .subtitle {
+  max-width: 560px;
+  margin: 8px auto 0;
+  font-size: 13px;
+  line-height: 1.65;
+  color: #86868b;
+  font-weight: 300;
+}
+
+/* 地图自适应底盘 */
+.map-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: visible;
+  opacity: 0.62;
+  transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity;
+}
+
+.travel-map-section.map-awake .map-wrapper {
+  opacity: 1;
+}
+
+/* 🎨 颜色滤镜控制核心：将黑色 SVG 一键转化为高级轻欧式淡色 */
+.base-map-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none;
+  
+  /* 以下三行利用现代 CSS 滤镜：把黑色变成低饱和度灰，再降调，使之完美融入点阵背景 */
+  filter: invert(0.9) brightness(0.98) contrast(0.9); 
+  opacity: 0;
+  transform: translateY(16px) scale(0.985);
+  transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1), transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.travel-map-section.map-awake .base-map-svg {
+  opacity: 0.65;
+  transform: translateY(0) scale(1);
+}
+
+/* --- 城市标记点公用基类 --- */
+.map-marker {
+  position: absolute;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+/* --- 🌸 粉色核心故事点样式 --- */
+.core-pink-marker {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  --marker-scale: 0.55;
+  transform: translate(-50%, -50%) scale(var(--marker-scale));
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.3s ease;
+  will-change: transform, opacity;
+  z-index: 40;
+}
+
+.travel-map-section.map-awake .core-pink-marker {
+  opacity: 1;
+  --marker-scale: 1;
+}
+
+.core-pink-marker:hover,
+.core-pink-marker.active {
+  z-index: 300;
+}
+.core-pink-marker .marker-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #ff6b8b; /* 高级复古烟粉色 */
+  border-radius: 50%;
+  position: absolute;
+  top: 6px; left: 6px;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 0 1px 4px rgba(255,107,139,0.4);
+}
+
+/* 粉色点极简呼吸环 */
+.core-pink-marker .marker-dot::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  border-radius: 50%;
+  animation: pinkPulse 2.4s infinite ease-in-out;
+}
+@keyframes pinkPulse {
+  0% { box-shadow: 0 0 0 0px rgba(255, 107, 139, 0.35); }
+  70% { box-shadow: 0 0 0 9px rgba(255, 107, 139, 0); }
+  100% { box-shadow: 0 0 0 0px rgba(255, 107, 139, 0); }
+}
+
+/* Hover 放大交互 */
+.core-pink-marker:hover .marker-dot {
+  transform: scale(1.35);
+  background-color: #ff4772;
+}
+
+
+
+/* --- 💛 黄色足迹常驻点样式 --- */
+.passive-yellow-marker {
+  width: 6px;
+  height: 6px;
+  background-color: rgba(235, 190, 70, 0.7); /* 低饱和通透黄 */
+  border-radius: 50%;
+  pointer-events: auto; /* 允许鼠标悬停看原生 title 提示城市名 */
+  box-shadow: 0 0 2px rgba(235,190,70,0.3);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s ease, background-color 0.25s ease;
+  z-index: 12;
+}
+
+.travel-map-section.map-awake .passive-yellow-marker {
+  opacity: 1;
+}
+
+.passive-yellow-marker:hover {
+  background-color: rgba(235, 190, 70, 1);
+  transform: translate(-50%, -50%) scale(1.4);
+}
+
+
+/* --- 🌫️ 拍立得感高毛玻璃弹出框 --- */
+.map-popover {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  width: 210px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: 320;
+  overflow: hidden;
+}
+
+/* 触发显隐（支持 Hover 与点击类） */
+.core-pink-marker:hover .map-popover,
+.core-pink-marker.active .map-popover {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.popover-img-wrapper {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  background-color: transparent;
+}
+.popover-img-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.popover-content {
+  padding: 12px;
+}
+.popover-content h4 {
+  font-size: 13px;
+  font-weight: 500;
+  color: #111;
+  margin: 0 0 3px 0;
+}
+.popover-content p {
+  font-size: 11px;
+  color: #555;
+  line-height: 1.4;
+  margin: 0;
+  font-weight: 300;
+}
+
+/* 响应式降级 */
+@media (max-width: 600px) {
+  .map-popover {
+    width: 170px;
+  }
+}
+/* --- 样式重调：严格对齐极简、透明感与写实风 --- */
+
+.page-section {
+    width: 100%;
+    max-width: 1100px; /* 收紧最大宽度，防止大屏幕下图片过散 */
+    margin: 0 auto;
+    padding: 120px 40px; /* 大留白，营造呼吸感 */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #111;
+    user-select: none;
+}
+
+.section-header {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto 70px;
+}
+
+.section-divider {
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.06); /* 极其微弱的线条，参考全站风格 */
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* 标题样式，参考 image_1.png 的 A song for each page */
+.section-title {
+    font-size: 34px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    color: #111;
+    margin: 0 0 8px 0;
+}
+
+.section-num {
+    display: block;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 11px;
+    line-height: 1.4;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #a0a0a0;
+    margin-bottom: 12px;
+}
+
+.section-desc {
+    font-size: 13px;
+    color: #86868b;
+    max-width: 640px;
+    line-height: 1.7;
+    font-weight: 300;
+    margin: 0 auto;
+}
+
+/* --- 短道速滑 现场布局 --- */
+.skating-live-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 80px;
+    align-items: flex-start;
+    margin-top: 60px;
+}
+
+.meta-label {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 11px;
+    color: #888;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+.live-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.live-list li {
+    font-size: 15px;
+    color: #333;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04); /* 极细的底线隔离 */
+}
+
+.live-display-photo {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    align-items: start;
+}
+
+.live-display-photo .clean-rect-photo {
+    width: 100%;
+    height: auto;
+    aspect-ratio: auto;
+    display: block;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.skating-hover-card,
+.skating-collage-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.skating-hover-card {
+    margin: 0;
+    border-radius: 8px;
+    line-height: 0;
+}
+
+.skating-hover-card .clean-rect-photo,
+.skating-collage-photo {
+    transition: transform 300ms ease, filter 300ms ease;
+    will-change: transform;
+}
+
+.skating-hover-card:hover .clean-rect-photo,
+.skating-collage-item:hover .skating-collage-photo {
+    transform: scale(1.03);
+}
+
+.skating-hover-overlay {
+    position: absolute;
+    inset: auto 0 0 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 3px;
+    min-height: 48%;
+    padding: 18px 18px 14px;
+    color: #fff;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.28) 54%, rgba(0, 0, 0, 0));
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 300ms ease, transform 300ms ease;
+    pointer-events: none;
+    line-height: 1.35;
+}
+
+.skating-hover-card:hover .skating-hover-overlay,
+.skating-collage-item:hover .skating-hover-overlay {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.skating-hover-name {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.28);
+}
+
+.skating-hover-tag {
+    display: block;
+    font-size: 10px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.35;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.24);
+}
+
+.skating-rink-card .skating-hover-overlay {
+    min-height: 38%;
+}
+
+.skating-rink-card .skating-hover-name {
+    font-size: 14px;
+}
+
+.skating-collage-item .skating-hover-overlay {
+    padding: 14px 12px 11px;
+    min-height: 56%;
+}
+
+.skating-collage-item .skating-hover-name {
+    font-size: 11px;
+}
+
+.skating-collage-item .skating-hover-tag {
+    font-size: 9px;
+}
+
+/* 图片通用写实规范（参考全站卡片边框） */
+.clean-rect-photo {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.05); /* 1px 极其轻微的描边 */
+    background: #fff;
+}
+
+.ac-media-tile {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    display: block;
+    padding: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    line-height: 0;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-radius: 8px;
+    background: rgba(250, 250, 250, 0.55);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.035);
+    transform: translateY(0);
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.5s ease;
+}
+
+.ac-16-9-photo {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transition: filter 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.ac-media-tile:hover {
+    transform: translateY(-6px);
+    border-color: rgba(0, 0, 0, 0.06);
+    box-shadow: 0 12px 22px rgba(0, 0, 0, 0.08);
+}
+
+.ac-media-tile:hover .ac-16-9-photo {
+    filter: brightness(1.03);
+}
+
+/* --- 短道速滑 克制拼图（Collage Grid） --- */
+.skating-collage-container {
+    margin-top: 100px;
+    width: 100%;
+}
+
+/* 冷静的底片墙：缩小单张照片权重，保持秩序感 */
+.minimal-collage-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    align-items: stretch;
+}
+
+.skating-collage-item {
+    aspect-ratio: 3 / 4;
+    order: var(--skating-order);
+    grid-row: span 1;
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.skating-span-tall {
+    grid-row: span 1;
+}
+
+.skating-collage-photo {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.skating-collage-caption {
+    margin: 0 0 48px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #333;
+    font-weight: 400;
+    text-align: center;
+}
+
+/* 容器规范 */
+.ac-interactive-container {
+    width: 100%;
+    margin-top: 60px;
+}
+
+.ac-tab-nav {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    padding-bottom: 12px;
+    margin-bottom: 32px;
+}
+
+.ac-nav-tag {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-sub, #888);
+}
+
+.ac-display-window {
+    width: 100%;
+    max-width: 1100px;
+    position: relative;
+    display: flex;
+    gap: 40px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 14px 0 18px;
+    margin: -14px 0 -18px;
+    scroll-behavior: smooth;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.ac-display-window::-webkit-scrollbar {
+    display: none;
+}
+
+.ac-room-group {
+    flex: 0 0 min(80vw, 880px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    scroll-snap-align: start;
+}
+
+.ac-room-group.active {
+    display: grid;
+}
+
+.ac-closing-box {
+    max-width: 720px;
+    margin: 72px auto 0;
+    text-align: center;
+}
+
+.closing-text {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #333;
+    margin: 0 0 12px;
+    font-weight: 300;
+}
+
+.closing-hint {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #a0a0a0;
+    font-style: italic;
+    margin: 0;
+}
+
+.subtle-link {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(160, 160, 160, 0.35);
+    transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.subtle-link:hover {
+    color: #111;
+    border-color: #111;
+}
+
+
+.otr-goodbye-footer {
+    padding: 140px 24px 150px;
+    text-align: center;
+    user-select: none;
+}
+.otr-goodbye-footer p {
+    margin: 0;
+    font-size: clamp(18px, 2vw, 25px);
+    line-height: 1.8;
+    letter-spacing: 0.01em;
+    color: #5f5b57;
+    font-weight: 300;
+    text-transform: none;
+    /* 这里的字体保持原样，作为主体文字 */
+}
+
+.otr-goodbye-footer a {
+    /* 核心修改：只为链接添加手写体 */
+    font-family: 'Caveat', cursive; 
+    font-size: 1.2em; /* 手写体通常字号较小，加一点点倍数让它更醒目 */
+    color: #e85ba6;
+    text-decoration: none;
+    transition: color 0.3s ease, border-color 0.3s ease;
+    
+    /* 确保其为行内块，避免字体切换导致行高被撑开 */
+    display: inline-block; 
+}
+
+.otr-goodbye-footer a:hover,
+.otr-goodbye-footer a:focus-visible {
+    color: #b93f80;
+    border-color: rgba(185, 63, 128, 0.62);
+}
+
+.ac-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(28, 25, 23, 0.9);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.ac-lightbox.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.ac-lightbox-stage {
+    width: 100%;
+    height: 100%;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ac-lightbox-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 0;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+}
+
+.ac-lightbox-close {
+    position: fixed;
+    top: 32px;
+    right: 32px;
+    z-index: 1001;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: "Courier New", Courier, monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.25s ease;
+}
+
+.ac-lightbox-close:hover {
+    color: #fff;
+}
+
+@media (max-width: 900px) {
+    .page-section {
+        padding: 90px 28px;
+    }
+
+    .skating-live-grid,
+    .ac-room-group {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .live-display-photo {
+        grid-template-columns: 1fr;
+    }
+
+    .skating-hover-overlay {
+        opacity: 1;
+        transform: translateY(0);
+        padding: 14px 14px 12px;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.56), rgba(0, 0, 0, 0.22) 58%, rgba(0, 0, 0, 0));
+    }
+
+    .skating-hover-card:hover .clean-rect-photo,
+    .skating-collage-item:hover .skating-collage-photo {
+        transform: none;
+    }
+
+    .ac-tab-nav {
+        flex-wrap: wrap;
+    }
+
+    .ac-nav-tag {
+        width: 100%;
+        margin: 10px 0 0;
+        text-align: center;
+    }
+}
+
+@media (max-width: 767px) {
+    .minimal-collage-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+  </style>
+  
+  <script>
+  const siteHeader = document.querySelector('.site-header');
+  function updateHeaderSurface() {
+    if (!siteHeader) return;
+    siteHeader.classList.toggle('is-solid', window.scrollY > 24);
+  }
+  updateHeaderSurface();
+  window.addEventListener('scroll', updateHeaderSurface, { passive: true });
+
+  const motionAllowed = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelector('.room-model')?.addEventListener('animationend', (event) => {
+    event.currentTarget.style.willChange = 'auto';
+  }, { once: true });
+
+  const revealObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      window.setTimeout(() => {
+        entry.target.style.willChange = 'auto';
+      }, motionAllowed ? 900 : 0);
+      observer.unobserve(entry.target);
+    });
+  }, {
+    threshold: 0.12,
+    rootMargin: '0px 0px -80px 0px'
+  });
+
+  document.querySelectorAll('.otr-reveal').forEach((section) => {
+    revealObserver.observe(section);
+  });
+
+  const mapMarkers = Array.from(document.querySelectorAll('#travel-map-section .map-marker'));
+  mapMarkers
+    .sort((a, b) => {
+      const leftA = parseFloat((a.style.left || '0').replace('%', ''));
+      const leftB = parseFloat((b.style.left || '0').replace('%', ''));
+      const topA = parseFloat((a.style.top || '0').replace('%', ''));
+      const topB = parseFloat((b.style.top || '0').replace('%', ''));
+      return leftA === leftB ? topA - topB : leftA - leftB;
+    })
+    .forEach((marker, index) => {
+      marker.style.transitionDelay = motionAllowed ? `${280 + index * 18}ms` : '0ms';
+    });
+
+  const mapWakeObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const mapSection = entry.target.closest('#travel-map-section');
+      mapSection?.classList.add('map-awake');
+      window.setTimeout(() => {
+        entry.target.style.willChange = 'auto';
+        mapSection?.querySelector('.base-map-svg')?.style.setProperty('will-change', 'auto');
+        mapMarkers.forEach((marker) => {
+          marker.style.transitionDelay = '0ms';
+          marker.style.willChange = 'auto';
+        });
+      }, motionAllowed ? 2200 : 0);
+      observer.unobserve(entry.target);
+    });
+  }, {
+    threshold: 0.22,
+    rootMargin: '0px 0px -16% 0px'
+  });
+
+  const mapWrapper = document.querySelector('#travel-map-section .map-wrapper');
+  if (mapWrapper) {
+    mapWakeObserver.observe(mapWrapper);
+  }
+
+  const photoRevealObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      window.setTimeout(() => {
+        entry.target.style.willChange = 'auto';
+        entry.target.style.transitionDelay = '0ms';
+      }, motionAllowed ? 1500 : 0);
+      observer.unobserve(entry.target);
+    });
+  }, {
+    threshold: 0.16,
+    rootMargin: '0px 0px -60px 0px'
+  });
+
+  function observePhotoSet(selector, delayStep = 45) {
+    document.querySelectorAll(selector).forEach((photo, index) => {
+      const order = Number.parseInt(photo.style.getPropertyValue('--skating-order'), 10);
+      const sequence = Number.isFinite(order) ? order - 1 : index;
+      photo.classList.add('otr-photo-reveal');
+      photo.style.transitionDelay = motionAllowed ? `${Math.min(sequence, 7) * delayStep}ms` : '0ms';
+      photoRevealObserver.observe(photo);
+    });
+  }
+
+  observePhotoSet('.live-display-photo .skating-hover-card', 45);
+  observePhotoSet('.skating-collage-item', 45);
+  observePhotoSet('.ac-media-tile', 45);
+
+  // 保持原有的 JS 播放控制逻辑不变
+  function togglePlay(id) {
+    const audio = document.getElementById(`audio-${id}`);
+    const card = document.getElementById(`card-${id}`);
+    const isCurrentPlaying = card.classList.contains('playing');
+  
+    document.querySelectorAll('audio').forEach(el => {
+      if (el !== audio) el.pause();
+    });
+    document.querySelectorAll('.track-card').forEach(el => {
+      if (el !== card) el.classList.remove('playing');
+    });
+  
+    if (isCurrentPlaying) {
+      audio.pause();
+      card.classList.remove('playing');
+    } else {
+      audio.play().then(() => {
+        card.classList.add('playing');
+      }).catch(err => {
+        console.log("Audio file missing or interaction blocked:", err);
+      });
+    }
+  
+    if (!audio.dataset.eventsBound) {
+      audio.addEventListener('timeupdate', () => updateProgress(id, audio));
+      audio.addEventListener('ended', () => {
+        card.classList.remove('playing');
+        document.getElementById(`progress-${id}`).style.width = '0%';
+      });
+      audio.dataset.eventsBound = "true";
+    }
+  }
+  
+  function updateProgress(id, audio) {
+    const progressBar = document.getElementById(`progress-${id}`);
+    const timeDisplay = document.getElementById(`time-${id}`);
+    if (audio.duration) {
+      const percentage = (audio.currentTime / audio.duration) * 100;
+      progressBar.style.width = `${percentage}%`;
+      timeDisplay.textContent = formatTime(audio.currentTime);
+    }
+  }
+  
+  function seekAudio(event, id) {
+    event.stopPropagation();
+    const audio = document.getElementById(`audio-${id}`);
+    const container = event.currentTarget;
+    const rect = container.getBoundingClientRect();
+    const clickX = event.clientX - rect.left;
+    const width = rect.width;
+    if (audio.duration) {
+      audio.currentTime = (clickX / width) * audio.duration;
+      updateProgress(id, audio);
+    }
+  }
+  
+  function formatTime(seconds) {
+    const min = Math.floor(seconds / 60);
+    const sec = Math.floor(seconds % 60);
+    return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+  }
+// 兼容移动端点击查看
+function togglePopover(popoverId, element) {
+  const isActive = element.classList.contains('active');
+  document.querySelectorAll('.core-pink-marker').forEach(el => el.classList.remove('active'));
+  if (!isActive) {
+    element.classList.add('active');
+  }
+}
+
+// 点击空白关闭弹窗
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.core-pink-marker')) {
+    document.querySelectorAll('.core-pink-marker').forEach(el => el.classList.remove('active'));
+  }
+})
+
+// 💡 局部关灯联动机制（直接对 roomStage 及其子元素加滤镜，不污染点阵底色）
+const lightSwitch = document.getElementById('lightSwitch');
+        const roomStage = document.getElementById('roomStage');
+        const lightOnImg = document.getElementById('lightOnImg');
+        const lightOffImg = document.getElementById('lightOffImg');
+        const lightTooltip = document.getElementById('lightTooltip');
+        const roomTV = document.getElementById('roomTV');
+        const lightClickSound = new Audio('assets/lights.mp3');
+        lightClickSound.preload = 'auto';
+        let isLightOn = true;
+
+        lightSwitch.addEventListener('click', () => {
+            lightClickSound.currentTime = 0;
+            lightClickSound.play().catch(() => {});
+            isLightOn = !isLightOn;
+            if (!isLightOn) {
+                roomStage.classList.add('night-mode-active');
+                lightOnImg.style.opacity = "0";
+                lightOffImg.style.opacity = "1";
+                lightTooltip.innerText = "Lights On";
+                roomTV.classList.add('tv-night-glow'); // 电视机保持明亮
+            } else {
+                roomStage.classList.remove('night-mode-active');
+                lightOnImg.style.opacity = "1";
+                lightOffImg.style.opacity = "0";
+                lightTooltip.innerText = "Shhh... Lights Off";
+                roomTV.classList.remove('tv-night-glow');
+            }
+        })
+        
+     // 1. 预加载音频对象（把 mp3 放在 assets/sounds/ 目录下）
+const dogBarkSound = new Audio('assets/house/woof.mp3');
+const birdSingSound = new Audio('assets/house/chirp.mp3');
+
+// 🐕 宠物互动：小狗
+document.getElementById('dogBtn').addEventListener('click', function() {
+    // 播放声音
+    dogBarkSound.currentTime = 0; // 每次点击从头播放，防止连点没声音
+    dogBarkSound.play().catch(e => console.log("音频播放需用户交互后触发"));
+
+    const img = this.querySelector('img');
+    img.classList.remove('animate-[dogBreath_2.5s_infinite_ease-in-out]');
+    img.classList.add('animate-bark');
+    setTimeout(() => {
+        img.classList.remove('animate-bark');
+        img.classList.add('animate-[dogBreath_2.5s_infinite_ease-in-out]');
+    }, 400);
+});
+
+
+// 🐦 宠物互动：小鸟
+document.getElementById('birdBtn').addEventListener('click', function() {
+    // 播放声音
+    birdSingSound.currentTime = 0;
+    birdSingSound.play().catch(e => console.log("音频播放需用户交互后触发"));
+
+    const img = this.querySelector('img');
+    img.classList.remove('animate-[birdFloat_3.5s_infinite_ease-in-out]');
+    img.classList.add('animate-flutter');
+    setTimeout(() => {
+        img.classList.remove('animate-flutter');
+        img.classList.add('animate-[birdFloat_3.5s_infinite_ease-in-out]');
+    }, 450);
+});
+
+        // 🧻 动态生成抽纸粒子（Corrected Path）
+        document.getElementById('tissueBox').addEventListener('click', function() {
+            const tissue = document.createElement('img');
+            tissue.src = 'assets/house/抽纸.png';
+            tissue.className = 'absolute w-[100%] pointer-events-none flying-tissue z-30';
+            tissue.style.left = '32%';
+            tissue.style.top = '5%';
+            this.appendChild(tissue);
+            setTimeout(() => tissue.remove(), 1200);
+        });
+
+        // 🎵 唱片机旋转
+        let isVinylPlaying = false;
+        const recordPlayerBtn = document.getElementById('recordPlayerBtn');
+        if (recordPlayerBtn) recordPlayerBtn.addEventListener('click', function() {
+            isVinylPlaying = !isVinylPlaying;
+            const img = document.getElementById('recordPlayerImg');
+            if (img) img.classList.toggle('animate-spin-slow', isVinylPlaying);
+        })
+
+const acHorizontalGallery = document.querySelector('.ac-display-window');
+if (acHorizontalGallery) {
+    acHorizontalGallery.addEventListener('wheel', (event) => {
+        if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+        event.preventDefault();
+        acHorizontalGallery.scrollLeft += event.deltaY;
+    }, { passive: false });
+}
+
+const acLightbox = document.getElementById('acLightbox');
+const acLightboxImg = acLightbox ? acLightbox.querySelector('.ac-lightbox-img') : null;
+const acLightboxClose = acLightbox ? acLightbox.querySelector('.ac-lightbox-close') : null;
+let previousBodyOverflow = '';
+
+function openAcLightbox(image) {
+    if (!acLightbox || !acLightboxImg) return;
+    previousBodyOverflow = document.body.style.overflow;
+    acLightboxImg.src = image.currentSrc || image.src;
+    acLightboxImg.alt = image.alt || 'Animal Crossing room preview';
+    acLightbox.classList.add('is-open');
+    acLightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeAcLightbox() {
+    if (!acLightbox || !acLightboxImg) return;
+    acLightbox.classList.remove('is-open');
+    acLightbox.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = previousBodyOverflow;
+    window.setTimeout(() => {
+        if (!acLightbox.classList.contains('is-open')) {
+            acLightboxImg.src = '';
+            acLightboxImg.alt = '';
+        }
+    }, 280);
+}
+
+document.querySelectorAll('.ac-media-tile').forEach((tile) => {
+    const image = tile.querySelector('.ac-16-9-photo');
+    if (image) {
+        tile.addEventListener('click', () => openAcLightbox(image));
+    }
+});
+
+if (acLightboxClose) {
+    acLightboxClose.addEventListener('click', closeAcLightbox);
+}
+
+if (acLightbox) {
+    acLightbox.addEventListener('click', (event) => {
+        if (event.target === acLightbox || event.target.classList.contains('ac-lightbox-stage')) {
+            closeAcLightbox();
+        }
+    });
+}
+
+if (acLightboxImg) {
+    acLightboxImg.addEventListener('click', (event) => event.stopPropagation());
+}
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && acLightbox && acLightbox.classList.contains('is-open')) {
+        closeAcLightbox();
+    }
+});
+
+document.querySelectorAll('#travel-map-section .map-popover img, #skating-section img').forEach((image) => {
+    image.setAttribute('draggable', 'false');
+    image.addEventListener('contextmenu', (event) => event.preventDefault());
+    image.addEventListener('dragstart', (event) => event.preventDefault());
+});
+    </script>
+</body>
+</html>

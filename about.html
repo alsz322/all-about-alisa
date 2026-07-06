@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About — Alisa Zhao</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600&family=Noto+Serif+SC:wght@200;300;400&family=Playfair+Display:ital,wght@1,400;1,500;1,600&family=Monsieur+La+Douise&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #f9f9f9;
+            background-image: radial-gradient(#e5e5e5 1px, transparent 1px);
+            background-size: 24px 24px;
+            color: #1a1a1a;
+            overflow-x: hidden;
+        }
+        .site-header {
+            width: 100vw;
+            box-sizing: border-box;
+            padding: 22px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1200;
+            background: transparent;
+            backdrop-filter: blur(0);
+            -webkit-backdrop-filter: blur(0);
+            border: 1px solid transparent;
+            border-left: 0;
+            border-right: 0;
+            border-radius: 0;
+            box-shadow: none;
+            transition: background 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease, backdrop-filter 0.28s ease, -webkit-backdrop-filter 0.28s ease;
+        }
+        .site-header.is-solid {
+            background: rgba(249, 249, 249, 0.94);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-color: rgba(26, 26, 26, 0.06);
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.035);
+        }
+        .brand-name {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: #1a1a1a;
+            text-decoration: none;
+        }
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+        .nav-links a {
+            font-size: 13px;
+            text-decoration: none;
+            color: #1a1a1a;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .nav-links a.active,
+        .nav-links a[data-nav="about"].active {
+            color: #b55d9d;
+        }
+        .nav-links a[data-nav="about"]:hover,
+        .nav-links a[data-nav="about"]:focus-visible { color: #b55d9d; }
+        .nav-links a[data-nav="projects"]:hover,
+        .nav-links a[data-nav="projects"]:focus-visible { color: #007aff; }
+        .nav-links a[data-nav="experience"]:hover,
+        .nav-links a[data-nav="experience"]:focus-visible { color: #d6a400; }
+        .nav-links a[data-nav="off-record"]:hover,
+        .nav-links a[data-nav="off-record"]:focus-visible { color: #e85ba6; }
+        .footer-answer[data-nav="projects"] { color: #007aff; }
+        .footer-answer[data-nav="experience"] { color: #d6a400; }
+        .footer-answer[data-nav="off-record"] { color: #e85ba6; }
+        .font-serif-zh {
+            font-family: 'Noto Serif SC', serif;
+        }
+        /* 🖌️ 终极手写斜体后备系统 */
+        .font-brand-script {
+            font-family: 'Monsieur La Douise', 'Playfair Display', serif;
+            font-style: italic;
+        }
+        ruby {
+            ruby-position: over;
+            ruby-align: center;
+        }
+        rt {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 0.22em;
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            color: #c5c5c5; 
+            padding-bottom: 1.2rem;
+        }
+        html {
+            background-color: #f9f9f9;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(26, 26, 26, 0.2) #f9f9f9;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f9f9f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(26, 26, 26, 0.18);
+            border: 2px solid transparent;
+            border-radius: 999px;
+            background-clip: content-box;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(26, 26, 26, 0.28);
+            background-clip: content-box;
+        }
+        @keyframes fadeInTracking {
+            from { opacity: 0; letter-spacing: 0; }
+            to { opacity: 1; letter-spacing: 0.2em; }
+        }
+        @keyframes slideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hero-portrait-intro {
+            opacity: 0;
+            transform: translateY(24px);
+            animation: slideUp 1.2s ease-out 400ms forwards;
+        }
+        .hero-copy-intro {
+            opacity: 0;
+            transform: translateY(16px);
+            animation: slideUp 1s ease-out 700ms forwards;
+        }
+        .hero-bg-intro {
+            opacity: 0;
+            letter-spacing: 0;
+            animation: fadeInTracking 1.5s ease-out 100ms forwards;
+        }
+        #text-chunxiao {
+            letter-spacing: 0.2em;
+        }
+        @media (max-width: 900px) {
+            .site-header {
+                padding: 26px 5% !important;
+                gap: 18px;
+                flex-wrap: wrap;
+                align-items: flex-start;
+            }
+            .nav-links {
+                gap: 18px !important;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+                max-width: 70%;
+            }
+        }
+        @media (max-width: 768px) {
+            .site-header {
+                padding: 22px 18px !important;
+            }
+            .brand-name {
+                font-size: 17px !important;
+            }
+            .nav-links {
+                gap: 10px 14px !important;
+                max-width: 100%;
+                justify-content: flex-start;
+            }
+            .nav-links a {
+                font-size: 12px !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-neutral-800 antialiased min-h-screen">
+
+    <!-- 1. Navigation -->
+    <header class="site-header">
+        <a href="index.html" class="brand-name">Alisa Zhao</a>
+        <nav class="nav-links">
+            <a href="about.html" class="active" data-nav="about">About Me</a>
+            <a href="projects.html" data-nav="projects">Projects</a>
+            <a href="experience.html" data-nav="experience">Experience</a>
+            <a href="off-the-record.html" data-nav="off-record">Off the Record</a>
+        </nav>
+    </header>
+
+    <!-- ⚡️ HERO 动画定格大外壳 (通过 h-[350vh] 锁定滚动深度，给动画留足滑动空间) -->
+    <div id="about-hero-scroll" class="relative h-[350vh] w-full">
+        <div class="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden">
+            <div class="relative w-full max-w-[700px] aspect-[16/9] flex items-center justify-center mb-6 select-none">
+                <div id="text-chunxiao" class="absolute inset-0 flex items-center justify-center font-serif-zh text-[10rem] sm:text-[12rem] md:text-[13rem] font-extralight text-neutral-200/50 leading-none z-0 pointer-events-none gap-36 md:gap-48 transition-all duration-75 will-change-transform hero-bg-intro">
+                    <ruby>春<rt>chūn</rt></ruby>
+                    <ruby>晓<rt>xiǎo</rt></ruby>
+                </div>
+
+                <div id="text-alisa" class="absolute font-brand-script text-[11rem] sm:text-[13rem] md:text-[14.5rem] text-neutral-200/50 leading-none z-0 pointer-events-none transition-all duration-75 will-change-transform -translate-y-8 opacity-0 select-none tracking-widest">
+                    Alisa
+                </div>
+
+                <div class="relative z-10 hero-portrait-intro">
+                    <img src="assets/chunxiao-avatar.png" alt="Alisa Zhao"
+                         class="max-h-[340px] sm:max-h-[360px] w-auto object-contain filter contrast-[1.01] drop-shadow-[0_20px_40px_rgba(0,0,0,0.03)]" />
+                </div>
+            </div>
+
+            <!-- 📝 描述文案容器 (marketing 已加粗版本) -->
+            <div class="max-w-2xl mx-auto text-neutral-600 font-light leading-relaxed text-sm md:text-base mt-4 relative w-full h-28 px-6 hero-copy-intro">
+                <p id="desc-chunxiao" class="absolute inset-x-6 text-center transition-all duration-100 will-change-transform opacity-100 transform translate-y-0">
+                    My Chinese name is <strong class="font-medium text-neutral-900">春晓</strong>, which means Spring Morning. It comes from <a href="https://poems.mahacinasthana.com/en/gushi/chun-xiao/" target="_blank" class="text-neutral-800 underline underline-offset-4 decoration-neutral-300 hover:text-[#b55d9d] hover:decoration-[#b55d9d] transition-colors">a classic poem</a> I grew up with, and I've always liked what it stands for, that fresh, clear feeling of a new day starting. It fits how I think too. I like approaching things with a clear head and a bit of structure.
+                </p>
+
+                <p id="desc-alisa" class="absolute inset-x-6 text-center transition-all duration-100 will-change-transform opacity-0 transform translate-y-6 text-neutral-600">
+                    <strong class="font-medium text-neutral-900">Alisa</strong> is the name I picked for myself. Same me, just my own choice. These days I'm aiming for a career in <strong class="font-medium text-neutral-900">marketing</strong>, ideally the kind where I get to dig into the numbers and tell a good story with them.
+                </p>
+            </div>
+
+            <div id="scroll-indicator" class="absolute bottom-8 text-neutral-300 animate-bounce text-[10px] font-mono tracking-widest transition-opacity duration-300">SCROLL DOWN ↓</div>
+        </div>
+    </div>
+
+
+    <!-- ⚡️ 下方的其余网页正文内容（当上面的动画放完，这部分才会正常滚上来） -->
+    <main class="w-full relative z-30 bg-[#f9f9f9]">
+        
+      <!-- ================= SECTION 2: MBTI (亚克力低饱和质感·呼吸动效版) ================= -->
+      <section data-scroll-section class="opacity-0 translate-y-4 [&.is-visible]:opacity-100 [&.is-visible]:translate-y-0 transition-all duration-700 ease-out py-24">
+        <div class="w-full h-[1px] bg-neutral-200/50 scale-x-0 origin-left transition-transform duration-1000 ease-out delay-100 [.is-visible_&]:scale-x-100"></div>
+        <div class="max-w-5xl mx-auto px-8 mt-12">
+        <h2 class="text-xs text-neutral-400 font-mono uppercase tracking-normal transition-all duration-1000 ease-out delay-300 [.is-visible_&]:tracking-[0.25em] mb-16">02 / MBTI</h2>
+        
+        <!-- 整体容器放大至 max-w-4xl -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto px-4">
+            
+            <!-- I - Introverted (基于 about me 紫色挂件微调) -->
+            <div class="group flex gap-8 items-start p-8 rounded-2xl bg-[#f5effa]/50 border border-[#e8ddf3]/40 transition-all duration-500 ease-out hover:-translate-y-1 hover:bg-[#ebdff7] hover:shadow-[0_12px_24px_-10px_rgba(223,213,236,0.5)]">
+                <span class="text-5xl font-black text-[#bdaacf] font-mono leading-none select-none transition-colors duration-500 group-hover:text-[#a68ebd]">I</span>
+                <div class="flex flex-col gap-2">
+                    <h4 class="text-xs font-bold text-neutral-800 uppercase tracking-widest">Introverted</h4>
+                    <p class="text-sm text-neutral-500 leading-relaxed font-light">I really enjoy my own company and time to myself, but I still love meeting new people. The quiet is where I recharge.</p>
+                </div>
+            </div>
+
+            <!-- S - Sensing (基于 projects 蓝色挂件微调) -->
+            <div class="group flex gap-8 items-start p-8 rounded-2xl bg-[#ecf4f9]/60 border border-[#dbebf6]/40 transition-all duration-500 ease-out hover:-translate-y-1 hover:bg-[#e0eef7] hover:shadow-[0_12px_24px_-10px_rgba(219,235,246,0.6)]">
+                <span class="text-5xl font-black text-[#a6cadf] font-mono leading-none select-none transition-colors duration-500 group-hover:text-[#8cb8d1]">S</span>
+                <div class="flex flex-col gap-2">
+                    <h4 class="text-xs font-bold text-neutral-800 uppercase tracking-widest">Sensing</h4>
+                    <p class="text-sm text-neutral-500 leading-relaxed font-light">I trust concrete details and things I can actually watch working.</p>
+                </div>
+            </div>
+
+            <!-- T - Thinking (基于 experiences 黄色挂件微调) -->
+            <div class="group flex gap-8 items-start p-8 rounded-2xl bg-[#faf6e9]/60 border border-[#f5ecd2]/40 transition-all duration-500 ease-out hover:-translate-y-1 hover:bg-[#f7f0da] hover:shadow-[0_12px_24px_-10px_rgba(251,241,211,0.6)]">
+                <span class="text-5xl font-black text-[#decba0] font-mono leading-none select-none transition-colors duration-500 group-hover:text-[#cca474]">T</span>
+                <div class="flex flex-col gap-2">
+                    <h4 class="text-xs font-bold text-neutral-800 uppercase tracking-widest">Thinking</h4>
+                    <p class="text-sm text-neutral-500 leading-relaxed font-light">I lead with logic. When something doesn't make sense, I'd rather figure out why than let it slide.</p>
+                </div>
+            </div>
+
+            <!-- J - Judging (基于 off the record 粉色挂件微调) -->
+            <div class="group flex gap-8 items-start p-8 rounded-2xl bg-[#fbf0f2]/60 border border-[#f7e3e7]/40 transition-all duration-500 ease-out hover:-translate-y-1 hover:bg-[#fcdde3] hover:shadow-[0_12px_24px_-10px_rgba(247,227,231,0.6)]">
+                <span class="text-5xl font-black text-[#e3b6bf] font-mono leading-none select-none transition-colors duration-500 group-hover:text-[#d499a5]">J</span>
+                <div class="flex flex-col gap-2">
+                    <h4 class="text-xs font-bold text-neutral-800 uppercase tracking-widest">Judging</h4>
+                    <p class="text-sm text-neutral-500 leading-relaxed font-light">I plan everything. Calendars, trackers, the AI automation. Hand me a messy project and I'm happiest turning it into a system that just runs on its own.</p>
+                </div>
+            </div>
+
+        </div>
+        </div>
+    </section>
+<!-- ================= SECTION 3: WHAT I BRING (高级画册大留白版) ================= -->
+<section data-scroll-section class="opacity-0 translate-y-4 [&.is-visible]:opacity-100 [&.is-visible]:translate-y-0 transition-all duration-700 ease-out py-24">
+    <div class="w-full h-[1px] bg-neutral-200/50 scale-x-0 origin-left transition-transform duration-1000 ease-out delay-100 [.is-visible_&]:scale-x-100"></div>
+    <div class="max-w-5xl mx-auto px-8 mt-12">
+    <h2 class="text-xs text-neutral-400 font-mono uppercase tracking-normal transition-all duration-1000 ease-out delay-300 [.is-visible_&]:tracking-[0.25em] mb-16">03 / What I bring</h2>
+    
+    <!-- ⚡️ 核心调整：最大宽度放大到 max-w-5xl，左右栏间距拉大到 md:gap-x-32 从而向两边散开 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-32 gap-y-16 max-w-5xl mx-auto px-6">
+        
+        <!-- 🛠️ 左栏：Technical Skills -->
+        <div class="flex flex-col">
+            <!-- 干掉了死板的黑粗线，纯靠字形和间距拉开层次 -->
+            <div class="pb-6 mb-2">
+                <h4 class="text-xs font-bold text-neutral-700 uppercase tracking-widest">Technical Skills</h4>
+                <p class="text-[11px] text-neutral-400 font-light mt-1.5">The tools and frameworks I use to analyze data and design experiences.</p>
+            </div>
+            
+            <div class="flex flex-col">
+                <!-- Item 1 (大小适中 text-[15px]，高级深灰 text-neutral-800，极淡底线) -->
+                <div class="py-4.5 border-b border-neutral-200/40 flex flex-col gap-1 group transform transition-all duration-300 hover:translate-x-1 hover:border-[#b55d9d]/60">
+                    <div class="flex justify-between items-baseline gap-4">
+                        <span class="text-[15px] font-semibold text-neutral-800 group-hover:text-[#b55d9d] transition-colors duration-300">SQL / R</span>
+                        <span class="text-[10px] tracking-wider text-neutral-400 font-light uppercase shrink-0">Data Analysis</span>
+                    </div>
+                    <p class="text-xs text-neutral-500 font-light leading-relaxed">For marketing models and machine learning.</p>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="py-4.5 border-b border-neutral-200/40 flex flex-col gap-1 group transform transition-all duration-300 hover:translate-x-1 hover:border-[#a6cadf]/60">
+                    <div class="flex justify-between items-baseline gap-4">
+                        <span class="text-[15px] font-semibold text-neutral-800 group-hover:text-sky-600 transition-colors duration-300">Tableau</span>
+                        <span class="text-[10px] tracking-wider text-neutral-400 font-light uppercase shrink-0">Data Viz</span>
+                    </div>
+                    <p class="text-xs text-neutral-500 font-light leading-relaxed">Turning complex data points into clear visual stories and dashboards.</p>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="py-4.5 border-b border-neutral-200/40 flex flex-col gap-1 group transform transition-all duration-300 hover:translate-x-1 hover:border-[#decba0]/60">
+                    <div class="flex justify-between items-baseline gap-4">
+                        <span class="text-[15px] font-semibold text-neutral-800 group-hover:text-amber-600 transition-colors duration-300">Photoshop, Illustrator, InDesign</span>
+                        <span class="text-[10px] tracking-wider text-neutral-400 font-light uppercase shrink-0">Design</span>
+                    </div>
+                    <p class="text-xs text-neutral-500 font-light leading-relaxed">Structuring visual assets, layouts, and brand creatives.</p>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="py-4.5 border-b border-neutral-200/40 flex flex-col gap-1 group transform transition-all duration-300 hover:translate-x-1 hover:border-[#e3b6bf]/60">
+                    <div class="flex justify-between items-baseline gap-4">
+                        <span class="text-[15px] font-semibold text-neutral-800 group-hover:text-pink-600 transition-colors duration-300">Google Analytics, HubSpot</span>
+                        <span class="text-[10px] tracking-wider text-neutral-400 font-light uppercase shrink-0">Marketing Tech</span>
+                    </div>
+                    <p class="text-xs text-neutral-500 font-light leading-relaxed">Tracking user behavior and managing campaigns.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🌟 右栏：Soft Skills -->
+        <div class="flex flex-col">
+            <div class="pb-6 mb-2">
+                <h4 class="text-xs font-bold text-neutral-700 uppercase tracking-widest">Soft Skills</h4>
+                <p class="text-[11px] text-neutral-400 font-light mt-1.5">How I get things done, with proof.</p>
+            </div>
+            
+            <div class="flex flex-col">
+                <!-- Item 1 (高度对齐，大小同步降级) -->
+                <div class="py-4.5 border-b border-neutral-200/40 flex flex-col gap-1 group transform transition-all duration-300 hover:translate-x-1 hover:border-[#b55d9d]/60 min-h-[73px] justify-center">
+                    <span class="text-[15px] font-semibold text-neutral-800 group-hover:text-[#b55d9d] transition-colors duration-300">Project Management</span>
+                    <p class="text-xs text-neutral-500 font-light leading-relaxed">Directed a 15-person crew through a full production cycle.</p>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="py-4.5 border-b border-neutral-200/40 flex flex-col gap-1 group transform transition-all duration-300 hover:translate-x-1 hover:border-[#a6cadf]/60 min-h-[73px] justify-center">
+                    <span class="text-[15px] font-semibold text-neutral-800 group-hover:text-sky-600 transition-colors duration-300">Event Coordination</span>
+                    <p class="text-xs text-neutral-500 font-light leading-relaxed">Ran on-site ops for 90+ camp participants across two cohorts.</p>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="py-4.5 border-b border-neutral-200/40 flex flex-col gap-1 group transform transition-all duration-300 hover:translate-x-1 hover:border-[#decba0]/60 min-h-[73px] justify-center">
+                    <span class="text-[15px] font-semibold text-neutral-800 group-hover:text-amber-600 transition-colors duration-300">Cross-functional Communication</span>
+                    <p class="text-xs text-neutral-500 font-light leading-relaxed">Aligned teams on messaging and consolidated impact data.</p>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="py-4.5 border-b border-neutral-200/40 flex flex-col gap-1 group transform transition-all duration-300 hover:translate-x-1 hover:border-[#e3b6bf]/60 min-h-[73px] justify-center">
+                    <span class="text-[15px] font-semibold text-neutral-800 group-hover:text-pink-600 transition-colors duration-300">Content & Storytelling</span>
+                    <p class="text-xs text-neutral-500 font-light leading-relaxed">Produced 5 student stories end to end, from interview to published.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    </div>
+</section>
+<!-- ================= SECTION 4: FOOTER & INVITATION (硬朗直角·纯粹悬停版) ================= -->
+<footer data-scroll-section class="opacity-0 translate-y-4 [&.is-visible]:opacity-100 [&.is-visible]:translate-y-0 transition-all duration-700 ease-out py-40 bg-transparent select-none">
+    <div class="max-w-5xl mx-auto px-8 flex flex-col items-center text-center">
+        
+        <!-- 💬 第一层：核心邀请语（直角·左到右滑入反白） -->
+        <h2 class="text-2xl md:text-3xl font-light tracking-wide text-neutral-800 mb-16 select-none">
+            Let's build something 
+            <!-- ⚡️ 特效：纯直角 rounded-none，无放大。利用背景尺寸实现左到右滑入 -->
+            <span class="relative inline-block px-2 py-0.5 mx-0.5 font-semibold text-neutral-800 rounded-none bg-gradient-to-r from-[#8f3f7d] to-[#8f3f7d] bg-[length:0%_100%] bg-left bg-no-repeat transition-all duration-300 ease-out hover:bg-[length:100%_100%] hover:text-white cursor-pointer">
+                insightful
+            </span> 
+            together.
+        </h2>
+
+        <!-- 🔗 第二层：社交渠道 -->
+        <div class="flex flex-wrap justify-center items-center gap-x-12 gap-y-4 mb-24 opacity-60 hover:opacity-100 transition-opacity duration-500">
+            <a href="mailto:azhao0322@gmail.com" class="text-[10px] tracking-[0.25em] text-neutral-500 font-mono uppercase hover:text-neutral-900 transition-colors duration-300">Email</a>
+            <a href="http://www.linkedin.com/in/alisa-zhao-92a644292" target="_blank" class="text-[10px] tracking-[0.25em] text-neutral-500 font-mono uppercase hover:text-neutral-900 transition-colors duration-300">Linkedin</a>
+            <a href="https://github.com/alsz322" target="_blank" class="text-[10px] tracking-[0.25em] text-neutral-500 font-mono uppercase hover:text-neutral-900 transition-colors duration-300">Github</a>
+            <a href="assets/Alisa_Zhao_Resume.pdf" target="_blank" rel="noopener" class="text-[10px] tracking-[0.25em] text-neutral-500 font-mono uppercase hover:text-neutral-900 transition-colors duration-300">View Resume</a>
+        </div>
+
+        <!-- ⚡️ 第三层：趣味问答式导航（回归初衷：Hover 显色，平时隐藏） -->
+        <div class="flex flex-col md:flex-row items-center justify-center gap-y-12 md:gap-y-0 gap-x-16 border-t border-neutral-200/40 pt-14 w-full max-w-5xl">
+            
+            <!-- 💎 Navigation 1: Projects (天空蓝) -->
+            <!-- 💡 核心修正：字色加深到 text-neutral-500，答案平时彻底不显示（opacity-0） -->
+            <a href="projects.html" class="group flex flex-col items-center gap-2 transition-all duration-300">
+                <span class="text-xs text-neutral-500 font-light tracking-wide whitespace-nowrap group-hover:text-neutral-400 transition-colors duration-300">Curious what I've built?</span>
+                <span class="footer-answer text-[13px] font-semibold opacity-0 transform translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out" data-nav="projects">
+                    Projects <span class="text-[10px] ml-0.5">↗</span>
+                </span>
+            </a>
+            
+            <!-- 极简中隔线 -->
+            <span class="hidden md:inline text-neutral-200/60 font-light select-none">/</span>
+
+            <!-- 💎 Navigation 2: Experience (落日黄) -->
+            <a href="experience.html" class="group flex flex-col items-center gap-2 transition-all duration-300">
+                <span class="text-xs text-neutral-500 font-light tracking-wide whitespace-nowrap group-hover:text-neutral-400 transition-colors duration-300">Wondering where I've worked?</span>
+                <span class="footer-answer text-[13px] font-semibold opacity-0 transform translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out" data-nav="experience">
+                    Experience <span class="text-[10px] ml-0.5">↗</span>
+                </span>
+            </a>
+
+            <span class="hidden md:inline text-neutral-200/60 font-light select-none">/</span>
+
+            <!-- 💎 Navigation 3: Off the Record (蔷薇粉) -->
+            <a href="off-the-record.html" class="group flex flex-col items-center gap-2 transition-all duration-300">
+                <span class="text-xs text-neutral-500 font-light tracking-wide whitespace-nowrap group-hover:text-neutral-400 transition-colors duration-300">Rather see the fun side?</span>
+                <span class="footer-answer text-[13px] font-semibold opacity-0 transform translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out" data-nav="off-record">
+                    Off the Record <span class="text-[10px] ml-0.5">↗</span>
+                </span>
+            </a>
+        </div>
+
+    </div>
+</footer>
+</main>
+ 
+
+    <!-- ⚡️ 控制斯克罗叙事（Scrollytelling）的核心脚本 -->
+    <script>
+        function initHeaderSurface() {
+            const header = document.querySelector('.site-header');
+            const heroScroll = document.getElementById('about-hero-scroll');
+            if (!header || !heroScroll) return;
+
+            let ticking = false;
+
+            function updateHeaderSurface() {
+                const solidPoint = heroScroll.offsetTop + heroScroll.offsetHeight - window.innerHeight;
+                header.classList.toggle('is-solid', window.scrollY >= solidPoint);
+            }
+
+            function requestHeaderSurfaceUpdate() {
+                if (ticking) return;
+                ticking = true;
+                window.requestAnimationFrame(() => {
+                    ticking = false;
+                    updateHeaderSurface();
+                });
+            }
+
+            updateHeaderSurface();
+            window.addEventListener('scroll', requestHeaderSurfaceUpdate, { passive: true });
+            window.addEventListener('resize', requestHeaderSurfaceUpdate);
+        }
+
+        initHeaderSurface();
+
+        function updateAboutHero() {
+            const scrollTop = window.scrollY;
+            const animationMax = window.innerHeight * 1.5;
+            let progress = Math.min(Math.max(scrollTop / animationMax, 0), 1);
+
+            const txtChunxiao = document.getElementById('text-chunxiao');
+            const txtAlisa = document.getElementById('text-alisa');
+            const descChunxiao = document.getElementById('desc-chunxiao');
+            const descAlisa = document.getElementById('desc-alisa');
+            const indicator = document.getElementById('scroll-indicator');
+            if (!txtChunxiao || !txtAlisa || !descChunxiao || !descAlisa || !indicator) return;
+
+            if (scrollTop > 2 && txtChunxiao.classList.contains('hero-bg-intro')) {
+                txtChunxiao.classList.remove('hero-bg-intro');
+            }
+
+            txtChunxiao.style.transform = `translateY(-${progress * 40}px)`;
+            txtChunxiao.style.opacity = `${1 - progress * 1.8}`;
+
+            const currentY = 40 - (progress * 50);
+            txtAlisa.style.transform = `translateY(${currentY}px)`;
+            txtAlisa.style.opacity = `${progress * 1.8}`;
+
+            descChunxiao.style.opacity = `${1 - progress * 2.5}`;
+            descChunxiao.style.transform = `translateY(-${progress * 15}px)`;
+
+            descAlisa.style.opacity = `${(progress - 0.25) * 2.5}`;
+            descAlisa.style.transform = `translateY(${Math.max(20 - (progress * 40), 0)}px)`;
+
+            indicator.style.opacity = progress > 0.1 ? '0' : '1';
+        }
+
+        window.addEventListener('scroll', updateAboutHero, { passive: true });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const txtChunxiao = document.getElementById('text-chunxiao');
+            if (txtChunxiao) {
+                txtChunxiao.addEventListener('animationend', () => {
+                    txtChunxiao.classList.remove('hero-bg-intro');
+                    updateAboutHero();
+                }, { once: true });
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    } else {
+                        // 离开视野时移除，这样每次滚回来都能重新触发优雅的绘制
+                        entry.target.classList.remove('is-visible');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: "0px 0px -50px 0px"
+            });
+
+            document.querySelectorAll('[data-scroll-section]').forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>

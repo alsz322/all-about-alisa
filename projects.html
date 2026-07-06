@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="zh" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects — Alisa Zhao</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #f9f9f9;
+            background-image: radial-gradient(#e5e5e5 1px, transparent 1px);
+            background-size: 24px 24px;
+            color: #1a1a1a;
+            overflow-x: hidden;
+        }
+        html {
+            background-color: #f9f9f9;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(26, 26, 26, 0.2) #f9f9f9;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f9f9f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(26, 26, 26, 0.18);
+            border: 2px solid transparent;
+            border-radius: 999px;
+            background-clip: content-box;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(26, 26, 26, 0.28);
+            background-clip: content-box;
+        }
+        /* 保持轻盈透亮的微点背景 */
+        .dot-grid-bg {
+            background-color: #f9f9f9; 
+            background-image: radial-gradient(#e5e5e5 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .ease-breath {
+            transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 1s cubic-bezier(0.21, 0.6, 0.35, 1), transform 1s cubic-bezier(0.21, 0.6, 0.35, 1);
+            will-change: transform, opacity;
+        }
+        .reveal-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .fade-on-load {
+            opacity: 0;
+            transition: opacity 900ms cubic-bezier(0.21, 0.6, 0.35, 1);
+            will-change: opacity;
+        }
+        .fade-on-load.is-visible {
+            opacity: 1;
+        }
+        [data-reveal-delay="80"] { transition-delay: 80ms; }
+        [data-reveal-delay="150"] { transition-delay: 150ms; }
+        [data-reveal-delay="240"] { transition-delay: 240ms; }
+        [data-reveal-delay="320"] { transition-delay: 320ms; }
+        @media (prefers-reduced-motion: reduce) {
+            .reveal-on-scroll,
+            .fade-on-load,
+            .gallery-scroll-fade {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+        }
+        .site-header {
+            width: 100vw;
+            box-sizing: border-box;
+            padding: 22px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1200;
+            background: transparent;
+            backdrop-filter: blur(0);
+            -webkit-backdrop-filter: blur(0);
+            border: 1px solid transparent;
+            border-left: 0;
+            border-right: 0;
+            border-radius: 0;
+            box-shadow: none;
+            transition: opacity 900ms cubic-bezier(0.21, 0.6, 0.35, 1), background 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease, backdrop-filter 0.28s ease, -webkit-backdrop-filter 0.28s ease;
+        }
+        .site-header.is-solid {
+            background: rgba(249, 249, 249, 0.94);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-color: rgba(26, 26, 26, 0.06);
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.035);
+        }
+        .brand-name {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: #1a1a1a;
+            text-decoration: none;
+        }
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+        .nav-links a {
+            font-size: 13px;
+            text-decoration: none;
+            color: #1a1a1a;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .nav-links a[data-nav="projects"].active {
+            color: #007aff;
+        }
+        .nav-links a[data-nav="about"]:hover,
+        .nav-links a[data-nav="about"]:focus-visible { color: #b55d9d; }
+        .nav-links a[data-nav="projects"]:hover,
+        .nav-links a[data-nav="projects"]:focus-visible { color: #007aff; }
+        .nav-links a[data-nav="experience"]:hover,
+        .nav-links a[data-nav="experience"]:focus-visible { color: #d6a400; }
+        .nav-links a[data-nav="off-record"]:hover,
+        .nav-links a[data-nav="off-record"]:focus-visible { color: #e85ba6; }
+        .footer-answer[data-nav="about"] { color: #b55d9d; }
+        .footer-answer[data-nav="projects"] { color: #007aff; }
+        .footer-answer[data-nav="experience"] { color: #d6a400; }
+        .footer-answer[data-nav="off-record"] { color: #e85ba6; }
+        .gallery-scroll-fade {
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 900ms cubic-bezier(0.25, 1, 0.5, 1), transform 900ms cubic-bezier(0.25, 1, 0.5, 1);
+            transition-delay: 180ms;
+            will-change: opacity, transform;
+        }
+        .gallery-scroll-fade.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .projects-gallery section > .flex span {
+            font-size: 0.78rem !important;
+        }
+        .projects-gallery h4 {
+            font-size: 1.12rem !important;
+            line-height: 1.4 !important;
+        }
+        .projects-gallery p {
+            font-size: 0.92rem !important;
+            line-height: 1.7 !important;
+        }
+        .projects-gallery .font-mono {
+            font-size: 0.78rem !important;
+        }
+        .projects-gallery [class*="border-t"][class*="font-mono"] {
+            font-size: 10px !important;
+            line-height: 1.45 !important;
+        }
+        .projects-gallery [class*="border-t"][class*="font-mono"] span {
+            font-size: inherit !important;
+        }
+        .project-detail-content p,
+        .project-detail-content li,
+        .project-detail-content .text-xs,
+        .project-detail-content .text-sm {
+            font-size: 0.95rem !important;
+            line-height: 1.75 !important;
+        }
+        .project-detail-content h5,
+        .project-detail-content .text-\[9px\],
+        .project-detail-content .text-\[10px\] {
+            font-size: 0.76rem !important;
+        }
+        .project-detail-content .project-press-line {
+            max-width: none !important;
+            font-size: 0.92rem !important;
+            line-height: 1.8 !important;
+            text-wrap: pretty;
+        }
+        @media (max-width: 900px) {
+            .site-header {
+                padding: 26px 5% !important;
+                gap: 18px;
+                flex-wrap: wrap;
+                align-items: flex-start;
+            }
+            .nav-links {
+                gap: 18px !important;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+                max-width: 70%;
+            }
+        }
+        @media (max-width: 768px) {
+            .site-header {
+                padding: 22px 18px !important;
+            }
+            .brand-name {
+                font-size: 17px !important;
+            }
+            .nav-links {
+                gap: 10px 14px !important;
+                max-width: 100%;
+                justify-content: flex-start;
+            }
+            .nav-links a {
+                font-size: 12px !important;
+            }
+        }
+    </style>
+</head>
+<body class="dot-grid-bg min-h-screen text-stone-800 antialiased selection:bg-blue-50 selection:text-blue-800">
+    <!-- ========================================================================= -->
+    <!-- ======================== HEADER & HERO (明蓝色调) ========================= -->
+    <!-- ========================================================================= -->
+    <header class="site-header fade-on-load">
+        <a href="index.html" class="brand-name">Alisa Zhao</a>
+        <nav class="nav-links">
+            <a href="about.html" data-nav="about">About Me</a>
+            <a href="projects.html" class="active" data-nav="projects">Projects</a>
+            <a href="experience.html" data-nav="experience">Experience</a>
+            <a href="off-the-record.html" data-nav="off-record">Off the Record</a>
+        </nav>
+    </header>
+    <section id="projects-hero" class="hero-container w-full max-w-5xl mx-auto px-8 pt-32 pb-16 text-center select-none">
+        <span class="reveal-on-scroll text-[10px] font-mono tracking-[0.4em] text-neutral-400 uppercase block mb-6" data-reveal-delay="80">
+            Selected Work
+        </span>
+        <h2 class="reveal-on-scroll text-3xl md:text-5xl font-light text-neutral-800 tracking-tight leading-relaxed max-w-3xl mx-auto mb-8" data-reveal-delay="150">
+            Turning data into decisions, <br class="hidden md:block" />ideas into impact.
+        </h2>
+        <div class="reveal-on-scroll w-12 h-[1px] bg-neutral-300 mx-auto mb-8" data-reveal-delay="240"></div>
+        <div class="reveal-on-scroll flex items-center justify-center flex-wrap gap-y-2 text-[11px] font-mono tracking-[0.25em] text-neutral-500 uppercase font-medium" data-reveal-delay="320">
+            <a href="#analytics" class="transition-all duration-300 hover:text-[#b55d9d] hover:-translate-y-0.5 cursor-pointer">
+                Analytics
+            </a>
+            <span class="mx-3 text-neutral-300 select-none">·</span>
+            <a href="#content-creation" class="transition-all duration-300 hover:text-[#d29d00] hover:-translate-y-0.5 cursor-pointer">
+                Content Creation
+            </a>
+            <span class="mx-3 text-neutral-300 select-none">·</span>
+            <a href="#graphic-design" class="transition-all duration-300 hover:text-[#eb5fa1] hover:-translate-y-0.5 cursor-pointer">
+                Graphic Design
+            </a>
+            <span class="mx-3 text-neutral-300 select-none">·</span>
+            <a href="#side-projects" class="transition-all duration-300 hover:text-[#007aff] hover:-translate-y-0.5 cursor-pointer">
+                Side Projects
+            </a>
+        </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- ======================== PROJECTS MAIN GALLERY ========================== -->
+    <!-- ========================================================================= -->
+    <main class="projects-gallery w-full max-w-5xl mx-auto px-8 pt-28 space-y-28 pb-40">
+       <!-- ----------------------------------------------------------------- -->
+        <!-- SECTION 1: ANALYTICS (冷静数据青色调) -> 纯文字、一行两个 + 底部工具栏 -->
+        <!-- ----------------------------------------------------------------- -->
+        <section id="analytics" class="space-y-8 scroll-mt-28">
+            <div class="reveal-on-scroll flex items-center space-x-4 select-none">
+                <span class="text-[10px] font-mono tracking-[0.3em] text-[#b55d9d] font-bold">01 / DATA ANALYTICS & STRATEGY</span>
+                <div class="h-[1px] flex-1 bg-[#b55d9d]/20"></div>
+            </div>
+            
+            <!-- 1行2列布局，去除了图片，底部增加了符合 Screenshot 2026-07-02 at 14.40.12.png 样式的工具栏 -->
+            <div class="reveal-on-scroll grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-10" data-reveal-delay="150">
+                <!-- 项目 1.1: PeacePlayers -->
+                <div onclick="openProject('proj-analytics-peace')" class="group cursor-pointer bg-white/40 hover:bg-white border border-stone-200/40 p-6 rounded-xl transition-all duration-500 ease-breath hover:shadow-md hover:border-[#b55d9d]/40 hover:-translate-y-0.5 flex flex-col justify-between min-h-[220px]">
+                    <div class="space-y-2">
+                        <p class="text-[8px] font-mono text-stone-400 uppercase tracking-widest select-none">CRM STRATEGY</p>
+                        <h4 class="text-base font-normal text-stone-800 leading-snug group-hover:text-[#b55d9d] transition-colors">PeacePlayers CRM Audit & Segmentation</h4>
+                        <p class="text-xs text-stone-500 font-light leading-relaxed">Audited a nonprofit's 20K+ contact HubSpot CRM, diagnosed weak engagement as a targeting problem, and designed a tiered supporter segmentation framework.</p>
+                    </div>
+                    <div class="pt-4 mt-4 border-t border-stone-100 flex justify-between items-center text-[10px] font-mono tracking-wider uppercase select-none">
+                        <div class="text-stone-400">Result: <span class="text-[#b55d9d] font-semibold">Diagnostic</span></div>
+                        <div class="text-stone-400">Tools: <span class="text-stone-700 font-medium">HubSpot, SQL</span></div>
+                    </div>
+                </div>
+
+                <!-- 项目 1.4: Campaign Analytics -->
+                <div onclick="openProject('proj-analytics-campaign')" class="group cursor-pointer bg-white/40 hover:bg-white border border-stone-200/40 p-6 rounded-xl transition-all duration-500 ease-breath hover:shadow-md hover:border-[#b55d9d]/40 hover:-translate-y-0.5 flex flex-col justify-between min-h-[220px]">
+                    <div class="space-y-2">
+                        <p class="text-[8px] font-mono text-stone-400 uppercase tracking-widest select-none">CAMPAIGN ANALYTICS</p>
+                        <h4 class="text-base font-normal text-stone-800 leading-snug group-hover:text-[#b55d9d] transition-colors">Marketing Campaign Response & Segmentation</h4>
+                        <p class="text-xs text-stone-500 font-light leading-relaxed">Analyzed 2,240 customers to find who actually responds to a marketing campaign, and tested whether web activity predicts customer value. Found it doesn't: the highest spenders browsed the least.</p>
+                    </div>
+                    <div class="pt-4 mt-4 border-t border-stone-100 flex justify-between items-center text-[10px] font-mono tracking-wider uppercase select-none">
+                        <div class="text-stone-400">Result: <span class="text-[#b55d9d] font-semibold">Targeting Strategy</span></div>
+                        <div class="text-stone-400">Tools: <span class="text-stone-700 font-medium">R, SQL, Tableau</span></div>
+                    </div>
+                </div>
+
+                <!-- 项目 1.3: TikTok Virality -->
+                <div onclick="openProject('proj-analytics-tiktok')" class="group cursor-pointer bg-white/40 hover:bg-white border border-stone-200/40 p-6 rounded-xl transition-all duration-500 ease-breath hover:shadow-md hover:border-[#b55d9d]/40 hover:-translate-y-0.5 flex flex-col justify-between min-h-[220px]">
+                    <div class="space-y-2">
+                        <p class="text-[8px] font-mono text-stone-400 uppercase tracking-widest select-none">CONTENT STRATEGY</p>
+                        <h4 class="text-base font-normal text-stone-800 leading-snug group-hover:text-[#b55d9d] transition-colors">Predicting TikTok Virality</h4>
+                        <p class="text-xs text-stone-500 font-light leading-relaxed">A model on 12,345 videos predicting organic shares from pre-publication features. I owned the business implications: what creators, brands, and platforms should do with it.</p>
+                    </div>
+                    <div class="pt-4 mt-4 border-t border-stone-100 flex justify-between items-center text-[10px] font-mono tracking-wider uppercase select-none">
+                        <div class="text-stone-400">Result: <span class="text-[#b55d9d] font-semibold">Predictive Modeling</span></div>
+                        <div class="text-stone-400">Tools: <span class="text-stone-700 font-medium">LASSO, Random Forest</span></div>
+                    </div>
+                </div>
+
+                <!-- 项目 1.2: Kakao Spillover -->
+                <div onclick="openProject('proj-analytics-kakao')" class="group cursor-pointer bg-white/40 hover:bg-white border border-stone-200/40 p-6 rounded-xl transition-all duration-500 ease-breath hover:shadow-md hover:border-[#b55d9d]/40 hover:-translate-y-0.5 flex flex-col justify-between min-h-[220px]">
+                    <div class="space-y-2">
+                        <p class="text-[8px] font-mono text-stone-400 uppercase tracking-widest select-none">CAUSAL INFERENCE</p>
+                        <h4 class="text-base font-normal text-stone-800 leading-snug group-hover:text-[#b55d9d] transition-colors">Cross-App Spillover on Kakao</h4>
+                        <p class="text-xs text-stone-500 font-light leading-relaxed">A causal study of how adopting a hit game shifts usage of other apps on Kakao. Built the PSM/DID pipeline and found the spillover is asymmetric: it flows to games, not to social.</p>
+                    </div>
+                    <div class="pt-4 mt-4 border-t border-stone-100 flex justify-between items-center text-[10px] font-mono tracking-wider uppercase select-none">
+                        <div class="text-stone-400">Result: <span class="text-[#b55d9d] font-semibold">Platform Strategy</span></div>
+                        <div class="text-stone-400">Tools: <span class="text-stone-700 font-medium">R, PSM/DID</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ----------------------------------------------------------------- -->
+        <!-- SECTION 2: CONTENT CREATION (温润金黄调) -->
+        <!-- ----------------------------------------------------------------- -->
+        <section id="content-creation" class="space-y-8 scroll-mt-28">
+            <div class="reveal-on-scroll flex items-center space-x-4 select-none">
+                <div class="h-[1px] flex-1 bg-[#d29d00]/20"></div>
+                <span class="text-[10px] font-mono tracking-[0.3em] text-[#d29d00] font-bold">02 / CONTENT CREATION</span>
+            </div>
+            
+            <div class="reveal-on-scroll grid grid-cols-1 md:grid-cols-2 gap-6" data-reveal-delay="150">
+                <!-- 项目 2.1 -->
+                <div onclick="openProject('proj-heartbeat')" class="group cursor-pointer bg-white border border-stone-200/60 p-6 space-y-4 transition-all duration-500 ease-breath hover:-translate-y-1 hover:shadow-xl hover:shadow-[#d29d00]/5 hover:border-[#d29d00]/30 flex flex-col justify-between rounded-xl">
+                    <div class="space-y-4">
+                        <div class="aspect-[16/10] bg-stone-50 overflow-hidden border border-stone-100 rounded-lg">
+                            <img src="assets/Heartbeat_BTS_4.JPG" alt="Heartbeat behind the scenes" class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700" />
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-start">
+                                <span class="text-[8px] font-mono text-stone-400 uppercase tracking-widest select-none">DATING REALITY SHOW</span>
+                                <span class="text-xs font-mono text-stone-300 group-hover:text-[#d29d00] transition-colors">&nearr;</span>
+                            </div>
+                            <h4 class="text-lg font-normal tracking-tight text-stone-800 leading-snug group-hover:text-[#d29d00] transition-colors">Heartbeat</h4>
+                            <p class="text-xs text-stone-500 font-light leading-relaxed">BU's <strong class="font-medium text-neutral-800">first student-run dating show</strong>. Co-produced, designed, and analyzed end to end for the international student community.</p>
+                        </div>
+                    </div>
+                    <div class="pt-4 border-t border-stone-100 flex justify-between items-center text-[10px] font-mono tracking-wider uppercase select-none">
+                        <div class="text-stone-400">Result: <span class="text-[#d29d00] font-semibold">300K+ Views</span></div>
+                        <div class="text-stone-400">Tools: <span class="text-stone-700 font-medium">Photoshop, Illustrator, Premiere</span></div>
+                    </div>
+                </div>
+                <!-- 项目 2.2 -->
+                <div onclick="openProject('proj-seasons')" class="group cursor-pointer bg-white border border-stone-200/60 p-6 space-y-4 transition-all duration-500 ease-breath hover:-translate-y-1 hover:shadow-xl hover:shadow-[#d29d00]/5 hover:border-[#d29d00]/30 flex flex-col justify-between rounded-xl">
+                        <div class="space-y-4">
+                            <div class="aspect-[16/10] bg-stone-50 overflow-hidden rounded-lg border border-stone-100">
+                            <img src="assets/seasons_4.png" alt="4 For Seasons brand visual" class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700" />
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-start">
+                                <span class="text-[8px] font-mono text-stone-400 uppercase tracking-widest select-none">BRAND STORYTELLING</span>
+                                <span class="text-xs font-mono text-stone-300 group-hover:text-[#d29d00] transition-colors">&nearr;</span>
+                            </div>
+                            <h4 class="text-lg font-normal tracking-tight text-stone-800 leading-snug group-hover:text-[#d29d00] transition-colors">4 For Seasons — Eastern Healing Through Scent</h4>
+                            <p class="text-xs text-stone-500 font-light leading-relaxed">Wrote and produced a long-form brand story for a student wellness fragrance venture, <span class="whitespace-nowrap">end to end</span>. Featured on DKU's official INE site.</p>
+                        </div>
+                    </div>
+                    <div class="pt-4 border-t border-stone-100 flex justify-between items-center text-[10px] font-mono tracking-wider uppercase select-none">
+                        <div class="text-stone-400">Tag: <span class="text-[#d29d00] font-semibold">EDITORIAL / WELLNESS</span></div>
+                        <div class="text-stone-400">Featured: <span class="text-stone-700 font-medium">DKU INE</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ----------------------------------------------------------------- -->
+        <!-- SECTION 3: GRAPHIC DESIGN (明快蔷薇粉调) -->
+        <!-- ----------------------------------------------------------------- -->
+        <section id="graphic-design" class="space-y-8 scroll-mt-28">
+            <div class="reveal-on-scroll flex items-center space-x-4 select-none">
+                <span class="text-[10px] font-mono tracking-[0.3em] text-[#eb5fa1] font-bold">03 / GRAPHIC DESIGN</span>
+                <div class="h-[1px] flex-1 bg-[#eb5fa1]/20"></div>
+            </div>
+            
+            <div class="reveal-on-scroll grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8" data-reveal-delay="150">
+                <!-- 项目 3.1: BU Libraries -->
+                <div onclick="openProject('proj-graphic-bu')" class="group cursor-pointer space-y-4">
+                    <div class="w-full aspect-square bg-white border border-stone-200/40 overflow-hidden rounded-xl shadow-sm transition-all duration-500 ease-breath group-hover:shadow-md group-hover:border-[#eb5fa1]/40 group-hover:-translate-y-1">
+                        <img src="assets/BU Libraries/Zhao_AskALibrarian_Insta.png" alt="BU Libraries Ask a Librarian design" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102" />
+                    </div>
+                    <div class="px-1 space-y-2">
+                        <p class="text-[8px] font-mono text-stone-400 uppercase tracking-widest select-none">INSTITUTIONAL DESIGN</p>
+                        <h4 class="text-base font-normal text-stone-800 leading-snug group-hover:text-[#eb5fa1] transition-colors">BU Libraries</h4>
+                        <p class="text-xs text-stone-500 font-light leading-relaxed">A full set of event and campaign visuals for BU Libraries, including posters, digital displays, and social.</p>
+                        <div class="pt-1 select-none">
+                            <span class="text-[9px] font-mono font-semibold uppercase tracking-wider text-[#eb5fa1] bg-[#eb5fa1]/5 px-2 py-0.5 rounded">BRAND IDENTITY</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- 项目 3.2: Freelance -->
+                <div onclick="openProject('proj-graphic-free')" class="group cursor-pointer space-y-4">
+                    <div class="w-full aspect-square bg-white border border-stone-200/40 overflow-hidden rounded-xl shadow-sm transition-all duration-500 ease-breath group-hover:shadow-md group-hover:border-[#eb5fa1]/40 group-hover:-translate-y-1">
+                        <img src="assets/free_7.png" alt="Commissioned design cover" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102" />
+                    </div>
+                    <div class="px-1 space-y-2">
+                        <p class="text-[8px] font-mono text-stone-400 uppercase tracking-widest select-none">FREELANCE</p>
+                        <h4 class="text-base font-normal text-stone-800 leading-snug group-hover:text-[#eb5fa1] transition-colors">Commissioned Design</h4>
+                        <p class="text-xs text-stone-500 font-light leading-relaxed">Paid freelance work: a fan-merch set that sold 280 units (~$5,400), plus published book covers.</p>
+                        <div class="pt-1 select-none">
+                            <span class="text-[9px] font-mono font-semibold uppercase tracking-wider text-[#eb5fa1] bg-[#eb5fa1]/5 px-2 py-0.5 rounded">FREELANCE / COMMISSIONED</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- 项目 3.3: DKU Event -->
+                <div onclick="openProject('proj-graphic-dku')" class="group cursor-pointer space-y-4">
+                    <div class="w-full aspect-square bg-white border border-stone-200/40 overflow-hidden rounded-xl shadow-sm transition-all duration-500 ease-breath group-hover:shadow-md group-hover:border-[#eb5fa1]/40 group-hover:-translate-y-1">
+                        <img src="assets/dku_cover.jpg" alt="DKU InE cover" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102" />
+                    </div>
+                    <div class="px-1 space-y-2">
+                        <p class="text-[8px] font-mono text-stone-400 uppercase tracking-widest select-none">EVENT BRANDING</p>
+                        <h4 class="text-base font-normal text-stone-800 leading-snug group-hover:text-[#eb5fa1] transition-colors">DKU InE</h4>
+                        <p class="text-xs text-stone-500 font-light leading-relaxed">Event branding, promotional materials, and merch for DKU's Innovation & Entrepreneurship Initiative.</p>
+                        <div class="pt-1 select-none">
+                            <span class="text-[9px] font-mono font-semibold uppercase tracking-wider text-[#eb5fa1] bg-[#eb5fa1]/5 px-2 py-0.5 rounded">EVENT BRANDING</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ----------------------------------------------------------------- -->
+        <!-- SECTION 4: SIDE PROJECTS (产品 / AI-assisted build) -->
+        <!-- ----------------------------------------------------------------- -->
+        <section id="side-projects" class="space-y-8 scroll-mt-28">
+            <div class="reveal-on-scroll flex items-center space-x-4 select-none">
+                <div class="h-[1px] flex-1 bg-[#007aff]/20"></div>
+                <span class="text-[10px] font-mono tracking-[0.3em] text-[#007aff] font-bold">04 / SIDE PROJECTS</span>
+            </div>
+
+            <div class="reveal-on-scroll grid grid-cols-1 md:grid-cols-2 gap-8" data-reveal-delay="150">
+                <div onclick="openProject('proj-side-seesaw')" class="group cursor-pointer bg-white border border-stone-200/60 p-6 space-y-5 transition-all duration-500 ease-breath hover:-translate-y-1 hover:shadow-xl hover:shadow-[#007aff]/5 hover:border-[#007aff]/30 flex flex-col justify-between rounded-xl">
+                    <div class="space-y-5">
+                        <div class="aspect-[16/10] overflow-hidden rounded-lg border border-stone-100 bg-[#f8fbff] p-5">
+                            <div class="h-full w-full rounded-md border border-[#007aff]/15 bg-white/80 p-4 flex flex-col justify-between shadow-sm">
+                                <div class="flex items-center justify-between text-[8px] font-mono tracking-widest uppercase text-stone-400">
+                                    <span>Shared Ledger</span>
+                                    <span class="text-[#007aff]">Live</span>
+                                </div>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between gap-4">
+                                        <span class="h-10 w-10 rounded-full bg-stone-100 flex items-center justify-center text-[10px] font-mono text-stone-500">A</span>
+                                        <div class="flex-1">
+                                            <div class="relative h-[2px] bg-stone-200 rounded-full">
+                                                <div class="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#007aff] transition-transform duration-500 ease-breath group-hover:translate-x-4"></div>
+                                            </div>
+                                            <div class="mt-3 h-10 rounded-lg bg-stone-50 flex items-center justify-center text-xl font-light tracking-tight text-stone-800">$42.80</div>
+                                        </div>
+                                        <span class="h-10 w-10 rounded-full bg-stone-100 flex items-center justify-center text-[10px] font-mono text-stone-500">B</span>
+                                    </div>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <div class="h-8 rounded-md bg-[#007aff]/10"></div>
+                                        <div class="h-8 rounded-md bg-stone-100"></div>
+                                        <div class="h-8 rounded-md bg-stone-100"></div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between text-[8px] font-mono tracking-widest uppercase text-stone-400">
+                                    <span>2-tap logging</span>
+                                    <span>Multi-ledger</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-start">
+                                <span class="text-[8px] font-mono text-stone-400 uppercase tracking-widest select-none">a shared expense ledger</span>
+                                <span class="text-xs font-mono text-stone-300 group-hover:text-[#007aff] transition-colors">&nearr;</span>
+                            </div>
+                            <h4 class="text-lg font-normal tracking-tight text-stone-800 leading-snug group-hover:text-[#007aff] transition-colors">Seesaw</h4>
+                            <p class="text-xs text-stone-500 font-light leading-relaxed">A shared ledger for couples, roommates, and travel partners that tracks who owes whom without ever shoving the scary total in your face. Designed and built end to end (AI-assisted).</p>
+                        </div>
+                    </div>
+                    <div class="pt-4 border-t border-stone-100 flex justify-between items-center text-[10px] font-mono tracking-wider uppercase select-none">
+                        <div class="text-stone-400">Tag: <span class="text-[#007aff] font-semibold">Expense Tracker</span></div>
+                        <div class="text-stone-400">Tools: <span class="text-stone-700 font-medium">Codex, Cursor</span></div>
+                    </div>
+                </div>
+
+                <div onclick="openProject('proj-side-easteregg')" class="group cursor-pointer bg-[#faf9f6]/30 hover:bg-[#faf9f6] border border-dashed border-stone-200 hover:border-amber-500/30 p-6 rounded-2xl transition-all duration-700 ease-in-out hover:shadow-2xl hover:shadow-amber-500/[0.01] flex flex-col justify-between min-h-[440px]">
+                    <div class="aspect-[16/10] border border-stone-200/40 bg-stone-50/40 group-hover:bg-amber-50/10 rounded-xl flex items-center justify-center relative overflow-hidden select-none transition-all duration-500">
+                        <div class="absolute inset-0 opacity-[0.02] bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:12px_12px]"></div>
+                        <div class="flex flex-col items-center space-y-4 relative z-10">
+                            <div class="w-12 h-14 relative flex items-center justify-center">
+                                <svg class="w-full h-full overflow-visible" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <g style="transform-origin: 7px 11px; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);"
+                                       class="group-hover:[transform:translateY(-3px)_rotate(-95deg)]">
+                                        <path class="stroke-stone-300 group-hover:stroke-amber-600 transition-colors duration-500"
+                                              d="M7 11V7C7 4.23858 9.23858 2 12 2C14.7614 2 17 4.23858 17 7V11"
+                                              stroke-width="1.6"
+                                              stroke-linecap="round"/>
+                                    </g>
+                                    <rect class="stroke-stone-300 group-hover:stroke-amber-600 fill-white group-hover:fill-amber-50/10 transition-all duration-500 ease-out"
+                                          x="4" y="11" width="16" height="13" rx="3"
+                                          stroke-width="1.6"/>
+                                    <circle class="fill-stone-300 group-hover:fill-amber-600 transition-colors duration-500"
+                                            cx="12" cy="16" r="1.2"/>
+                                    <path class="stroke-stone-300 group-hover:stroke-amber-600 transition-colors duration-500"
+                                          d="M12 17V19"
+                                          stroke-width="1.2"
+                                          stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <div class="relative h-3 min-w-[150px] text-center text-[8px] font-mono tracking-[0.45em] uppercase pl-[0.45em]">
+                                <span class="absolute inset-0 text-stone-400/60 transition-all duration-500 group-hover:opacity-0 group-hover:-translate-y-1">
+                                    SECURED
+                                </span>
+                                <span class="absolute inset-0 text-amber-800 opacity-0 transition-all duration-500 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0">
+                                    YOU UNLOCK SOMETHING
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 mt-6 flex-1">
+                        <p class="text-[9px] font-mono text-stone-400 uppercase tracking-widest select-none">A Hidden Page</p>
+                        <h4 class="text-base font-normal text-stone-700 tracking-tight group-hover:text-amber-700 transition-colors duration-500 flex items-center space-x-1.5">
+                            <span>So, about this site</span>
+                            <span class="text-xs opacity-0 scale-70 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500 ease-out">🥚</span>
+                        </h4>
+                        <p class="text-xs text-stone-400/80 font-light leading-relaxed transition-colors duration-500 group-hover:text-stone-500">
+                            The story behind how it came together, why it's built around a backpack, and a couple of things I didn't have to explain.
+                        </p>
+                    </div>
+                    <div class="pt-4 mt-4 border-t border-stone-200/40 flex justify-between items-center text-[10px] font-mono tracking-wider uppercase select-none">
+                        <div class="text-stone-400">Easter Egg</div>
+                        <div class="text-stone-400">Prepared by: <span class="text-stone-400 font-medium group-hover:text-amber-700/80 transition-colors">Alisa</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="gallery-scroll-fade py-40 bg-transparent select-none">
+        <div class="max-w-5xl mx-auto px-8 flex flex-col items-center text-center">
+            
+            <h2 class="reveal-on-scroll text-2xl md:text-3xl font-light tracking-wide text-neutral-800 mb-16 select-none">
+                Let's build something 
+                <span class="relative inline-block px-2 py-0.5 mx-0.5 font-semibold text-neutral-800 rounded-none bg-gradient-to-r from-[#005ecb] to-[#005ecb] bg-[length:0%_100%] bg-left bg-no-repeat transition-all duration-300 ease-out hover:bg-[length:100%_100%] hover:text-white cursor-pointer">
+                    insightful
+                </span> 
+                together.
+            </h2>
+
+            <div class="flex flex-wrap justify-center items-center gap-x-12 gap-y-4 mb-24 opacity-60 hover:opacity-100 transition-opacity duration-500">
+                <a href="mailto:azhao0322@gmail.com" class="text-[10px] tracking-[0.25em] text-neutral-500 font-mono uppercase hover:text-neutral-900 transition-colors duration-300">Email</a>
+                <a href="http://www.linkedin.com/in/alisa-zhao-92a644292" target="_blank" class="text-[10px] tracking-[0.25em] text-neutral-500 font-mono uppercase hover:text-neutral-900 transition-colors duration-300">Linkedin</a>
+                <a href="https://github.com/alsz322" target="_blank" class="text-[10px] tracking-[0.25em] text-neutral-500 font-mono uppercase hover:text-neutral-900 transition-colors duration-300">Github</a>
+                <a href="assets/Alisa_Zhao_Resume.pdf" target="_blank" rel="noopener" class="text-[10px] tracking-[0.25em] text-neutral-500 font-mono uppercase hover:text-neutral-900 transition-colors duration-300">View Resume</a>
+            </div>
+
+            <div class="flex flex-col md:flex-row items-center justify-center gap-y-12 md:gap-y-0 gap-x-16 border-t border-neutral-200/40 pt-14 w-full max-w-5xl">
+                <a href="about.html" class="group flex flex-col items-center gap-2 transition-all duration-300">
+                    <span class="text-xs text-neutral-500 font-light tracking-wide whitespace-nowrap group-hover:text-neutral-400 transition-colors duration-300">Want to know who I am?</span>
+                    <span class="footer-answer text-[13px] font-semibold opacity-0 transform translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out" data-nav="about">
+                        About Me <span class="text-[10px] ml-0.5">↗</span>
+                    </span>
+                </a>
+                
+                <span class="hidden md:inline text-neutral-200/60 font-light select-none">/</span>
+
+                <a href="experience.html" class="group flex flex-col items-center gap-2 transition-all duration-300">
+                    <span class="text-xs text-neutral-500 font-light tracking-wide whitespace-nowrap group-hover:text-neutral-400 transition-colors duration-300">Wondering where I've worked?</span>
+                    <span class="footer-answer text-[13px] font-semibold opacity-0 transform translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out" data-nav="experience">
+                        Experience <span class="text-[10px] ml-0.5">↗</span>
+                    </span>
+                </a>
+
+                <span class="hidden md:inline text-neutral-200/60 font-light select-none">/</span>
+
+                <a href="off-the-record.html" class="group flex flex-col items-center gap-2 transition-all duration-300">
+                    <span class="text-xs text-neutral-500 font-light tracking-wide whitespace-nowrap group-hover:text-neutral-400 transition-colors duration-300">Rather see the fun side?</span>
+                    <span class="footer-answer text-[13px] font-semibold opacity-0 transform translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out" data-nav="off-record">
+                        Off the Record <span class="text-[10px] ml-0.5">↗</span>
+                    </span>
+                </a>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- ========================================================================= -->
+    <!-- ========================= DETAILED PROJECT OVERLAY ===================== -->
+    <!-- ========================================================================= -->
+    <button id="project-close-btn" onclick="closeProject()" class="fixed top-8 right-8 z-[5000] pointer-events-none opacity-0 group flex items-center space-x-2 text-[10px] font-mono tracking-[0.3em] text-stone-400 uppercase hover:text-stone-900 transition-colors">
+        <span>Close</span>
+        <span class="text-xs transform transition-transform duration-500 ease-breath group-hover:rotate-90">✕</span>
+    </button>
+    <div id="project-overlay" class="fixed inset-0 z-[2000] overflow-y-auto pointer-events-none opacity-0 bg-white/90 backdrop-blur-xl transition-all duration-700 ease-breath">
+        <div class="w-full max-w-5xl mx-auto px-8 py-32">
+            <div id="overlay-content" class="project-detail-content space-y-16"></div>
+        </div>
+    </div>
+
+    <div id="media-lightbox" class="fixed inset-0 z-[4000] pointer-events-none opacity-0 bg-stone-950/90 backdrop-blur-md transition-opacity duration-300 ease-breath" onclick="closeMediaLightbox()">
+        <button type="button" onclick="event.stopPropagation(); closeMediaLightbox();" class="fixed top-8 right-8 z-[4010] text-[10px] font-mono tracking-[0.3em] uppercase text-white/60 hover:text-white transition-colors">
+            Close
+        </button>
+        <div class="w-full h-full p-6 md:p-12 flex items-center justify-center">
+            <img id="media-lightbox-img" src="" alt="" class="max-w-full max-h-full object-contain shadow-2xl shadow-black/30" onclick="event.stopPropagation();" />
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ======================== DATA & INTERACTION JS ========================== -->
+    <!-- ========================================================================= -->
+    <script>
+        function initHeaderSurface() {
+            const header = document.querySelector('.site-header');
+            const hero = document.getElementById('projects-hero');
+            if (!header || !hero) return;
+
+            let ticking = false;
+
+            function updateHeaderSurface() {
+                const solidPoint = hero.offsetTop + hero.offsetHeight - header.offsetHeight;
+                header.classList.toggle('is-solid', window.scrollY >= solidPoint);
+            }
+
+            function requestHeaderSurfaceUpdate() {
+                if (ticking) return;
+                ticking = true;
+                window.requestAnimationFrame(() => {
+                    ticking = false;
+                    updateHeaderSurface();
+                });
+            }
+
+            updateHeaderSurface();
+            window.addEventListener('scroll', requestHeaderSurfaceUpdate, { passive: true });
+            window.addEventListener('resize', requestHeaderSurfaceUpdate);
+        }
+
+        initHeaderSurface();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.fade-on-load').forEach(element => {
+                requestAnimationFrame(() => element.classList.add('is-visible'));
+            });
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const shouldRevealOnce = entry.target.closest('#projects-hero');
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        if (shouldRevealOnce) {
+                            observer.unobserve(entry.target);
+                        }
+                        return;
+                    }
+                    if (!shouldRevealOnce) {
+                        entry.target.classList.remove('is-visible');
+                    }
+                });
+            }, {
+                threshold: 0.05,
+                rootMargin: '0px 0px -40px 0px'
+            });
+
+            document.querySelectorAll('.reveal-on-scroll, .gallery-scroll-fade').forEach(element => {
+                observer.observe(element);
+            });
+        });
+
+        const projectDatabase = {
+            'proj-heartbeat': {
+                color: '#d29d00',
+                tag: 'DATING REALITY SHOW',
+                title: 'Heartbeat',
+                subtitle: "BU's first student-run dating show. Co-produced, designed, and analyzed end to end.",
+                stats: [
+                    { value: '300K+', label: 'COMBINED VIEWS' },
+                    { value: '900 → 5,800', label: 'SOCIAL FOLLOWERS' },
+                    { value: '263', label: 'COMMUNITY MEMBERS' },
+                    { value: '$420', label: 'TOTAL BUDGET' }
+                ],
+                press: {
+                    text: "Featured in **The Daily Free Press**, BU's independent student newspaper, which covered Heartbeat as the first student-run dating show on campus.",
+                    link: 'https://dailyfreepress.com/04/11/23/188061/boston-university-gets-its-very-first-student-run-dating-show/'
+                },
+                showDesc: "BU's first student-run dating show, made for the international student community. I co-led it across four teams from casting to release, and designed the full visual identity: episode covers, posters, and banners. All on a $420 budget.",
+                trailer: 'assets/Heartbeat_trailer.mp4',
+                gallery: {
+                    covers: [
+                        'assets/Heartbeat_videocover_1.jpg',
+                        'assets/Heartbeat_videocover_2.jpg',
+                        'assets/Heartbeat_videocover_3.jpg',
+                        'assets/Heartbeat_videocover_4.jpg'
+                    ],
+                    posters: [
+                        'assets/Heartbeat_poster_1.jpg',
+                        'assets/Heartbeat_poster_2.jpg'
+                    ],
+                    banners: [
+                        'assets/Heartbeat_banner_1.jpg',
+                        'assets/Heartbeat_banner_2.jpg',
+                        'assets/Heartbeat_banner_3.jpg',
+                        'assets/Heartbeat_banner_4.jpg'
+                    ],
+                    bts: [
+                        'assets/Heartbeat_BTS_1.JPG',
+                        'assets/Heartbeat_BTS_2.JPG',
+                        'assets/Heartbeat_BTS_3.JPG',
+                        'assets/Heartbeat_BTS_4.JPG'
+                    ]
+                },
+                analysis: [
+                    { title: "Traffic didn't convert.", desc: "Early reach came from a discovery platform but never became subscribers. No handoff between channels." },
+                    { title: "Format drove retention.", desc: "The long-form platform held steady while short-form decayed. Each rewards different content." },
+                    { title: "Headlines beat timing.", desc: "Our top post won on its title alone, not when it went out." }
+                ],
+                fixes: "Mid-week teasers, platform-matched content, one owner for cross-platform handoff.",
+                footer: {
+                    role: "Co-Project Lead, Designer, Post-launch Analyst",
+                    link: "https://www.bilibili.com/video/BV1hu411i7Wk/?share_source=copy_web&vd_source=5772176b66b7bacdc97cbe3b3c0ddefa"
+                }
+            },
+            'proj-analytics-peace': {
+                color: '#b55d9d',
+                tag: 'CRM STRATEGY',
+                title: 'PeacePlayers CRM',
+                subtitle: 'Audit, diagnosis & segmentation design',
+                stats: [
+                    { value: '20K+', label: 'CONTACTS AUDITED' },
+                    { value: '~10,700', label: 'REACHABLE' },
+                    { value: '~4x', label: 'TARGETED VS ALL-LIST OPEN RATE' }
+                ],
+                question: 'A nonprofit\'s HubSpot CRM held 20K+ contacts across ~48 lists, but engagement was weak. The question was whether it was a deliverability problem, or a targeting one.',
+                bullets: [
+                    { bold: 'Audited', text: 'the full CRM across deliverability, list hygiene, and lifecycle data, finding only ~10,700 contacts actually reachable.' },
+                    { bold: 'Diagnosed', text: 'the root cause as targeting, not deliverability, evidenced by targeted sends outperforming all-list sends 4x on open rate.' },
+                    { bold: 'Designed', text: 'segmentation frameworks, defining the HubSpot properties and active-list logic that make each segment activatable.' }
+                ],
+                next: 'The framework is designed and goes live this cycle. Engagement impact will be measured against the audited baseline once it\'s running, so the results aren\'t in yet, the work so far is the diagnosis and the system to act on it.',
+                footer: { role: 'SQL, HubSpot' }
+            },
+            'proj-analytics-kakao': {
+                color: '#b55d9d',
+                tag: 'CAUSAL INFERENCE',
+                title: 'Cross-App Spillover on Kakao',
+                subtitle: 'Where does engagement spill over after a hit?',
+                question: 'When a hit game launches on a platform, does the boost stay in the same category (other games) or travel across it (messaging, social)?',
+                methods: [
+                    { bold: 'PSM (Propensity Score Matching)', text: 'Matched adopters and non-adopters on demographics and pre-usage, running across 10 distinct matching specifications (varying caliper, ratio, replacement) to rigorously test robustness.' },
+                    { bold: 'DID (Difference-in-Differences)', text: 'Estimated the causal effect through both dummy-variable and individual/time fixed-effects specifications. Results remained highly consistent across both approaches.' }
+                ],
+                finding: 'The spillover is asymmetric. Adoption drove ~26x more time in other Kakao games, highly significant in 10/10 samples. Conversely, feedback loops to core messaging and social networks were weak and non-robust. The hit grew the adjacent catalog, not the core platform.',
+                implications: [
+                    { target: 'For Platform Owners', text: 'Intentionally ride the spillover and build systematic product bridges to steer gaming-induced traffic into adjacent apps.' },
+                    { target: 'For App Developers', text: 'Borrow the platform\'s social graph as a high-velocity launchpad, then quickly construct your own closed ecosystem.' }
+                ],
+                diagram: 'assets/kakao_01.png',
+                note: 'Academic Group Project (IMC 462, 3-person). Work split occurred after collective data validation. I independently wrote the entire PSM/DID statistical modeling pipeline and owned the strategic interpretation.',
+                footer: { role: 'R · PSM/DID modeling' }
+            },
+            'proj-analytics-campaign': {
+                color: '#b55d9d',
+                tag: 'CAMPAIGN ANALYTICS',
+                title: 'Marketing Campaign Response & Segmentation',
+                subtitle: 'Targeting strategy from customer response behavior',
+                question: 'How should a marketing team decide who to target, and are they using the right signals to do it?',
+                process: [
+                    {
+                        title: 'RFM Segmentation',
+                        text: 'Built Recency, Frequency, and Monetary scores in R to group 2,240 customers into segments such as High-Value Loyalists and At-Risk High Value, then layered on channel preference and household composition.'
+                    },
+                    {
+                        title: 'SQL Performance Ranking',
+                        text: 'Loaded the cleaned data into SQL to rank and profile segments by response and value.'
+                    },
+                    {
+                        title: 'Web Engagement Clustering',
+                        text: 'Clustered customers on web visits and spend to test a standard marketing assumption: that more site activity signals a more valuable customer.'
+                    },
+                    {
+                        title: 'Response Propensity Model',
+                        text: 'Trained logistic regression and random forest models in R to score customers by response likelihood, then ranked them into deciles to build a targeting list.'
+                    }
+                ],
+                finding: 'Web activity was a weak signal. The highest spending cluster had the lowest web visits per month, while the most active browsers converted at just 8.4%, the lowest rate of any group. The strongest predictor of response was not clicks, it was history: customers who had accepted a past campaign responded at 40.7%, nearly 5x the 8.2% rate of those who never had. So targeting on site activity spends budget on the wrong people. Prior engagement, not clicks, is where the next campaign should start.',
+                predictiveModel: 'A response propensity model scored every customer on likelihood to convert, using logistic regression and random forest. Ranked into deciles, the top-scored 10% responded at 68.2% and the top 20% at 50%, against a 15% baseline. So concentrating a campaign on the top-scored 20% delivers a 3.3x lift over random targeting, reaching most responders while contacting far fewer people.',
+                takeaway: 'The most valuable customers were the quietest online, and the busiest browsers barely converted. The lesson isn\'t about this one dataset, it\'s that engagement metrics are easy to over-trust. Better targeting comes from scoring customers on value and response history, not from whoever shows up most on the site.',
+                slides: {
+                    analysis: 'assets/campaign_1.png',
+                    finding: 'assets/campaign_2.png',
+                    propensity: 'assets/campaign_3.png'
+                },
+                note: 'Dataset: Maven Analytics, Marketing Campaign (2,240 customers, 28 variables).',
+                footer: { role: 'R, SQL, Tableau · K-means, logistic regression, random forest' }
+            },
+            'proj-analytics-tiktok': {
+                color: '#b55d9d',
+                tag: 'CONTENT STRATEGY',
+                title: 'Predicting TikTok Virality',
+                subtitle: 'What drives an organic share, before a video is posted?',
+                question: 'Which creator and content features, knowable before a video goes live, predict how much it gets shared, and which model predicts it best?',
+                setup: 'Built the full pipeline in R: data audit, missing-data handling, and four models in sequence, linear, LASSO, GAM, and random forest, on 12,345 videos. I rebuilt this independently from the original group project, and went further: a strict pre-publication feature set that excludes anything generated after posting.',
+                finding: "Views, likes, and comments are generated at the same moment as shares, they are co-outcomes, not causes. Including them inflates accuracy but produces a circular, useless model. I excluded them, and in a stricter version excluded post-publication signals like comment sentiment too, keeping only what's knowable before a video is posted. It's a lower R² (0.335), but an honest one: it reflects real pre-publication predictability.",
+                modelFinding: "Accuracy climbs as the models relax the linearity assumption, random forest more than doubles the linear baseline. Who posts dominates reach (follower and following count, total likes), but the controllable levers sit just below: transcript emotion, especially surprise, and image quality. <strong class=\"font-medium text-stone-900\">So creators can't grow their audience overnight, but they can control emotional distinctiveness and production quality, the factors that actually move shares.</strong>",
+                dashboard: 'assets/tiktok_1.png',
+                implications: [
+                    { target: 'For Creators', text: 'Follower count cannot change overnight. Maximize controllable levers: craft emotionally distinctive concepts, push production quality, and build content formats that spark active validation in comments.' },
+                    { target: 'For Brands', text: 'Follower count is the strongest predictor but the least controllable. When choosing creators, weight the signals that actually move shares, emotional tone and production quality, not audience size alone.' },
+                    { target: 'For Platforms', text: 'Share-worthiness is highly predictable from pre-post content features alone. This can serve as a powerful cold-start signal before a video collects views.' }
+                ],
+                caveat: 'The best model still leaves most of virality unexplained, timing, algorithm, and luck. The output shifts probabilities, it doesn not guarantee a hit.',
+                note: 'Group Project (IMC 463). The four machine learning models were built by technical teammates. My specific ownership was translating statistical outputs into segment-specific strategic implications and business conclusions.',
+                footer: { role: 'R · Linear, LASSO, GAM, and Random Forest' }
+            },
+            'proj-seasons': {
+                color: '#d29d00',
+                tag: 'BRAND STORYTELLING',
+                title: '4 For Seasons',
+                subtitle: 'A brand story for a student-founded wellness fragrance venture, written and produced <span class="whitespace-nowrap">end to end</span>.',
+                hook: '“Perfume is usually sold as Western romance. This one reframes scent as Eastern healing, tied to the rhythm of the four seasons.”',
+                owned: [
+                    { action: 'Interviewed', text: 'the student founder and shaped the unique storytelling angle.' },
+                    { action: 'Wrote', text: 'the original deep feature, published under my own byline.' },
+                    { action: 'Produced', text: 'it end to end, coordinating everything from concept to final publication.' }
+                ],
+                brief: 'A wellness fragrance brand built around Eastern healing and the four seasons. I turned a founder interview into a published brand narrative, owning the story angle and the writing. Originally written and published on WeChat, later featured on DKU’s official INE site.',
+                images: [
+                    'assets/seasons_1.jpg',
+                    'assets/seasons_2.jpg',
+                    'assets/seasons_3.jpg'
+                ],
+                footer: {
+                    role: 'Writer · Producer',
+                    platform: 'DKU Innovation & Entrepreneurship Initiative',
+                    link: 'https://ine.dukekunshan.edu.cn/a-journey-of-eastern-healing-through-scent-the-story-behind-4-for-seasons/'
+                }
+            },
+            'proj-graphic-bu': {
+                color: '#eb5fa1',
+                tag: 'INSTITUTIONAL DESIGN',
+                title: 'BU Libraries',
+                subtitle: 'Campaign & event visuals',
+                summary: 'A set of promotional materials for BU Libraries events and services, built to hold one consistent look across print, digital, and social.',
+                work: [
+                    { label: 'Event promotion', detail: 'Scavenger Hunt, Library Workshops, Welcome Alumni, CineMAfriq Film Series' },
+                    { label: 'Service campaigns', detail: 'Ask a Librarian, Citation Manager, 24 Hour Library, Study Spot at BU' },
+                    { label: 'Formats', detail: 'posters, digital displays, Instagram posts, thank-you cards, bookplates' }
+                ],
+                note: 'Real work for BU Libraries. Several designs stayed in institutional use months after the internship ended.',
+                samples: [
+                    { title: 'Ask a Librarian', src: 'assets/BU Libraries/Zhao_AskALibrarian_digital.png', group: 'wide' },
+                    { title: 'Ins and Outs', src: 'assets/BU Libraries/Zhao_InsandOuts_Digital.jpg', group: 'wide' },
+                    { title: 'CineMAfriq Film Series', src: 'assets/BU Libraries/Zhao_Nov.CineMAfriq_Digital.png', group: 'wide' },
+                    { title: 'Reference Manager', src: 'assets/BU Libraries/Zhao_ReferenceManager_digital.png', group: 'wide' },
+                    { title: 'Welcome Back General', src: 'assets/BU Libraries/Zhao_WelcomeBackGeneral_digital.png', group: 'wide' },
+                    { title: 'Library Workshops', src: 'assets/BU Libraries/Zhao_LibraryWorkshops_Warren.png', group: 'vertical' },
+                    { title: 'Scavenger Hunt', src: 'assets/BU Libraries/Zhao_ScavengerHunt_digital.png', group: 'vertical' },
+                    { title: 'Thank You Card', src: 'assets/BU Libraries/thank you card_Thankyoucard1-01.png', group: 'vertical' },
+                    { title: 'Study Spot', src: 'assets/BU Libraries/Zhao_StudySpot_warren.jpg', group: 'vertical' }
+                ],
+                execution: [
+                    { title: 'Installed poster display', src: 'assets/bu_lib_1_crop.jpg', aspect: 'aspect-[3/4]' },
+                    { title: 'Digital display execution 1', src: 'assets/bu_lib_2.JPG', aspect: 'aspect-video' },
+                    { title: 'Digital display execution 2', src: 'assets/bu_lib_3.JPG', aspect: 'aspect-video' }
+                ],
+                footer: { role: 'Communications Graphic Designer · Boston University Libraries' }
+            },
+            'proj-graphic-free': {
+                color: '#eb5fa1',
+                tag: 'FREELANCE',
+                title: 'Commissioned Design',
+                subtitle: 'Merchandise & book covers',
+                pieces: [
+                    {
+                        subhead: '— FAN MERCH',
+                        stats: [
+                            { value: '280', label: 'UNITS SOLD' },
+                            { value: '~$5,400', label: 'TOTAL SALES (USD)' }
+                        ],
+                        detail: 'Designed a 3-piece set (phone case, keyring, popsocket) for an artist birthday project. Sold as a bundle. Design validated by real demand.',
+                        layout: 'merch',
+                        samples: [
+                            { title: 'Fan merch sample 1', src: 'assets/free_1.png' },
+                            { title: 'Fan merch sample 2', src: 'assets/free_2.png' },
+                            { title: 'Fan merch sample 3', src: 'assets/free_3.png' }
+                        ]
+                    },
+                    {
+                        subhead: '— BOOK COVERS',
+                        detail: 'Designed published covers for a Chinese-language fiction title, commissioned and used in release. Shown here for design, not text.',
+                        layout: 'covers',
+                        samples: [
+                            { title: 'Book cover sample 1', src: 'assets/free_4.jpg' },
+                            { title: 'Book cover sample 2', src: 'assets/free_5.jpg' },
+                            { title: 'Book cover sample 3', src: 'assets/free_6.jpg' }
+                        ]
+                    }
+                ],
+                note: 'All commissioned, paid work.',
+                footer: { role: 'Freelance Designer · Commissioned work' }
+            },
+            'proj-graphic-dku': {
+                color: '#eb5fa1',
+                tag: 'EVENT BRANDING',
+                title: 'DKU Innovation & Entrepreneurship',
+                subtitle: 'Selected event design',
+                summary: 'During my time at DKU Innovation & Entrepreneurship Initiative, I designed visuals across events and channels.',
+                work: [
+                    { label: 'Cohort orientation', detail: 'big-screen graphics for the 2025 selected cohort and project posters' },
+                    { label: 'Pitch Day', detail: 'printed schedule and event banner' },
+                    { label: 'Branding', detail: 'orientation merch and promotion materials' }
+                ],
+                images: {
+                    editorial: [
+                        { title: 'DKU event visual 1', src: 'assets/dku_1.JPG' },
+                        { title: 'DKU event visual 2', src: 'assets/dku_2.JPG' }
+                    ],
+                    posters: [
+                        { title: 'DKU project poster 1', src: 'assets/dku_3.PNG' },
+                        { title: 'DKU project poster 2', src: 'assets/dku_4.png' },
+                        { title: 'DKU project poster 3', src: 'assets/dku_5.png' }
+                    ],
+                    landscape: [
+                        { title: 'DKU promotion material 1', src: 'assets/dku_6.png' },
+                        { title: 'DKU promotion material 2', src: 'assets/dku_7.png' },
+                        { title: 'DKU event visual 3', src: 'assets/dku_8.png' },
+                        { title: 'DKU event visual 4', src: 'assets/dku_9.png' }
+                    ]
+                },
+                footer: { role: 'Designer · DKU Innovation & Entrepreneurship Initiative' }
+            },
+            'proj-side-seesaw': {
+                color: '#007aff',
+                tag: 'SIDE PROJECT',
+                title: 'Seesaw',
+                subtitle: 'A shared expense ledger for the people you actually split with',
+                typeLabel: 'PRODUCT / AI-ASSISTED BUILD',
+                status: 'Live, deployed. Personal side project.',
+                problem: 'Splitting money with a partner or roommate is low-key stressful. Most expense apps either demand too much setup per entry, or they rub the running total in your face, so people stop logging. I wanted something you open and use in two taps, that answers only one question: who owes whom, right now.',
+                does: [
+                    { bold: 'One question, not a spreadsheet.', text: 'A seesaw balance shows only the difference between two people, never the intimidating grand total. Spending stats stay hidden until you choose to open them.' },
+                    { bold: 'Two-tap logging.', text: 'The number pad is on screen the moment you open it, amount is the only required field.' },
+                    { bold: 'Multiple ledgers, settled separately.', text: 'Keep "daily with X" and "Japan trip split" apart, each with its own balance.' },
+                    { bold: 'Multi-currency, auto-converted.', text: 'Live exchange rates fold everything back into one currency.' },
+                    { bold: 'AI receipt-scanning entry point.', text: 'Snap a receipt and have it pre-fill the form as an experimental entry path.' },
+                    { bold: 'Settle up & fold.', text: 'Clear the balance and past records collapse away.' }
+                ],
+                owned: 'I owned this end to end as the product: the positioning, the feature set, the two-tap flow, the "hide the scary total" design decisions, the data model, and the edge-case handling. The code was AI-assisted; the product thinking and every design call are mine.',
+                screenshots: [
+                    { title: 'Main interface', detail: 'Seesaw balance and core owed/owes view', src: 'assets/seesaw_main_interface.jpg' },
+                    { title: 'Quick input', detail: 'Persistent number pad for two-tap logging', src: 'assets/seesaw_quick_input.jpg' },
+                    { title: 'Ledger overview', detail: 'Multiple ledgers or folded history state', src: 'assets/seesaw_ledger_overview.jpg' }
+                ],
+                footer: {
+                    role: 'Product design & build, AI-assisted · Personal side project',
+                    link: 'https://seesaw-gules.vercel.app/'
+                }
+            },
+            'proj-side-easteregg': {
+                tag: '🥚 REVEALED SECRETS',
+                title: 'About This Site',
+                subtitle: "You made it this far, here's how it came together.",
+                color: '#d97706',
+                note: 'The hidden page',
+                footer: { role: 'All designed by Chunxiao (Alisa)' },
+                isEasterEgg: true,
+                htmlContent: `
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 pt-4">
+                        <div class="md:col-span-4 space-y-6">
+                            <div class="space-y-2 select-none">
+                                <div class="text-[10px] font-mono tracking-[0.3em] uppercase text-amber-600/80 font-bold">The Core Philosophy</div>
+                                <h3 class="text-2xl font-light text-stone-800 tracking-tight leading-tight">
+                                    "Your stuff is who you are."
+                                </h3>
+                            </div>
+                            <div class="p-4 bg-stone-50 border border-stone-200/40 rounded-xl select-none">
+                                <p class="text-[11px] font-light italic text-stone-500 leading-relaxed">
+                                    The concept, the story, and all the design are mine. AI implemented the code from my design, and I made edits in Cursor.
+                                </p>
+                            </div>
+                            <div class="pt-4 flex flex-col gap-2 border-t border-stone-100 select-none">
+                                <span class="text-[11px] font-mono text-stone-400">Curious how it's built?</span>
+                                <a href="https://github.com/alsz322/all-about-alisa" target="_blank" rel="noopener" class="group/link inline-flex items-center space-x-1 text-xs font-mono tracking-wider text-stone-600 hover:text-amber-600 transition-colors w-fit">
+                                    <span class="border-b border-stone-300 group-hover/link:border-amber-500 pb-0.5 transition-colors">Peek under the hood</span>
+                                    <span class="text-stone-400 group-hover/link:text-amber-500 transition-transform group-hover/link:translate-x-0.5 duration-300">→</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="md:col-span-8 space-y-10">
+                            <div class="space-y-3">
+                                <h4 class="text-[10px] font-mono tracking-widest text-stone-400 font-bold uppercase select-none">01 / The Inspiration</h4>
+                                <p class="text-sm font-light text-stone-700 leading-relaxed">
+                                    This whole site started from my actual backpack. I hang everything I care about on it: charms, keychains, little things from places and people that matter. One day I realized it's basically a portfolio already: everything important, carried together, visible at a glance. So I built the site around that.
+                                </p>
+                            </div>
+
+                            <div class="space-y-3">
+                                <h4 class="text-[10px] font-mono tracking-widest text-stone-400 font-bold uppercase select-none">02 / Behind The Names</h4>
+                                <p class="text-sm font-light text-stone-700 leading-relaxed">
+                                    The name transition is personal. For a long time I introduced myself just by <span class="font-normal text-stone-900">"I go by Alisa,"</span> without ever explaining the name my parents gave me or everything they hoped it would mean. I designed the scroll to move from <span class="font-mono font-medium text-stone-900">春晓</span> to <span class="font-mono font-medium text-stone-900">Alisa</span> because I didn't want to keep skipping that part. Showing the real thing instead of smoothing it over is something that runs through the whole site.
+                                </p>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="space-y-3">
+                                    <h4 class="text-[10px] font-mono tracking-widest text-stone-400 font-bold uppercase select-none">03 / The Same Idea, Everywhere</h4>
+                                    <p class="text-sm font-light text-stone-700 leading-relaxed">
+                                        The backpack you just opened isn't the only version of this. Over in <a href="off-the-record.html" class="font-normal text-[#eb5fa1] hover:text-[#d94790] underline underline-offset-4 decoration-[#eb5fa1]/40 hover:decoration-[#d94790] transition-colors">Off the Record</a>, I built a whole room, same idea, your things are who you are, just another corner of it.
+                                    </p>
+                                </div>
+                                <button type="button" onclick="openMediaLightbox('assets/off_the_record.png', 'Off the Record room screenshot')" class="group/media w-full aspect-[16/9] overflow-hidden rounded-xl border border-stone-200/60 bg-stone-50 shadow-sm hover:shadow-md transition-all">
+                                    <img src="assets/off_the_record.png" alt="Off the Record room screenshot" class="w-full h-full object-cover group-hover/media:scale-[1.02] transition-transform duration-500 ease-breath" loading="lazy" />
+                                </button>
+                            </div>
+                        </div>
+                        <div class="md:col-span-12 pt-4 text-center select-none">
+                            <p class="text-[11px] font-light italic text-stone-400/80">
+                                That's the tour, including the part I didn't have to explain. Thanks for the curiosity.
+                            </p>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function openProject(id) {
+            const data = projectDatabase[id];
+            if (!data) return;
+            
+            const overlay = document.getElementById('project-overlay');
+            const closeBtn = document.getElementById('project-close-btn');
+            const contentSlot = document.getElementById('overlay-content');
+            
+            // 🚀 【修复核心】重新梳理并彻底隔离了各个 Section 的弹窗模板逻辑，阻止嵌套错误
+            if (data.isEasterEgg) {
+                contentSlot.innerHTML = `
+                    <div class="space-y-3 select-none">
+                        <span class="text-[10px] font-mono tracking-[0.3em] font-bold uppercase block" style="color: ${data.color}">${data.tag}</span>
+                        <h3 class="text-3xl md:text-5xl font-light text-stone-800 tracking-tight">${data.title}</h3>
+                        <p class="text-sm font-light text-stone-500 max-w-2xl leading-relaxed">${data.subtitle}</p>
+                    </div>
+                    <div class="pt-8 border-t border-stone-200">
+                        ${data.htmlContent}
+                    </div>
+                    <div class="pt-12 border-t border-stone-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-[10px] font-mono tracking-wider text-stone-400 uppercase select-none">
+                        <div>${data.note}</div>
+                        <div class="text-stone-500 font-medium">${data.footer.role}</div>
+                    </div>
+                `;
+            }
+            else if (id === 'proj-heartbeat') {
+                contentSlot.innerHTML = `
+                    <div class="space-y-4 select-none">
+                        <span class="text-[10px] font-mono tracking-[0.3em] font-bold uppercase block" style="color: ${data.color}">${data.tag}</span>
+                        <h3 class="text-3xl md:text-5xl font-light text-stone-800 tracking-tight">${data.title}</h3>
+                        <p class="text-sm font-light text-stone-500 max-w-2xl leading-relaxed">${data.subtitle}</p>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 py-10 border-y border-stone-200 select-none">
+                        ${data.stats.map(stat => `
+                            <div class="space-y-1">
+                                <div class="text-2xl md:text-4xl font-light font-mono tracking-tight" style="color: ${data.color}">${stat.value}</div>
+                                <div class="text-[9px] font-mono tracking-wider text-stone-400 uppercase">${stat.label}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="project-press-line text-xs font-light text-stone-600 max-w-none select-text leading-relaxed">
+                        Featured in <a href="${data.press.link}" target="_blank" class="font-normal underline underline-offset-4 hover:opacity-80 transition-colors" style="color: ${data.color}">The Daily Free Press</a>, BU's independent student newspaper, which covered <span class="italic">Heartbeat</span> as the first student-run dating show on campus.
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-12 pt-8 border-t border-stone-100">
+                        <div class="md:col-span-5 space-y-4">
+                            <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">The Show</h5>
+                            <p class="text-xs font-light text-stone-600 leading-relaxed text-justify">${data.showDesc}</p>
+                        </div>
+                        <div class="md:col-span-7 space-y-3">
+                            <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">The Trailer</h5>
+                            <div class="w-full aspect-video bg-stone-900 overflow-hidden relative border border-stone-200 shadow-sm rounded-lg">
+                                <video class="w-full h-full object-cover" controls preload="metadata" poster="${data.gallery.covers[0]}">
+                                    <source src="${data.trailer}">
+                                </video>
+                            </div>
+                            <a href="${data.footer.link}" target="_blank" class="inline-flex items-center gap-1 text-[10px] font-mono tracking-widest uppercase hover:underline underline-offset-4 transition-colors" style="color: ${data.color}">Watch on Bilibili <span>↗</span></a>
+                        </div>
+                    </div>
+                    <div class="space-y-12 pt-12 border-t border-stone-100">
+                        <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">Visual Identity & Promotion</h5>
+                        <div class="space-y-12">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                                <div class="space-y-3">
+                                    <span class="text-[9px] font-mono text-stone-400 tracking-wider block uppercase">— Episode Video Covers</span>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        ${data.gallery.covers.map((img, index) => `
+                                            <button type="button" onclick="openMediaLightbox('${img}', 'Heartbeat video cover ${index + 1}')" class="group/media aspect-video bg-stone-50 border border-stone-200/60 overflow-hidden rounded-lg hover:shadow-md hover:border-[#d29d00]/40 transition-all">
+                                                <img src="${img}" alt="Heartbeat video cover ${index + 1}" class="w-full h-full object-cover group-hover/media:scale-[1.03] transition-transform duration-500 ease-breath" loading="lazy" />
+                                            </button>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                                <div class="space-y-3">
+                                    <span class="text-[9px] font-mono text-stone-400 tracking-wider block uppercase">— Campaign Posters</span>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        ${data.gallery.posters.map((img, index) => `
+                                            <button type="button" onclick="openMediaLightbox('${img}', 'Heartbeat campaign poster ${index + 1}')" class="group/media aspect-[2/3] bg-stone-50 border border-stone-200/60 overflow-hidden rounded-lg hover:shadow-md hover:border-[#d29d00]/40 transition-all">
+                                                <img src="${img}" alt="Heartbeat campaign poster ${index + 1}" class="w-full h-full object-cover group-hover/media:scale-[1.03] transition-transform duration-500 ease-breath" loading="lazy" />
+                                            </button>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <span class="text-[9px] font-mono text-stone-400 tracking-wider block uppercase">— Social Media Banners</span>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    ${data.gallery.banners.map((img, index) => `
+                                        <button type="button" onclick="openMediaLightbox('${img}', 'Heartbeat banner ${index + 1}')" class="group/media aspect-[1800/766] bg-stone-50 border border-stone-200/60 overflow-hidden rounded-lg hover:shadow-md hover:border-[#d29d00]/40 transition-all">
+                                            <img src="${img}" alt="Heartbeat banner ${index + 1}" class="w-full h-full object-cover group-hover/media:scale-[1.03] transition-transform duration-500 ease-breath" loading="lazy" />
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <span class="text-[9px] font-mono text-stone-400 tracking-wider block uppercase">— Behind the Scenes</span>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    ${data.gallery.bts.map((img, index) => `
+                                        <button type="button" onclick="openMediaLightbox('${img}', 'Heartbeat behind the scenes ${index + 1}')" class="group/media aspect-[3/2] bg-stone-50 border border-stone-200/60 overflow-hidden rounded-lg hover:shadow-md hover:border-[#d29d00]/40 transition-all">
+                                            <img src="${img}" alt="Heartbeat behind the scenes ${index + 1}" class="w-full h-full object-cover group-hover/media:scale-[1.03] transition-transform duration-500 ease-breath" loading="lazy" />
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-12 pt-12 border-t border-stone-100">
+                        <div class="md:col-span-4 select-none">
+                            <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">The Analysis</h5>
+                        </div>
+                        <div class="md:col-span-8 space-y-6">
+                            ${data.analysis.map(item => `
+                                <div class="text-xs font-light leading-relaxed text-stone-600">
+                                    <strong class="font-medium text-stone-800 block mb-0.5">${item.title}</strong>
+                                    ${item.desc}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="pt-16 border-t border-stone-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-[10px] font-mono tracking-wider text-stone-400 uppercase select-none">
+                        <div>Role: <span class="text-stone-700 font-medium">${data.footer.role}</span></div>
+                        <a href="${data.footer.link}" target="_blank" class="font-semibold hover:underline underline-offset-4" style="color: ${data.color}">Watch the show &rarr;</a>
+                    </div>
+                `;
+            } 
+            else if (id === 'proj-seasons') {
+                contentSlot.innerHTML = `
+                    <div class="space-y-4 select-none">
+                        <span class="text-[10px] font-mono tracking-[0.3em] font-bold uppercase block" style="color: ${data.color}">${data.tag}</span>
+                        <h3 class="text-3xl md:text-5xl font-light text-stone-800 tracking-tight">${data.title}</h3>
+                        <p class="text-sm font-light text-stone-500 max-w-4xl leading-relaxed">${data.subtitle}</p>
+                    </div>
+                    <div class="py-10 my-8 border-y border-stone-200/80">
+                        <span class="text-[9px] font-mono tracking-widest text-stone-400 block mb-3 select-none">THE HOOK</span>
+                        <blockquote class="text-lg md:text-xl font-serif italic text-stone-700 leading-relaxed max-w-3xl border-l-2 pl-6" style="border-color: ${data.color}">
+                            ${data.hook}
+                        </blockquote>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-12 pt-4 items-stretch">
+                        <div class="md:col-span-5 space-y-4">
+                            <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase select-none" style="color: ${data.color}">What I Owned</h5>
+                            <ul class="space-y-4 text-xs font-light text-stone-600 leading-relaxed">
+                                ${data.owned.map(item => `
+                                    <li class="relative pl-4"><span class="absolute left-0 top-0 font-medium" style="color: ${data.color}">•</span><strong class="font-medium text-stone-800">${item.action}</strong> ${item.text}</li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                        <div class="md:col-span-7 flex h-full flex-col gap-4">
+                            <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase select-none" style="color: ${data.color}">The Story</h5>
+                            <p class="text-xs font-light text-stone-600 leading-relaxed text-justify">${data.brief}</p>
+                            <div class="pt-4 mt-auto">
+                                <a href="${data.footer.link}" target="_blank" class="inline-flex items-center space-x-2 text-xs font-mono tracking-wider border-b pb-1 transition-all hover:opacity-80" style="color: ${data.color}; border-color: ${data.color}">
+                                    <span>Read Full Feature on DKU INE Site</span>
+                                    <span>&rarr;</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-4 pt-12 border-t border-stone-100">
+                        <div class="flex justify-between items-baseline select-none">
+                            <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">Brand Imagery</h5>
+                            <span class="text-[9px] font-mono text-stone-400 italic">Imagery provided by the student founder</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-start">
+                            ${data.images.map((img, index) => `
+                                <button type="button" onclick="openMediaLightbox('${img}', '4 For Seasons brand imagery ${index + 1}')" class="group/media aspect-[2/3] bg-stone-50 border border-stone-200/60 overflow-hidden rounded-xl shadow-sm hover:shadow-md hover:border-[#d29d00]/40 transition-all">
+                                    <img src="${img}" alt="4 For Seasons brand imagery ${index + 1}" class="w-full h-full object-cover group-hover/media:scale-[1.03] transition-transform duration-500 ease-breath" loading="lazy" />
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="pt-16 border-t border-stone-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-[10px] font-mono tracking-wider text-stone-400 uppercase select-none">
+                        <div>Role: <span class="text-stone-700 font-medium">${data.footer.role}</span></div>
+                        <div>Featured on: <span class="text-stone-700 font-medium">${data.footer.platform}</span></div>
+                    </div>
+                `;
+            } 
+            else if (id === 'proj-analytics-peace' || id === 'proj-analytics-kakao' || id === 'proj-analytics-campaign' || id === 'proj-analytics-tiktok') {
+                let detailHtml = '';
+                if (id === 'proj-analytics-peace') {
+                    detailHtml = `
+                        <div class="space-y-8 py-4">
+                            <div class="space-y-2">
+                                <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase text-stone-400">The Problem</h5>
+                                <p class="text-sm font-normal text-stone-800 leading-relaxed max-w-none">${data.question}</p>
+                            </div>
+                            <div class="space-y-3">
+                                <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">What I Did</h5>
+                                <ul class="space-y-3 text-xs font-light text-stone-600 leading-relaxed max-w-none">
+                                    ${data.bullets.map(b => `<li><strong class="font-medium text-stone-900">— ${b.bold}:</strong> ${b.text}</li>`).join('')}
+                                </ul>
+                            </div>
+                            <div class="space-y-2">
+                                <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase text-stone-400">What's Next</h5>
+                                <p class="text-xs font-light text-stone-600 leading-relaxed max-w-none">${data.next}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+                else if (id === 'proj-analytics-campaign') {
+                    detailHtml = `
+                        <div class="space-y-6 py-6 border-b border-stone-100">
+                            <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase text-stone-400">The Core Question</h5>
+                            <p class="text-sm md:text-base font-normal text-stone-800 max-w-none leading-relaxed">${data.question}</p>
+                        </div>
+                        <div class="space-y-8 pt-8">
+                            <div class="space-y-5">
+                                <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">Approach & Process</h5>
+                                <div class="divide-y divide-stone-100 border-y border-stone-100">
+                                    ${data.process.map(item => `
+                                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 py-5 items-start">
+                                            <strong class="md:col-span-4 text-xs font-medium text-stone-900 block">${item.title}</strong>
+                                            <p class="md:col-span-8 text-xs font-light text-stone-600 leading-relaxed">${item.text}</p>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            <div class="space-y-2 select-none">
+                                <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase text-stone-400">Analysis Slide</h5>
+                                <button type="button" onclick="openMediaLightbox('${data.slides.analysis}', 'Campaign Response & Customer Segmentation dashboard')" class="group/media w-full aspect-[1448/1086] overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-all">
+                                    <img src="${data.slides.analysis}" alt="Campaign Response & Customer Segmentation dashboard" class="w-full h-full object-cover group-hover/media:scale-[1.01] transition-transform duration-500 ease-breath" loading="lazy" />
+                                </button>
+                                <span class="text-[9px] font-mono text-stone-400 block text-right">Dashboard: Campaign Response & Customer Segmentation</span>
+                            </div>
+                        </div>
+                        <div class="pt-8 mt-8 border-t border-stone-100 space-y-3">
+                            <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">Key Empirical Finding</h5>
+                            <p class="text-xs font-light text-stone-700 leading-relaxed max-w-none">${data.finding}</p>
+                            <button type="button" onclick="openMediaLightbox('${data.slides.finding}', 'Campaign empirical finding slide')" class="group/media w-full aspect-[1448/1086] overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-all select-none">
+                                <img src="${data.slides.finding}" alt="Campaign empirical finding slide" class="w-full h-full object-cover group-hover/media:scale-[1.01] transition-transform duration-500 ease-breath" loading="lazy" />
+                            </button>
+                        </div>
+                        <div class="pt-8 mt-8 border-t border-stone-100 space-y-3">
+                            <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">Predictive Model</h5>
+                            <p class="text-xs font-light text-stone-700 leading-relaxed max-w-none">${data.predictiveModel}</p>
+                            <button type="button" onclick="openMediaLightbox('${data.slides.propensity}', 'Response Propensity Model Improves Targeting')" class="group/media w-full aspect-[1448/1086] overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-all select-none">
+                                <img src="${data.slides.propensity}" alt="Response Propensity Model Improves Targeting" class="w-full h-full object-cover group-hover/media:scale-[1.01] transition-transform duration-500 ease-breath" loading="lazy" />
+                            </button>
+                            <span class="text-[9px] font-mono text-stone-400 block text-right">Dashboard: Actual response rate by predicted decile.</span>
+                        </div>
+                        <div class="pt-8 mt-8 border-t border-stone-100 space-y-3">
+                            <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">The Takeaway</h5>
+                            <p class="text-xs font-light text-stone-700 leading-relaxed max-w-none">${data.takeaway}</p>
+                        </div>
+                        <div class="mt-8 p-5 bg-stone-50 border border-stone-200/40 rounded-xl text-[11px] font-light italic text-stone-500">
+                            <strong>Data Note:</strong> ${data.note}
+                        </div>
+                    `;
+                }
+                else if (id === 'proj-analytics-kakao') {
+                    detailHtml = `
+                        <div class="space-y-6 py-6 border-b border-stone-100">
+                            <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase text-stone-400">The Core Question</h5>
+                            <p class="text-base font-normal text-stone-800 max-w-none leading-relaxed">${data.question}</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-12 pt-8">
+                            <div class="md:col-span-6 space-y-6">
+                                <div class="space-y-3">
+                                    <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">Methodology & Robustness</h5>
+                                    <ul class="space-y-4 text-xs font-light text-stone-600 leading-relaxed">
+                                        ${data.methods.map(m => `<li><strong class="font-medium text-stone-900 block mb-0.5">${m.bold}</strong> ${m.text}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="md:col-span-6 space-y-6">
+                                <div class="space-y-2 select-none">
+                                    <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase text-stone-400">Analysis Slide</h5>
+                                    <button type="button" onclick="openMediaLightbox('${data.diagram}', 'The Spillover is Asymmetric analysis slide')" class="group/media w-full aspect-[1718/964] overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-all">
+                                        <img src="${data.diagram}" alt="The Spillover is Asymmetric analysis slide" class="w-full h-full object-cover group-hover/media:scale-[1.01] transition-transform duration-500 ease-breath" loading="lazy" />
+                                    </button>
+                                    <span class="text-[9px] font-mono text-stone-400 block text-right">Diagram: "The Spillover is Asymmetric" analysis slide</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-8 mt-8 border-t border-stone-100 space-y-3">
+                            <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">Key Empirical Finding</h5>
+                            <p class="text-xs font-light text-stone-700 leading-relaxed max-w-none">${data.finding}</p>
+                        </div>
+                        <div class="pt-8 mt-8 border-t border-stone-100 space-y-4">
+                            <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">Strategic Implications</h5>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                ${data.implications.map(imp => `
+                                    <div class="space-y-1.5 p-4 bg-stone-50/50 rounded-xl border border-stone-100">
+                                        <strong class="text-xs font-medium text-stone-800 block">${imp.target}</strong>
+                                        <p class="text-xs font-light text-stone-600 leading-relaxed">${imp.text}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                else if (id === 'proj-analytics-tiktok') {
+                    detailHtml = `
+                        <div class="space-y-8 py-4">
+                            <div class="space-y-2">
+                                <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase text-stone-400">The Question</h5>
+                                <p class="text-base font-normal text-stone-800 leading-relaxed max-w-none">${data.question}</p>
+                            </div>
+                            <div class="space-y-2 text-xs font-light text-stone-600 leading-relaxed">
+                                <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">Method</h5>
+                                <p class="max-w-none">${data.setup}</p>
+                            </div>
+                            <div class="space-y-2">
+                                <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">The Key Decision</h5>
+                                <p class="text-xs font-light text-stone-700 leading-relaxed max-w-none">${data.finding}</p>
+                            </div>
+                            <div class="space-y-2">
+                                <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">The Finding</h5>
+                                <p class="text-xs font-light text-stone-700 leading-relaxed max-w-none">${data.modelFinding}</p>
+                            </div>
+                            <div class="space-y-3">
+                                <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">Dashboard</h5>
+                                <button type="button" onclick="openMediaLightbox('${data.dashboard}', 'TikTok Shareability Dashboard')" class="group/media w-full aspect-[4/3] overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-all select-none">
+                                    <img src="${data.dashboard}" alt="TikTok Shareability Dashboard" class="w-full h-full object-cover transition-transform duration-500 group-hover/media:scale-[1.01]" />
+                                </button>
+                                <span class="block text-right text-[9px] font-mono tracking-wider text-stone-400">Dashboard: model comparison, permutation importance, key insights, and recommendations.</span>
+                            </div>
+                            <div class="p-5 bg-red-50/30 border border-red-200/30 rounded-xl space-y-2 max-w-none">
+                                <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase select-none" style="color: ${data.color}">Statistical Bound</h5>
+                                <p class="text-[11px] font-light italic text-stone-600 leading-relaxed">${data.caveat}</p>
+                            </div>
+                        </div>
+                        <div class="pt-8 mt-8 border-t border-stone-100 space-y-4">
+                            <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">Actionable Strategy</h5>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                                ${data.implications.map(imp => `
+                                    <div class="space-y-1.5 p-4 border border-stone-200/50 rounded-xl bg-stone-50/20">
+                                        <strong class="text-xs font-medium text-stone-800 block">${imp.target}</strong>
+                                        <p class="text-[11px] font-light text-stone-600 leading-relaxed">${imp.text}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                contentSlot.innerHTML = `
+                    <div class="space-y-2 select-none">
+                        <span class="text-[10px] font-mono tracking-[0.3em] font-bold uppercase block" style="color: ${data.color}">${data.tag}</span>
+                        <h3 class="text-3xl md:text-5xl font-light text-stone-800 tracking-tight">${data.title}</h3>
+                        <p class="text-sm font-light text-stone-500 max-w-2xl leading-relaxed">${data.subtitle}</p>
+                    </div>
+                    <div class="pt-6 mt-6 border-t border-stone-200">
+                        ${detailHtml}
+                    </div>
+                    <div class="pt-16 border-t border-stone-200 flex justify-between items-center text-[10px] font-mono tracking-wider text-stone-400 uppercase select-none">
+                        <div>Tools / Models: <span class="text-stone-700 font-medium">${data.footer.role}</span></div>
+                    </div>
+                `;
+            }
+            else if (id === 'proj-graphic-bu' || id === 'proj-graphic-free' || id === 'proj-graphic-dku') {
+                let textHtml = '';
+                if (id === 'proj-graphic-bu') {
+                    textHtml = `
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
+                            <div class="md:col-span-5 space-y-6">
+                                <div class="space-y-2">
+                                    <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">What It Is</h5>
+                                    <p class="text-xs font-light text-stone-600 leading-relaxed">${data.summary}</p>
+                                </div>
+                            </div>
+                            <div class="md:col-span-7 space-y-4">
+                                <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">The Work</h5>
+                                <ul class="space-y-3 text-xs font-light text-stone-600">
+                                    ${data.work.map(item => `<li><strong class="font-medium text-stone-800">— ${item.label}:</strong> ${item.detail}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                }
+                else if (id === 'proj-graphic-free') {
+                    textHtml = `
+                        <div class="space-y-10 max-w-none">
+                            ${data.pieces.map(piece => `
+                                <div class="space-y-3">
+                                    <h4 class="text-xs font-mono font-bold tracking-widest text-stone-800">${piece.subhead}</h4>
+                                    ${piece.stats ? `
+                                        <div class="flex flex-wrap gap-x-16 gap-y-4 py-3 border-y border-stone-200/50 my-2 select-none">
+                                            ${piece.stats.map(s => `
+                                                <div>
+                                                    <div class="text-xl font-mono font-light text-[#eb5fa1]">${s.value}</div>
+                                                    <div class="text-[9px] font-mono text-stone-400 tracking-wider">${s.label}</div>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    ` : ''}
+                                    <p class="text-xs font-light text-stone-600 leading-relaxed max-w-none">${piece.detail}</p>
+                                    ${piece.samples ? `
+                                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4">
+                                            ${piece.samples.map(sample => piece.layout === 'merch' ? `
+                                                <button type="button" onclick="openMediaLightbox('${sample.src}', '${sample.title}')" class="group/media aspect-square bg-stone-50 overflow-hidden rounded-xl flex items-center justify-center p-4 shadow-sm hover:shadow-md transition-all">
+                                                    <img src="${sample.src}" alt="${sample.title}" class="max-w-full max-h-full object-contain transition-transform duration-500 ease-breath group-hover/media:scale-[1.025]" loading="lazy" />
+                                                </button>
+                                            ` : `
+                                                <button type="button" onclick="openMediaLightbox('${sample.src}', '${sample.title}')" class="group/media aspect-[16/10] overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-all">
+                                                    <img src="${sample.src}" alt="${sample.title}" class="w-full h-full object-cover transition-transform duration-500 ease-breath group-hover/media:scale-[1.025]" loading="lazy" />
+                                                </button>
+                                            `).join('')}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                else if (id === 'proj-graphic-dku') {
+                    textHtml = `
+                        <div class="space-y-4 mb-8">
+                            <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">What It Is</h5>
+                            <p class="text-xs font-light text-stone-600 max-w-none leading-relaxed">${data.summary}</p>
+                        </div>
+                        <div class="space-y-3 pt-6 border-t border-stone-100">
+                            <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">The Work</h5>
+                            <ul class="space-y-3 text-xs font-light text-stone-600">
+                                ${data.work.map(item => `<li><strong class="font-medium text-stone-800">— ${item.label}:</strong> ${item.detail}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                const galleryHtml = id === 'proj-graphic-free' ? '' : id === 'proj-graphic-dku' ? `
+                    <div class="space-y-4 pt-12 border-t border-stone-100">
+                        <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase select-none" style="color: ${data.color}">Project Collage</h5>
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                ${data.images.editorial.map(item => `
+                                    <button type="button" onclick="openMediaLightbox('${item.src}', '${item.title}')" class="group/media aspect-[16/9] overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-all">
+                                        <img src="${item.src}" alt="${item.title}" class="w-full h-full object-cover group-hover/media:scale-[1.025] transition-transform duration-500 ease-breath" loading="lazy" />
+                                    </button>
+                                `).join('')}
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                ${data.images.posters.map(item => `
+                                    <button type="button" onclick="openMediaLightbox('${item.src}', '${item.title}')" class="group/media aspect-[3/4] overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-all">
+                                        <img src="${item.src}" alt="${item.title}" class="w-full h-full object-cover group-hover/media:scale-[1.025] transition-transform duration-500 ease-breath" loading="lazy" />
+                                    </button>
+                                `).join('')}
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                ${data.images.landscape.map(item => `
+                                    <button type="button" onclick="openMediaLightbox('${item.src}', '${item.title}')" class="group/media aspect-[4/3] overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-all">
+                                        <img src="${item.src}" alt="${item.title}" class="w-full h-full object-cover group-hover/media:scale-[1.025] transition-transform duration-500 ease-breath" loading="lazy" />
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                ` : id === 'proj-graphic-bu' ? `
+                    <div class="space-y-4 pt-12 border-t border-stone-100">
+                        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 select-none">
+                            <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">Work Samples</h5>
+                            <span class="text-[9px] font-mono text-stone-400 italic">One selected format per work</span>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
+                                ${data.samples.filter(sample => sample.group === 'wide').map((sample, index) => `
+                                    <button type="button" onclick="openMediaLightbox('${sample.src}', 'BU Libraries ${sample.title}')" class="group/media ${index < 2 ? 'md:col-span-3' : 'md:col-span-2'} aspect-video overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-all">
+                                        <img src="${sample.src}" alt="BU Libraries ${sample.title}" class="w-full h-full object-cover group-hover/media:scale-[1.025] transition-transform duration-500 ease-breath" loading="lazy" />
+                                    </button>
+                                `).join('')}
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                ${data.samples.filter(sample => sample.group === 'vertical').map(sample => `
+                                    <button type="button" onclick="openMediaLightbox('${sample.src}', 'BU Libraries ${sample.title}')" class="group/media aspect-[9/16] overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-all">
+                                        <img src="${sample.src}" alt="BU Libraries ${sample.title}" class="w-full h-full object-cover group-hover/media:scale-[1.025] transition-transform duration-500 ease-breath" loading="lazy" />
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-4 pt-12 border-t border-stone-100">
+                        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 select-none">
+                            <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">Execution</h5>
+                            <span class="text-[9px] font-mono text-stone-400 italic">Installed and in-use display photos</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-[0.84fr_1fr] gap-4 md:aspect-[5/3]">
+                            <button type="button" onclick="openMediaLightbox('${data.execution[0].src}', 'BU Libraries ${data.execution[0].title}')" class="group/media aspect-[3/4] md:aspect-auto md:h-full min-h-0 overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-all">
+                                <img src="${data.execution[0].src}" alt="BU Libraries ${data.execution[0].title}" class="w-full h-full object-cover group-hover/media:scale-[1.03] transition-transform duration-500 ease-breath" loading="lazy" />
+                            </button>
+                            <div class="grid grid-cols-1 md:grid-rows-2 gap-4 md:h-full min-h-0">
+                                ${data.execution.slice(1).map(item => `
+                                    <button type="button" onclick="openMediaLightbox('${item.src}', 'BU Libraries ${item.title}')" class="group/media aspect-video md:aspect-auto md:h-full min-h-0 overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-all">
+                                        <img src="${item.src}" alt="BU Libraries ${item.title}" class="w-full h-full object-cover group-hover/media:scale-[1.03] transition-transform duration-500 ease-breath" loading="lazy" />
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                ` : `
+                    <div class="space-y-4 pt-12 border-t border-stone-100">
+                        <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase select-none" style="color: ${data.color}">Project Gallery</h5>
+                        <div class="grid grid-cols-1 gap-8">
+                            ${data.images.map(img => `
+                                <div class="w-full bg-stone-50 border border-stone-200/60 overflow-hidden rounded-xl shadow-sm">
+                                    <img src="${img}" class="w-full h-auto object-cover" loading="lazy" />
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+
+                contentSlot.innerHTML = `
+                    <div class="space-y-2 select-none">
+                        <span class="text-[10px] font-mono tracking-[0.3em] font-bold uppercase block" style="color: ${data.color}">${data.tag}</span>
+                        <h3 class="text-3xl md:text-5xl font-light text-stone-800 tracking-tight">${data.title}</h3>
+                        <p class="text-sm font-light text-stone-500 max-w-2xl leading-relaxed">${data.subtitle}</p>
+                    </div>
+                    <div class="pt-8 border-t border-stone-200">
+                        ${textHtml}
+                    </div>
+                    ${galleryHtml}
+                    <div class="pt-16 border-t border-stone-200 flex justify-between items-center text-[10px] font-mono tracking-wider text-stone-400 uppercase select-none">
+                        <div>Context & Credits: <span class="text-stone-700 font-medium">${data.footer.role}</span></div>
+                    </div>
+                `;
+            }
+            else if (id === 'proj-side-seesaw') {
+                contentSlot.innerHTML = `
+                    <div class="space-y-4 select-none">
+                        <span class="text-[10px] font-mono tracking-[0.3em] font-bold uppercase block" style="color: ${data.color}">${data.tag}</span>
+                        <h3 class="text-3xl md:text-5xl font-light text-stone-800 tracking-tight">${data.title}</h3>
+                        <p class="text-base font-light text-stone-500 max-w-3xl leading-relaxed">${data.subtitle}</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 py-8 border-y border-stone-200/70 select-none">
+                        <div class="space-y-1">
+                            <div class="text-[10px] font-mono tracking-widest uppercase text-stone-400">Type</div>
+                            <div class="text-xs font-mono tracking-wider uppercase text-stone-800">${data.typeLabel}</div>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="text-[10px] font-mono tracking-widest uppercase text-stone-400">Status</div>
+                            <div class="text-xs font-mono tracking-wider uppercase text-stone-800">${data.status}</div>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="text-[10px] font-mono tracking-widest uppercase text-stone-400">Live Demo</div>
+                            <a href="${data.footer.link}" target="_blank" class="text-xs font-mono tracking-wider uppercase hover:underline underline-offset-4" style="color: ${data.color}">Try SEESAW &rarr;</a>
+                        </div>
+                    </div>
+                    <div class="pt-4 space-y-3">
+                        <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">The Problem</h5>
+                        <p class="text-sm font-light text-stone-600 leading-relaxed max-w-4xl">${data.problem}</p>
+                    </div>
+                    <div class="pt-10 border-t border-stone-100 space-y-4">
+                        <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">What It Does</h5>
+                        <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs font-light text-stone-600 leading-relaxed">
+                            ${data.does.map(item => `
+                                <li class="p-4 rounded-xl bg-stone-50/70 border border-stone-200/50">
+                                    <strong class="font-medium text-stone-900 block mb-1">${item.bold}</strong>
+                                    ${item.text}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    <div class="pt-10 border-t border-stone-100 space-y-4">
+                        <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">What I Owned</h5>
+                        <p class="text-sm font-light text-stone-600 leading-relaxed max-w-none">${data.owned}</p>
+                    </div>
+                    <div class="pt-10 border-t border-stone-100 space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 select-none">
+                            <h5 class="text-[10px] font-mono tracking-widest font-bold uppercase" style="color: ${data.color}">Screenshots</h5>
+                            <span class="text-[9px] font-mono text-stone-400 italic">Core flows: balance, quick input, and ledger overview</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            ${data.screenshots.map((shot, index) => `
+                                <button type="button" onclick="openMediaLightbox('${shot.src}', 'SEESAW ${shot.title}')" class="group/media space-y-3 text-left select-none">
+                                    <div class="aspect-[9/13] overflow-hidden rounded-2xl bg-[#f8fbff] shadow-sm hover:shadow-md transition-all">
+                                        <img src="${shot.src}" alt="SEESAW ${shot.title}" class="w-full h-full object-cover group-hover/media:scale-[1.015] transition-transform duration-500 ease-breath" loading="lazy" />
+                                    </div>
+                                    <div class="space-y-1">
+                                        <div class="text-sm font-normal text-stone-800">${shot.title}</div>
+                                        <div class="text-[10px] font-light text-stone-500 leading-relaxed">${shot.detail}</div>
+                                    </div>
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="pt-16 border-t border-stone-200 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 text-[10px] font-mono tracking-wider text-stone-400 uppercase select-none">
+                        <div>My role: <span class="text-stone-700 font-medium">${data.footer.role}</span></div>
+                        <div class="flex flex-col items-start md:items-end gap-1">
+                            <a href="${data.footer.link}" target="_blank" class="font-semibold hover:underline underline-offset-4" style="color: ${data.color}">Live Demo &rarr;</a>
+                            <span class="text-[9px] normal-case tracking-normal font-light text-stone-400">AI receipt-scanning needs your own API key.</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            overlay.scrollTop = 0;
+            contentSlot.scrollTop = 0;
+            overlay.classList.remove('pointer-events-none', 'opacity-0');
+            overlay.classList.add('opacity-100');
+            if (closeBtn) {
+                closeBtn.classList.remove('pointer-events-none', 'opacity-0');
+                closeBtn.classList.add('opacity-100');
+            }
+            document.body.classList.add('overflow-hidden');
+            window.requestAnimationFrame(() => {
+                overlay.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+            });
+            window.location.hash = id; 
+        }
+
+        function openMediaLightbox(src, alt) {
+            const lightbox = document.getElementById('media-lightbox');
+            const image = document.getElementById('media-lightbox-img');
+            const projectCloseBtn = document.getElementById('project-close-btn');
+            if (!lightbox || !image) return;
+
+            image.src = src;
+            image.alt = alt || 'Project image';
+            if (projectCloseBtn) {
+                projectCloseBtn.classList.add('pointer-events-none', 'opacity-0');
+                projectCloseBtn.classList.remove('opacity-100');
+            }
+            lightbox.classList.remove('pointer-events-none', 'opacity-0');
+            lightbox.classList.add('opacity-100');
+        }
+
+        function closeMediaLightbox() {
+            const lightbox = document.getElementById('media-lightbox');
+            const image = document.getElementById('media-lightbox-img');
+            const projectOverlay = document.getElementById('project-overlay');
+            const projectCloseBtn = document.getElementById('project-close-btn');
+            if (!lightbox || !image) return;
+
+            lightbox.classList.add('pointer-events-none', 'opacity-0');
+            lightbox.classList.remove('opacity-100');
+            if (projectOverlay && projectOverlay.classList.contains('opacity-100') && projectCloseBtn) {
+                projectCloseBtn.classList.remove('pointer-events-none', 'opacity-0');
+                projectCloseBtn.classList.add('opacity-100');
+            }
+            window.setTimeout(() => {
+                if (lightbox.classList.contains('opacity-0')) {
+                    image.removeAttribute('src');
+                    image.alt = '';
+                }
+            }, 300);
+        }
+
+        function closeProject() {
+            const overlay = document.getElementById('project-overlay');
+            const closeBtn = document.getElementById('project-close-btn');
+            closeMediaLightbox();
+            if (!overlay) return;
+            overlay.classList.add('pointer-events-none', 'opacity-0');
+            overlay.classList.remove('opacity-100');
+            if (closeBtn) {
+                closeBtn.classList.add('pointer-events-none', 'opacity-0');
+                closeBtn.classList.remove('opacity-100');
+            }
+            document.body.classList.remove('overflow-hidden');
+            history.pushState("", document.title, window.location.pathname + window.location.search);
+        }
+
+        window.addEventListener('keydown', (event) => {
+            if (event.key !== 'Escape') return;
+            const lightbox = document.getElementById('media-lightbox');
+            const overlay = document.getElementById('project-overlay');
+            if (lightbox && lightbox.classList.contains('opacity-100')) {
+                closeMediaLightbox();
+                return;
+            }
+            if (overlay && overlay.classList.contains('opacity-100')) {
+                closeProject();
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const currentHash = window.location.hash.replace('#', '');
+            if (currentHash && projectDatabase[currentHash]) {
+                setTimeout(() => openProject(currentHash), 300);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experience — Alisa Zhao</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #f9f9f9;
+            background-image: radial-gradient(#e5e5e5 1px, transparent 1px);
+            background-size: 24px 24px;
+            color: #1a1a1a;
+            overflow-x: hidden;
+        }
+        html {
+            background-color: #f9f9f9;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(26, 26, 26, 0.2) #f9f9f9;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f9f9f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(26, 26, 26, 0.18);
+            border: 2px solid transparent;
+            border-radius: 999px;
+            background-clip: content-box;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(26, 26, 26, 0.28);
+            background-clip: content-box;
+        }
+        #education img,
+        #experience img {
+            -webkit-user-drag: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+        .site-header {
+            width: 100vw;
+            box-sizing: border-box;
+            padding: 22px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1200;
+            background: transparent;
+            backdrop-filter: blur(0);
+            -webkit-backdrop-filter: blur(0);
+            border: 1px solid transparent;
+            border-left: 0;
+            border-right: 0;
+            border-radius: 0;
+            box-shadow: none;
+            transition: background 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease, backdrop-filter 0.28s ease, -webkit-backdrop-filter 0.28s ease;
+        }
+        .site-header.is-solid {
+            background: rgba(249, 249, 249, 0.94);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-color: rgba(26, 26, 26, 0.06);
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.035);
+        }
+        .brand-name {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: #1a1a1a;
+            text-decoration: none;
+        }
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+        .nav-links a {
+            font-size: 13px;
+            text-decoration: none;
+            color: #1a1a1a;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .nav-links a[data-nav="experience"].active {
+            color: #d6a400;
+        }
+        .nav-links a[data-nav="about"]:hover,
+        .nav-links a[data-nav="about"]:focus-visible { color: #b55d9d; }
+        .nav-links a[data-nav="projects"]:hover,
+        .nav-links a[data-nav="projects"]:focus-visible { color: #007aff; }
+        .nav-links a[data-nav="experience"]:hover,
+        .nav-links a[data-nav="experience"]:focus-visible { color: #d6a400; }
+        .nav-links a[data-nav="off-record"]:hover,
+        .nav-links a[data-nav="off-record"]:focus-visible { color: #e85ba6; }
+        .footer-answer[data-nav="about"] { color: #b55d9d; }
+        .footer-answer[data-nav="projects"] { color: #007aff; }
+        .footer-answer[data-nav="experience"] { color: #d6a400; }
+        .footer-answer[data-nav="off-record"] { color: #e85ba6; }
+        @media (max-width: 900px) {
+            .site-header {
+                padding: 26px 5% !important;
+                gap: 18px;
+                flex-wrap: wrap;
+                align-items: flex-start;
+            }
+            .nav-links {
+                gap: 18px !important;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+                max-width: 70%;
+            }
+        }
+        @media (max-width: 768px) {
+            .site-header {
+                padding: 22px 18px !important;
+            }
+            .brand-name {
+                font-size: 17px !important;
+            }
+            .nav-links {
+                gap: 10px 14px !important;
+                max-width: 100%;
+                justify-content: flex-start;
+            }
+            .nav-links a {
+                font-size: 12px !important;
+            }
+        }
+        /* 延续之前的高级动效 Keyframes */
+        @keyframes fadeInTracking {
+            to { opacity: 1; letter-spacing: 0.25em; }
+        }
+        @keyframes slideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scaleX {
+            to { transform: scaleX(1); }
+        }
+        :root {
+            --gallery-ease: cubic-bezier(0.25, 1, 0.5, 1);
+            --gallery-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes galleryFadeIn {
+            to { opacity: 1; }
+        }
+        @keyframes gallerySlideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes galleryScaleX {
+            to { transform: scaleX(1); }
+        }
+        .gallery-intro-fade {
+            opacity: 0;
+            animation: galleryFadeIn 900ms var(--gallery-ease) forwards;
+        }
+        .gallery-intro-title {
+            opacity: 0;
+            transform: translateY(1rem);
+            animation: gallerySlideUp 1000ms var(--gallery-ease) forwards;
+        }
+        .gallery-intro-divider {
+            transform: scaleX(0);
+            transform-origin: center;
+            animation: galleryScaleX 1100ms var(--gallery-ease) forwards;
+        }
+        .gallery-delay-150 { animation-delay: 150ms; }
+        .gallery-delay-300 { animation-delay: 300ms; }
+        .gallery-delay-450 { animation-delay: 450ms; }
+        .scroll-timeline {
+            position: relative;
+        }
+        .scroll-timeline::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: rgba(229, 229, 229, 0.95);
+            transform: scaleY(0) translateZ(0);
+            transform-origin: top;
+            transition: transform 1050ms var(--gallery-ease);
+            will-change: transform;
+            backface-visibility: hidden;
+            pointer-events: none;
+        }
+        .scroll-timeline.is-visible::before {
+            transform: scaleY(1) translateZ(0);
+        }
+        .timeline-education::before {
+            left: 0;
+            transition-delay: 920ms;
+        }
+        .timeline-work::before {
+            left: 1rem;
+        }
+        @media (min-width: 768px) {
+            .timeline-work::before {
+                left: 50%;
+            }
+        }
+        .timeline-node {
+            opacity: 0;
+            transform: scale(0);
+            transition: opacity 520ms var(--gallery-ease), transform 620ms var(--gallery-pop), border-color 500ms var(--gallery-ease);
+            transition-delay: var(--node-delay, 420ms);
+        }
+        .timeline-node-center {
+            transform: translateX(-50%) scale(0);
+        }
+        .timeline-item.is-visible .timeline-node {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .timeline-education.is-visible .timeline-node {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .timeline-item.is-visible .timeline-node-center {
+            transform: translateX(-50%) scale(1);
+        }
+        .timeline-branch-left,
+        .timeline-branch-right {
+            opacity: 0;
+            transition: opacity 900ms var(--gallery-ease), transform 900ms var(--gallery-ease);
+            transition-delay: var(--branch-delay, 650ms);
+            will-change: opacity, transform;
+        }
+        .gallery-scroll-fade {
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 900ms var(--gallery-ease), transform 900ms var(--gallery-ease);
+            transition-delay: var(--fade-delay, 180ms);
+            will-change: opacity, transform;
+        }
+        .gallery-scroll-fade.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .timeline-branch-left {
+            transform: translateX(14px);
+        }
+        .timeline-branch-right {
+            transform: translateX(-14px);
+        }
+        .timeline-item.is-visible .timeline-branch-left,
+        .timeline-item.is-visible .timeline-branch-right {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .timeline-education.is-visible .timeline-branch-right {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .timeline-education-logo {
+            opacity: 0;
+            transform: translateY(10px) scale(0.72) translateZ(0);
+            transition:
+                opacity 520ms var(--gallery-ease),
+                transform 680ms var(--gallery-pop),
+                border-color 500ms var(--gallery-ease);
+            transition-delay: var(--node-delay, 420ms);
+            will-change: opacity, transform;
+            backface-visibility: hidden;
+        }
+        .timeline-education.is-visible .timeline-education-logo,
+        .timeline-item.is-visible .timeline-education-logo {
+            opacity: 1;
+            transform: translateY(0) scale(1) translateZ(0);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .gallery-intro-fade,
+            .gallery-intro-title,
+            .gallery-intro-divider {
+                opacity: 1;
+                transform: none;
+                animation: none;
+            }
+            .scroll-timeline::before,
+            .timeline-node,
+            .timeline-node-center,
+            .timeline-branch-left,
+            .timeline-branch-right,
+            .gallery-scroll-fade {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+            .timeline-node-center {
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+<body class="text-neutral-800 antialiased selection:bg-neutral-900 selection:text-white">
+
+<header class="site-header gallery-intro-fade">
+    <a href="index.html" class="brand-name">Alisa Zhao</a>
+    <nav class="nav-links">
+        <a href="about.html" data-nav="about">About Me</a>
+        <a href="projects.html" data-nav="projects">Projects</a>
+        <a href="experience.html" class="active" data-nav="experience">Experience</a>
+        <a href="off-the-record.html" data-nav="off-record">Off the Record</a>
+    </nav>
+</header>
+
+<!-- ========================================================================= -->
+<!-- ===================== SECTION HERO INTRO (交互导航版) ===================== -->
+<!-- ========================================================================= -->
+<section id="experience-hero" class="w-full max-w-5xl mx-auto px-8 pt-32 pb-16 select-none text-center">
+    
+    <!-- 1. 顶层时间主轴 -->
+    <span class="gallery-intro-fade text-[10px] font-mono tracking-[0.4em] text-neutral-400 uppercase block mb-6">
+        2021 — NOW
+    </span>
+    
+    <!-- 2. 核心巨幕主文本 -->
+    <h2 class="gallery-intro-title gallery-delay-150 text-3xl md:text-5xl font-light text-neutral-800 tracking-tight leading-relaxed max-w-3xl mx-auto mb-8">
+        The places, teams, and roles <br class="hidden md:block" />that got me here.
+    </h2>
+    
+    <!-- 3. 装饰性极简短线 -->
+    <div class="w-12 h-[1px] bg-neutral-300 mx-auto mb-8"></div>
+    
+    <!-- 4. 底层动态交互线：支持变色、微动与锚点跳转 -->
+    <div class="gallery-intro-fade gallery-delay-300 flex items-center justify-center flex-wrap gap-y-2 text-[11px] font-mono tracking-[0.25em] text-neutral-500 uppercase font-medium">
+        
+        <!-- 2 Degrees -> 跳转至教育区 -->
+        <a href="#education" class="transition-all duration-300 hover:text-[#d6a400] hover:-translate-y-0.5 cursor-pointer">
+            2 Degrees
+        </a>
+        
+        <!-- 分隔符 -->
+        <span class="mx-3 text-neutral-300 select-none">·</span>
+        
+        <!-- 5 Roles -> 跳转至工作经历区 -->
+        <a href="#experience" class="transition-all duration-300 hover:text-[#d6a400] hover:-translate-y-0.5 cursor-pointer">
+            5 Roles
+        </a>
+        
+        <!-- 分隔符 -->
+        <span class="mx-3 text-neutral-300 select-none">·</span>
+        
+        <!-- 4 Cities -> 跳转至工作经历区 -->
+        <a href="#experience" class="transition-all duration-300 hover:text-[#d6a400] hover:-translate-y-0.5 cursor-pointer">
+            4 Cities
+        </a>
+        
+    </div>
+
+</section>
+<section id="education" class="w-full max-w-5xl mx-auto px-8 py-24">
+    <div class="gallery-intro-divider gallery-delay-450 w-full h-[1px] bg-neutral-200/60 mb-16"></div>
+    
+    <div class="gallery-intro-fade gallery-delay-450 mb-16">
+        <h3 class="text-2xl font-light text-neutral-800 tracking-tight">Academic Background</h3>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
+        
+        <div data-timeline class="scroll-timeline timeline-education md:col-span-8 pl-10 space-y-16 relative">
+            
+            <div class="relative group timeline-item" style="--node-delay: 420ms; --branch-delay: 620ms;">
+                <div class="timeline-node timeline-education-logo absolute -left-[65px] -top-2 w-12 h-12 rounded-full bg-white border border-neutral-200 group-hover:border-purple-600 flex items-center justify-center overflow-hidden z-10">
+                    <img src="assets/northwestern-logo.png" alt="Northwestern Logo" class="w-full h-full p-1 object-contain transition-transform duration-500 ease-out group-hover:scale-110" />
+                </div>
+                
+                <div class="timeline-branch-right">
+                    <span class="text-[11px] font-mono tracking-widest text-neutral-500 block mb-2 font-medium pt-1">2025 — PRESENT</span>
+                    <h4 class="text-2xl font-normal text-neutral-800 group-hover:text-purple-900 transition-colors duration-300">Northwestern University</h4>
+                    <p class="text-[13px] font-normal text-neutral-600 mt-1 uppercase tracking-wider">M.S. in Integrated Marketing Communication (Track: Data and Media)</p>
+                    
+                    <ul class="text-sm text-neutral-600 font-light space-y-3 mt-5 list-none pl-0">
+                        <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Focusing on predictive marketing models, marketing tech stacks, and consumer audience insights.</li>
+                        <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Translating complex multi-channel data points into strategic, actionable narratives.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="relative group timeline-item" style="--node-delay: 420ms; --branch-delay: 620ms;">
+                <div class="timeline-node timeline-education-logo absolute -left-[65px] -top-2 w-12 h-12 rounded-full bg-white border border-neutral-200 group-hover:border-red-600 flex items-center justify-center overflow-hidden z-10">
+                    <img src="assets/bu-logo.png" alt="BU Logo" class="w-full h-full p-1 object-contain transition-transform duration-500 ease-out group-hover:scale-110" />
+                </div>
+                
+                <div class="timeline-branch-right">
+                    <span class="text-[11px] font-mono tracking-widest text-neutral-500 block mb-2 font-medium pt-1">2021 — 2025</span>
+                    <h4 class="text-2xl font-normal text-neutral-800 group-hover:text-red-600 transition-colors duration-300">Boston University</h4>
+                    <p class="text-[13px] font-normal text-neutral-600 mt-1 uppercase tracking-wider">B.S. in Advertising, Minor in Psychology</p>
+                    
+                    <ul class="text-sm text-neutral-600 font-light space-y-3 mt-5 list-none pl-0">
+                        <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">
+                            <strong class="font-medium text-neutral-800 group-hover:text-red-700 transition-colors">Graduated with Dean's Honor List for 4 semesters.</strong>
+                        </li>
+                        <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Explored the cross-section of visual communication, human behavior, and brand tech.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div data-scroll-once class="gallery-scroll-fade md:col-span-4 md:pt-1">
+            <div class="space-y-8">
+                <h5 class="text-[10px] font-mono tracking-[0.25em] text-neutral-400 uppercase">Selected Projects</h5>
+                
+                <div class="space-y-6">
+                    <a href="projects.html#proj-analytics-kakao" class="block group border-b border-neutral-200 pb-3.5">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-medium text-neutral-700 group-hover:text-neutral-900 transition-colors">Cross-App Engagement Spillover</span>
+                            <span class="text-[10px] font-mono text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">&nearr;</span>
+                        </div>
+                        <p class="text-[10px] font-light text-neutral-400 mt-1.5 uppercase tracking-wider">IMC 462 / Marketing Models</p>
+                    </a>
+                    
+                    <a href="projects.html#proj-analytics-tiktok" class="block group border-b border-neutral-200 pb-3.5">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-medium text-neutral-700 group-hover:text-neutral-900 transition-colors">Predicting TikTok Virality</span>
+                            <span class="text-[10px] font-mono text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">&nearr;</span>
+                        </div>
+                        <p class="text-[10px] font-light text-neutral-400 mt-1.5 uppercase tracking-wider">IMC 463 / Machine Learning</p>
+                    </a>
+                </div>
+            </div>
+
+            <div class="space-y-8 mt-10 md:mt-8">
+                <h5 class="text-[10px] font-mono tracking-[0.25em] text-neutral-400 uppercase">Club Experience</h5>
+                
+                <div class="space-y-6">
+                    <a href="projects.html#proj-heartbeat" class="block group border-b border-neutral-200 pb-3.5">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-medium text-neutral-700 group-hover:text-neutral-900 transition-colors">Heartbeat</span>
+                            <span class="text-[10px] font-mono text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">&nearr;</span>
+                        </div>
+                        <p class="text-[10px] font-light text-neutral-400 mt-1.5 uppercase tracking-wider">BU After School / Dating Reality Show</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full mt-32">
+        <h5 class="text-[10px] font-mono tracking-[0.25em] text-neutral-400 uppercase mb-8">Campus Imagery Gallery</h5>
+        
+        <div class="w-full overflow-x-auto flex items-start space-x-8 pb-4 scrollbar-hide snap-x" style="-ms-overflow-style: none; scrollbar-width: none;">
+            <div class="group flex-shrink-0 w-[min(78vw,360px)] snap-start">
+                <div class="relative aspect-[3/4] overflow-hidden bg-neutral-100 shadow-sm transition-all duration-500 ease-out group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-neutral-200/70">
+                    <img src="assets/education_1_web.jpg" alt="Education memory 1" class="w-full h-full object-cover filter saturate-[0.58] contrast-[1.04] brightness-[0.98] transition-all duration-700 ease-out group-hover:scale-[1.035] group-hover:saturate-100 group-hover:contrast-100 group-hover:brightness-105" />
+                    <div class="pointer-events-none absolute inset-0 bg-[#f9f9f9]/20 transition-opacity duration-700 ease-out group-hover:opacity-0"></div>
+                </div>
+            </div>
+
+            <div class="group flex-shrink-0 w-[min(78vw,360px)] snap-start">
+                <div class="relative aspect-[3/4] overflow-hidden bg-neutral-100 shadow-sm transition-all duration-500 ease-out group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-neutral-200/70">
+                    <img src="assets/education_2_web.jpg" alt="Education memory 2" class="w-full h-full object-cover object-center filter saturate-[0.58] contrast-[1.04] brightness-[0.98] transition-all duration-700 ease-out group-hover:scale-[1.035] group-hover:saturate-100 group-hover:contrast-100 group-hover:brightness-105" />
+                    <div class="pointer-events-none absolute inset-0 bg-[#f9f9f9]/20 transition-opacity duration-700 ease-out group-hover:opacity-0"></div>
+                </div>
+            </div>
+
+            <div class="group flex-shrink-0 w-[min(78vw,360px)] snap-start">
+                <div class="relative aspect-[3/4] overflow-hidden bg-neutral-100 shadow-sm transition-all duration-500 ease-out group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-neutral-200/70">
+                    <img src="assets/education_3_web.jpg" alt="Education memory 3" class="w-full h-full object-cover filter saturate-[0.58] contrast-[1.04] brightness-[0.98] transition-all duration-700 ease-out group-hover:scale-[1.035] group-hover:saturate-100 group-hover:contrast-100 group-hover:brightness-105" />
+                    <div class="pointer-events-none absolute inset-0 bg-[#f9f9f9]/20 transition-opacity duration-700 ease-out group-hover:opacity-0"></div>
+                </div>
+            </div>
+
+            <div class="group flex-shrink-0 w-[min(78vw,360px)] snap-start">
+                <div class="relative aspect-[3/4] overflow-hidden bg-neutral-100 shadow-sm transition-all duration-500 ease-out group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-neutral-200/70">
+                    <img src="assets/education_4_web.jpg" alt="Education memory 4" class="w-full h-full object-cover filter saturate-[0.58] contrast-[1.04] brightness-[0.98] transition-all duration-700 ease-out group-hover:scale-[1.035] group-hover:saturate-100 group-hover:contrast-100 group-hover:brightness-105" />
+                    <div class="pointer-events-none absolute inset-0 bg-[#f9f9f9]/20 transition-opacity duration-700 ease-out group-hover:opacity-0"></div>
+                </div>
+            </div>
+
+            <div class="group flex-shrink-0 w-[min(78vw,360px)] snap-start">
+                <div class="relative aspect-[3/4] overflow-hidden bg-neutral-100 shadow-sm transition-all duration-500 ease-out group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-neutral-200/70">
+                    <img src="assets/education_5_web.jpg" alt="Education memory 5" class="w-full h-full object-cover filter saturate-[0.58] contrast-[1.04] brightness-[0.98] transition-all duration-700 ease-out group-hover:scale-[1.035] group-hover:saturate-100 group-hover:contrast-100 group-hover:brightness-105" />
+                    <div class="pointer-events-none absolute inset-0 bg-[#f9f9f9]/20 transition-opacity duration-700 ease-out group-hover:opacity-0"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section id="experience" class="w-full max-w-5xl mx-auto px-8 py-24">
+    <div class="w-full h-[1px] bg-neutral-200/60 mb-16"></div>
+    
+    <div class="mb-20">
+        <h3 class="text-2xl font-light text-neutral-800 tracking-tight">Professional Experience</h3>
+    </div>
+    
+    <div data-timeline class="scroll-timeline timeline-work relative space-y-20 md:space-y-24">
+        
+        <div class="relative grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-start group timeline-item" style="--node-delay: 420ms; --branch-delay: 620ms;">
+            
+            <div class="timeline-node timeline-node-center absolute left-4 md:left-1/2 top-2 w-3 h-3 rounded-full bg-white border border-neutral-300 group-hover:border-amber-600 group-hover:scale-125 transition-all duration-500 transform -translate-x-1/2 z-10"></div>
+            
+            <div class="timeline-branch-left pl-12 md:pl-0 md:flex md:justify-end">
+                <div class="w-full max-w-md bg-neutral-50 border border-neutral-100 overflow-hidden shadow-sm transition-all duration-500 ease-out transform group-hover:-translate-y-1.5 group-hover:shadow-md">
+                    <img src="assets/PeacePlayers.png" alt="Peace Players CRM strategy work" class="w-full h-auto object-contain filter saturate-[0.6] contrast-[1.04] brightness-[0.98] transition-all duration-700 ease-out group-hover:saturate-100 group-hover:contrast-100 group-hover:brightness-105" />
+                </div>
+            </div>
+            
+            <div class="timeline-branch-right pl-12 md:pl-4 text-left">
+                <span class="text-[11px] font-mono tracking-widest text-neutral-400 block mb-2 font-medium uppercase">JUN. 2026 — PRESENT · REMOTE</span>
+                <h4 class="text-2xl font-normal text-neutral-800 transition-colors duration-300 group-hover:text-amber-900">Peace Players</h4>
+                <p class="text-[13px] font-mono font-medium text-amber-600 mt-0.5 uppercase tracking-wider">CRM Strategy Consultant</p>
+                
+                <ul class="text-sm text-neutral-600 font-light space-y-3 mt-5 list-none pl-0">
+                    <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Audited a nonprofit's HubSpot CRM of <strong class="font-medium text-neutral-800">20,000+ contacts</strong> across <strong class="font-medium text-neutral-800">48 lists</strong>, reframing weak engagement as a targeting problem.</li>
+                    <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Designing a <strong class="font-medium text-neutral-800">tiered supporter segmentation framework</strong> to make each audience activatable.</li>
+                    <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Building lifecycle journey blueprints and a <strong class="font-medium text-neutral-800">KPI dashboard</strong> to track engagement, fundraising, and growth.</li>
+                    <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Operationalizing the journeys into a <strong class="font-medium text-neutral-800">phased automation roadmap</strong> in HubSpot.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="relative grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-start group timeline-item" style="--node-delay: 560ms; --branch-delay: 760ms;">
+            
+            <div class="timeline-node timeline-node-center absolute left-4 md:left-1/2 top-2 w-3 h-3 rounded-full bg-white border border-neutral-300 group-hover:border-blue-600 group-hover:scale-125 transition-all duration-500 transform -translate-x-1/2 z-10"></div>
+            
+            <div class="timeline-branch-left pl-12 md:pl-0 md:flex md:justify-end">
+                <div class="w-full max-w-md text-left">
+                    <span class="text-[11px] font-mono tracking-widest text-neutral-400 block mb-2 font-medium uppercase">MAR. 2025 — AUG. 2025 · KUNSHAN, CHINA</span>
+                    <h4 class="text-2xl font-normal text-neutral-800 transition-colors duration-300 group-hover:text-blue-900">Duke Kunshan University</h4>
+                    <p class="text-[13px] font-mono font-medium text-blue-600 mt-0.5 uppercase tracking-wider">Marketing Intern</p>
+                    
+                    <ul class="text-sm text-neutral-600 font-light space-y-3 mt-5 list-none pl-0">
+                        <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Produced <strong class="font-medium text-neutral-800">5 external-facing student entrepreneurship stories</strong> from interview to published.</li>
+                        <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Restructured the site's content architecture and wrote a <strong class="font-medium text-neutral-800">WordPress publishing SOP</strong>.</li>
+                        <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Designed collateral for <strong class="font-medium text-neutral-800">10+ events</strong>, from posters to branded merchandise, and also served as photographer and videographer.</li>
+                        <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Ran on-site ops for two summer camps totaling <strong class="font-medium text-neutral-800">90 participants</strong>.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="timeline-branch-right pl-12 md:pl-4">
+                <div class="grid w-full max-w-md aspect-[4/3] grid-cols-[0.92fr_1.08fr] gap-3 transition-all duration-500 ease-out transform group-hover:-translate-y-1.5">
+                    <div class="h-full bg-neutral-50 border border-neutral-100 overflow-hidden shadow-sm transition-shadow duration-500 group-hover:shadow-md">
+                        <img src="assets/duke_3.JPG" alt="Duke Kunshan University content production" class="w-full h-full object-cover object-top filter saturate-[0.6] contrast-[1.04] brightness-[0.98] transition-all duration-700 ease-out group-hover:scale-[1.035] group-hover:saturate-100 group-hover:contrast-100 group-hover:brightness-105" />
+                    </div>
+                    <div class="grid h-full grid-rows-2 gap-3">
+                        <div class="min-h-0 bg-neutral-50 border border-neutral-100 overflow-hidden shadow-sm transition-shadow duration-500 group-hover:shadow-md">
+                            <img src="assets/duke_1.JPG" alt="Duke Kunshan University event coverage" class="w-full h-full object-cover filter saturate-[0.6] contrast-[1.04] brightness-[0.98] transition-all duration-700 ease-out group-hover:scale-[1.035] group-hover:saturate-100 group-hover:contrast-100 group-hover:brightness-105" />
+                        </div>
+                        <div class="min-h-0 bg-neutral-50 border border-neutral-100 overflow-hidden shadow-sm transition-shadow duration-500 group-hover:shadow-md">
+                            <img src="assets/duke_2.JPG" alt="Duke Kunshan University marketing collateral" class="w-full h-full object-cover filter saturate-[0.6] contrast-[1.04] brightness-[0.98] transition-all duration-700 ease-out group-hover:scale-[1.035] group-hover:saturate-100 group-hover:contrast-100 group-hover:brightness-105" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="relative grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-start group timeline-item" style="--node-delay: 700ms; --branch-delay: 900ms;">
+            
+            <div class="timeline-node timeline-node-center absolute left-4 md:left-1/2 top-2 w-3 h-3 rounded-full bg-white border border-neutral-300 group-hover:border-red-500 group-hover:scale-125 transition-all duration-500 transform -translate-x-1/2 z-10"></div>
+            
+            <div class="timeline-branch-left pl-12 md:pl-0 md:flex md:justify-end">
+                <div class="grid w-full max-w-md aspect-[5/3] grid-cols-[0.84fr_1fr] gap-3 transition-all duration-500 ease-out transform group-hover:-translate-y-1.5">
+                    <div class="h-full bg-neutral-50 border border-neutral-100 overflow-hidden shadow-sm transition-shadow duration-500 group-hover:shadow-md">
+                        <img src="assets/bu_lib_1_crop.jpg" alt="Boston University Libraries design installation" class="w-full h-full object-cover filter saturate-[0.6] contrast-[1.04] brightness-[0.98] transition-all duration-700 ease-out group-hover:scale-[1.035] group-hover:saturate-100 group-hover:contrast-100 group-hover:brightness-105" />
+                    </div>
+                    <div class="grid h-full grid-rows-2 gap-3">
+                        <div class="min-h-0 bg-neutral-50 border border-neutral-100 overflow-hidden shadow-sm transition-shadow duration-500 group-hover:shadow-md">
+                            <img src="assets/bu_lib_2.JPG" alt="Boston University Libraries printed collateral" class="w-full h-full object-cover filter saturate-[0.6] contrast-[1.04] brightness-[0.98] transition-all duration-700 ease-out group-hover:scale-[1.035] group-hover:saturate-100 group-hover:contrast-100 group-hover:brightness-105" />
+                        </div>
+                        <div class="min-h-0 bg-neutral-50 border border-neutral-100 overflow-hidden shadow-sm transition-shadow duration-500 group-hover:shadow-md">
+                            <img src="assets/bu_lib_3.JPG" alt="Boston University Libraries campaign asset" class="w-full h-full object-cover filter saturate-[0.6] contrast-[1.04] brightness-[0.98] transition-all duration-700 ease-out group-hover:scale-[1.035] group-hover:saturate-100 group-hover:contrast-100 group-hover:brightness-105" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="timeline-branch-right pl-12 md:pl-4 text-left">
+                <span class="text-[11px] font-mono tracking-widest text-neutral-400 block mb-2 font-medium uppercase">SEP. 2024 — JAN. 2025 · BOSTON, MA</span>
+                <h4 class="text-2xl font-normal text-neutral-800 transition-colors duration-300 group-hover:text-red-700">Boston University Libraries</h4>
+                <p class="text-[13px] font-mono font-medium text-red-500 mt-0.5 uppercase tracking-wider">Communications Graphic Designer</p>
+                
+                <ul class="text-sm text-neutral-600 font-light space-y-3 mt-5 list-none pl-0">
+                    <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Delivered <strong class="font-medium text-neutral-800">40+ design assets</strong> across <strong class="font-medium text-neutral-800">12 projects</strong>, from billboards to print collateral.</li>
+                    <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Made designs still in institutional use <strong class="font-medium text-neutral-800">9+ months later</strong>, eliminating the need for redesign.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="relative grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-start group timeline-item" style="--node-delay: 840ms; --branch-delay: 1040ms;">
+            
+            <div class="timeline-node timeline-node-center absolute left-4 md:left-1/2 top-2 w-3 h-3 rounded-full bg-white border border-neutral-300 group-hover:border-emerald-500 group-hover:scale-125 transition-all duration-500 transform -translate-x-1/2 z-10"></div>
+            
+            <div class="timeline-branch-left pl-12 md:pl-0 md:flex md:justify-end">
+                <div class="w-full max-w-md text-left">
+                    <span class="text-[11px] font-mono tracking-widest text-neutral-400 block mb-2 font-medium uppercase">JUN. 2024 — AUG. 2024 · CAMBRIDGE, MA</span>
+                    <h4 class="text-2xl font-normal text-neutral-800 transition-colors duration-300 group-hover:text-emerald-700">LabCentral</h4>
+                    <p class="text-[13px] font-mono font-medium text-emerald-600 mt-0.5 uppercase tracking-wider">Marketing &amp; Creative Intern</p>
+                    
+                    <ul class="text-sm text-neutral-600 font-light space-y-3 mt-5 list-none pl-0">
+                        <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Optimized <strong class="font-medium text-neutral-800">SEO</strong> and content across <strong class="font-medium text-neutral-800">10+ pages</strong>, lifting visitors <strong class="font-medium text-neutral-800">25%</strong>.</li>
+                        <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Ran <strong class="font-medium text-neutral-800">competitor analysis</strong> of <strong class="font-medium text-neutral-800">20+ peer organizations</strong> on website UX experience to guide a site redesign.</li>
+                        <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Designed and distributed <strong class="font-medium text-neutral-800">cross-department survey</strong> to collect data for annual impact report.</li>
+                        <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Researched lead capture tools for the Resident Acquisition Project and synthesized findings to support <strong class="font-medium text-neutral-800">digital funnel planning</strong>.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="timeline-branch-right pl-12 md:pl-4">
+                <div class="w-full max-w-[260px] aspect-[3/4] bg-neutral-50 border border-neutral-100 overflow-hidden shadow-sm transition-all duration-500 ease-out transform group-hover:-translate-y-1.5 group-hover:shadow-md">
+                    <img src="assets/labcentral.JPG" alt="LabCentral marketing and creative work" class="w-full h-full object-cover filter saturate-[0.6] contrast-[1.04] brightness-[0.98] transition-all duration-700 ease-out group-hover:scale-[1.035] group-hover:saturate-100 group-hover:contrast-100 group-hover:brightness-105" />
+                </div>
+            </div>
+        </div>
+
+        <div class="relative grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-start group timeline-item" style="--node-delay: 980ms; --branch-delay: 1180ms;">
+            
+            <div class="timeline-node timeline-node-center absolute left-4 md:left-1/2 top-2 w-3 h-3 rounded-full bg-white border border-neutral-300 group-hover:border-pink-500 group-hover:scale-125 transition-all duration-500 transform -translate-x-1/2 z-10"></div>
+            
+            <div class="timeline-branch-left pl-12 md:pl-0 md:flex md:justify-end">
+                <div class="w-full max-w-[260px] aspect-[3/4] bg-neutral-50 border border-neutral-100 overflow-hidden shadow-sm transition-all duration-500 ease-out transform group-hover:-translate-y-1.5 group-hover:shadow-md">
+                    <img src="assets/lighthearted.JPG" alt="Lighthearted Entertainment development work" class="w-full h-full object-cover filter saturate-[0.6] contrast-[1.04] brightness-[0.98] transition-all duration-700 ease-out group-hover:scale-[1.035] group-hover:saturate-100 group-hover:contrast-100 group-hover:brightness-105" />
+                </div>
+            </div>
+            
+            <div class="timeline-branch-right pl-12 md:pl-4 text-left">
+                <span class="text-[11px] font-mono tracking-widest text-neutral-400 block mb-2 font-medium uppercase">JAN. 2024 — APR. 2024 · LOS ANGELES, CA</span>
+                <h4 class="text-2xl font-normal text-neutral-800 transition-colors duration-300 group-hover:text-pink-700">Lighthearted Entertainment</h4>
+                <p class="text-[13px] font-mono font-medium text-pink-500 mt-0.5 uppercase tracking-wider">Development Intern</p>
+                
+                <ul class="text-sm text-neutral-600 font-light space-y-3 mt-5 list-none pl-0">
+                    <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Built a <strong class="font-medium text-neutral-800">full pitch deck</strong> for an original format, presented to senior leadership.</li>
+                    <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Created sales decks and sizzles for <strong class="font-medium text-neutral-800">5+ high-profile projects</strong>.</li>
+                    <li class="relative pl-4 before:content-['—'] before:absolute before:left-0 before:text-neutral-300">Researched market and audience trends to inform new unscripted show concepts.</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+    <div class="w-full flex justify-center py-24 select-none scroll-trigger">
+        <a href="assets/Alisa_Zhao_Resume.pdf" target="_blank" rel="noopener" class="group relative py-2 text-[11px] font-mono tracking-[0.25em] text-neutral-400 uppercase transition-colors duration-500 hover:text-neutral-800">
+            <span>View and Download Full Resume</span>
+            <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-[1px] bg-neutral-800 transform scale-x-0 transition-transform duration-500 ease-breath group-hover:w-full group-hover:scale-x-100"></span>
+        </a>
+    </div>
+</section>
+
+<footer data-scroll-once class="gallery-scroll-fade pt-24 pb-32 bg-transparent select-none">
+    <div class="max-w-5xl mx-auto px-8 flex flex-col items-center text-center">
+        
+        <h2 class="text-2xl md:text-3xl font-light tracking-wide text-neutral-800 mb-16 select-none">
+            Let's build something 
+            <span class="relative inline-block px-2 py-0.5 mx-0.5 font-semibold text-neutral-800 rounded-none bg-gradient-to-r from-[#b98500] to-[#b98500] bg-[length:0%_100%] bg-left bg-no-repeat transition-all duration-300 ease-out hover:bg-[length:100%_100%] hover:text-white cursor-pointer">
+                insightful
+            </span> 
+            together.
+        </h2>
+
+        <div class="flex flex-wrap justify-center items-center gap-x-12 gap-y-4 mb-24 opacity-60 hover:opacity-100 transition-opacity duration-500">
+            <a href="mailto:azhao0322@gmail.com" class="text-[10px] tracking-[0.25em] text-neutral-500 font-mono uppercase hover:text-neutral-900 transition-colors duration-300">Email</a>
+            <a href="http://www.linkedin.com/in/alisa-zhao-92a644292" target="_blank" class="text-[10px] tracking-[0.25em] text-neutral-500 font-mono uppercase hover:text-neutral-900 transition-colors duration-300">Linkedin</a>
+            <a href="https://github.com/alsz322" target="_blank" class="text-[10px] tracking-[0.25em] text-neutral-500 font-mono uppercase hover:text-neutral-900 transition-colors duration-300">Github</a>
+            <a href="assets/Alisa_Zhao_Resume.pdf" target="_blank" rel="noopener" class="text-[10px] tracking-[0.25em] text-neutral-500 font-mono uppercase hover:text-neutral-900 transition-colors duration-300">View Resume</a>
+        </div>
+
+        <div class="flex flex-col md:flex-row items-center justify-center gap-y-12 md:gap-y-0 gap-x-16 border-t border-neutral-200/40 pt-14 w-full max-w-5xl">
+            <a href="about.html" class="group flex flex-col items-center gap-2 transition-all duration-300">
+                <span class="text-xs text-neutral-500 font-light tracking-wide whitespace-nowrap group-hover:text-neutral-400 transition-colors duration-300">Want to know who I am?</span>
+                <span class="footer-answer text-[13px] font-semibold opacity-0 transform translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out" data-nav="about">
+                    About Me <span class="text-[10px] ml-0.5">↗</span>
+                </span>
+            </a>
+            
+            <span class="hidden md:inline text-neutral-200/60 font-light select-none">/</span>
+
+            <a href="projects.html" class="group flex flex-col items-center gap-2 transition-all duration-300">
+                <span class="text-xs text-neutral-500 font-light tracking-wide whitespace-nowrap group-hover:text-neutral-400 transition-colors duration-300">Curious what I've built?</span>
+                <span class="footer-answer text-[13px] font-semibold opacity-0 transform translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out" data-nav="projects">
+                    Projects <span class="text-[10px] ml-0.5">↗</span>
+                </span>
+            </a>
+
+            <span class="hidden md:inline text-neutral-200/60 font-light select-none">/</span>
+
+            <a href="off-the-record.html" class="group flex flex-col items-center gap-2 transition-all duration-300">
+                <span class="text-xs text-neutral-500 font-light tracking-wide whitespace-nowrap group-hover:text-neutral-400 transition-colors duration-300">Rather see the fun side?</span>
+                <span class="footer-answer text-[13px] font-semibold opacity-0 transform translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out" data-nav="off-record">
+                    Off the Record <span class="text-[10px] ml-0.5">↗</span>
+                </span>
+            </a>
+        </div>
+
+    </div>
+</footer>
+
+
+
+
+    <script>
+        function initHeaderSurface() {
+            const header = document.querySelector('.site-header');
+            const hero = document.getElementById('experience-hero');
+            if (!header || !hero) return;
+
+            let ticking = false;
+
+            function updateHeaderSurface() {
+                const solidPoint = hero.offsetTop + hero.offsetHeight - header.offsetHeight;
+                header.classList.toggle('is-solid', window.scrollY >= solidPoint);
+            }
+
+            function requestHeaderSurfaceUpdate() {
+                if (ticking) return;
+                ticking = true;
+                window.requestAnimationFrame(() => {
+                    ticking = false;
+                    updateHeaderSurface();
+                });
+            }
+
+            updateHeaderSurface();
+            window.addEventListener('scroll', requestHeaderSurfaceUpdate, { passive: true });
+            window.addEventListener('resize', requestHeaderSurfaceUpdate);
+        }
+
+        initHeaderSurface();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                });
+            }, {
+                threshold: 0.12,
+                rootMargin: '0px 0px -8% 0px'
+            });
+
+            document.querySelectorAll('[data-scroll-section], [data-scroll-once], [data-timeline], .timeline-item').forEach(section => {
+                observer.observe(section);
+            });
+
+            document.querySelectorAll('#education img, #experience img').forEach((image) => {
+                image.setAttribute('draggable', 'false');
+                image.addEventListener('contextmenu', (event) => event.preventDefault());
+                image.addEventListener('dragstart', (event) => event.preventDefault());
+            });
+        });
+    </script>
+</body>
+</html>

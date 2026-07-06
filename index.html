@@ -1,0 +1,3906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alisa Zhao's Backpack</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* --- 1. 全局与背景 --- */
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+background-color: #f4f3f1;
+background-image:
+radial-gradient(rgba(180, 180, 180, 0.25) 1.2px, transparent 0),
+radial-gradient(circle at 50% 48%, rgba(246, 246, 246, 0.8) 0%, rgba(244, 243, 241, 0) 70%);
+background-size: 18px 18px, 100% 100%;
+background-position: center center;
+background-attachment: fixed;
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+color: #1a1a1a;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+overflow-x: hidden;
+--notebook-mobile-scale: 1;
+}
+html {
+background-color: #f4f3f1;
+scrollbar-width: thin;
+scrollbar-color: rgba(26, 26, 26, 0.2) #f4f3f1;
+}
+::-webkit-scrollbar {
+width: 8px;
+height: 8px;
+}
+::-webkit-scrollbar-track {
+background: #f4f3f1;
+}
+::-webkit-scrollbar-thumb {
+background: rgba(26, 26, 26, 0.18);
+border: 2px solid transparent;
+border-radius: 999px;
+background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+background: rgba(26, 26, 26, 0.28);
+background-clip: content-box;
+}
+.noise {
+position: fixed;
+top: 0; left: 0; width: 100vw; height: 100vh;
+background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+pointer-events: none;
+z-index: 999;
+}
+/* --- 2. Header 导航 --- */
+.site-header {
+width: 100vw;
+box-sizing: border-box;
+padding: 22px 6%;
+display: flex;
+justify-content: space-between;
+align-items: center;
+position: fixed;
+top: 0; left: 0;
+z-index: 1200;
+background: transparent;
+backdrop-filter: blur(0);
+-webkit-backdrop-filter: blur(0);
+border: 1px solid transparent;
+border-left: 0;
+border-right: 0;
+border-radius: 0;
+box-shadow: none;
+transition: background 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease, backdrop-filter 0.28s ease, -webkit-backdrop-filter 0.28s ease;
+}
+.site-header.is-solid {
+background: rgba(244, 243, 241, 0.94);
+backdrop-filter: blur(18px);
+-webkit-backdrop-filter: blur(18px);
+border-color: rgba(26, 26, 26, 0.06);
+box-shadow: 0 12px 36px rgba(0, 0, 0, 0.035);
+}
+.brand-name { font-size: 18px; font-weight: 600; letter-spacing: -0.5px; color: #1a1a1a; text-decoration: none; }
+.nav-links { display: flex; gap: 32px; }
+.nav-links a { font-size: 13px; text-decoration: none; color: #1a1a1a; font-weight: 500; transition: color 0.3s ease; }
+.nav-links a.active { color: #1a1a1a; }
+.nav-links a[data-nav="about"]:hover,
+.nav-links a[data-nav="about"]:focus-visible { color: #b55d9d; }
+.nav-links a[data-nav="projects"]:hover,
+.nav-links a[data-nav="projects"]:focus-visible { color: #007aff; }
+.nav-links a[data-nav="experience"]:hover,
+.nav-links a[data-nav="experience"]:focus-visible { color: #d6a400; }
+.nav-links a[data-nav="off-record"]:hover,
+.nav-links a[data-nav="off-record"]:focus-visible { color: #e85ba6; }
+
+/* --- 3. 背包舞台区域 --- */
+.hero-container {
+width: 100%;
+height: 100vh;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+position: relative;
+overflow: hidden;
+}
+.bag-wrapper {
+position: relative;
+width: 580px;
+height: 720px;
+}
+.bag-image {
+position: absolute;
+top: 0; left: 0;
+width: 100%;
+height: 100%;
+object-fit: contain;
+filter: drop-shadow(0 35px 70px rgba(181, 93, 157, 0.12));
+transition: opacity 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.img-studio { z-index: 2; opacity: 0; }
+.img-reality { z-index: 1; opacity: 0; }
+.bag-wrapper.active-reality .img-studio { opacity: 0; }
+.bag-wrapper.active-reality .img-reality { opacity: 1; z-index: 3; }
+
+.reality-eye-btn {
+position: absolute;
+bottom: 14%;
+left: 15%;
+z-index: 20;
+width: 38px;
+height: 38px;
+border-radius: 50%;
+background: rgba(255, 255, 255, 0.9);
+border: 1px solid rgba(0, 0, 0, 0.06);
+backdrop-filter: blur(10px);
+display: flex;
+justify-content: center;
+align-items: center;
+cursor: pointer;
+box-shadow: 0 6px 16px rgba(0,0,0,0.04);
+transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+user-select: none;
+opacity: 0;
+}
+.reality-eye-btn:hover { background: #fff; transform: scale(1.08); border-color: #b55d9d; }
+.reality-eye-btn svg { width: 18px; height: 18px; fill: none; stroke: #555; stroke-width: 2; }
+
+/* 挂件热区 */
+.hotspot { position: absolute; z-index: 5; background: transparent; border: none; }
+.spot-projects { top: 26%; left: 38%; width: 13%; height: 17%; cursor: pointer; }
+.spot-experience { top: 48%; right: 23%; width: 13%; height: 17%; cursor: pointer; }
+.spot-switch { top: 65%; left: 61%; width: 10%; height: 10%; cursor: help; }
+.spot-blue-bear { top: 38%; right: 15%; width: 10%; height: 18%; cursor: help; }
+.spot-companion { left: 18%; right: 65%; bottom: 31%; height: 20%; cursor: help; }
+.spot-journal { bottom: 18%; left: 48%; width: 13%; height: 15%; pointer-events: auto; cursor: pointer; }
+.spot-about-me { top: 52%; left: 42%; width: 14%; height: 15%; cursor: pointer; }
+
+.tag-tooltip {
+position: absolute;
+top: 50%; left: 105%;
+transform: translateY(-50%) translateX(8px);
+background: rgba(255, 255, 255, 0.96);
+backdrop-filter: blur(10px);
+border: 1px solid rgba(0,0,0,0.06);
+border-radius: 4px;
+padding: 6px 14px;
+font-size: 11px;
+font-weight: 500;
+letter-spacing: 0.5px;
+white-space: nowrap;
+opacity: 0;
+pointer-events: none;
+box-shadow: 0 8px 25px rgba(0,0,0,0.04);
+transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hotspot:hover .tag-tooltip { opacity: 1; transform: translateY(-50%) translateX(0); }
+
+/* 介绍面板 */
+.info-panel {
+position: absolute;
+width: 230px;
+background: #ffffff;
+padding: 20px;
+box-shadow: 0 15px 40px rgba(0,0,0,0.04);
+opacity: 0;
+pointer-events: none;
+transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+z-index: 10;
+}
+.info-panel.show { opacity: 1; transform: translate(0, 0); }
+.panel-left-dog { right: calc(100% + 50px); top: 52%; transform: translateX(15px); }
+.panel-left-dog.show { transform: translateX(0); }
+.panel-right-bear { left: calc(100% + 50px); top: 32%; transform: translateX(-15px); }
+.panel-right-bear.show { transform: translateX(0); }
+.panel-right-switch { left: calc(100% + 50px); top: 58%; transform: translateX(-15px); }
+.panel-right-switch.show { transform: translateX(0); }
+.panel-tag { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: #b55d9d; font-weight: 700; margin-bottom: 6px; display: block; }
+.panel-text { font-size: 11px; line-height: 1.6; color: #555; }
+
+.scroll-hint-container {
+position: absolute;
+bottom: 4%;
+left: 50%;
+transform: translateX(-50%);
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 10px;
+pointer-events: none;
+opacity: 0;
+}
+.scroll-text { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #8c8c8c; font-weight: 500; white-space: nowrap; }
+.hero-story-note {
+position: absolute;
+top: 19%;
+left: 50%;
+transform: translateX(-50%);
+font-size: 9px;
+letter-spacing: 2px;
+text-transform: uppercase;
+color: #8c8c8c;
+font-weight: 500;
+line-height: 1.8;
+text-align: center;
+white-space: nowrap;
+opacity: 0;
+pointer-events: none;
+z-index: 30;
+display: none;
+}
+
+.hero-story-accent {
+color: #b55d9d;
+}
+.scroll-arrow-icon { animation: indicatorBounce 2s infinite ease-in-out; }
+@keyframes indicatorBounce { 0%, 100% { transform: translateY(0); opacity: 0.6; } 50% { transform: translateY(6px); opacity: 1; } }
+
+/* --- 4. 📸 拍立得与便签电脑端的基础控制（完美还原截图 2 的横向并排） --- */
+.polaroid-group {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 0;
+width: 100%;
+max-width: 1100px;
+margin: 0 auto 95px auto;
+position: relative;
+}
+.polaroid {
+width: 280px;
+height: auto;
+}
+
+.polaroid-group img {
+-webkit-user-drag: none;
+-webkit-user-select: none;
+user-select: none;
+-webkit-touch-callout: none;
+}
+
+.note-wrapper {
+width: 680px;            /* 便签纸在电脑端应有的宽度 */
+position: relative;
+}
+.note-learn-more:hover {
+color: #b55d9d !important;
+border-bottom-color: #b55d9d !important;
+transform: translateY(-2px);
+cursor: pointer !important;
+}
+.note-learn-more {
+transition: all 0.25s ease, color 0.25s ease, border-color 0.25s ease !important;
+}
+
+.next-content-section {
+min-height: auto !important;
+padding-bottom: 88px !important;
+}
+
+.note-trigger-section {
+margin-bottom: 58px !important;
+}
+
+/* --- 5. 活页手账本区 --- */
+.experience-section {
+width: 100%;
+min-height: 100vh;
+padding: 42px 6% 120px 6%;
+display: flex;
+flex-direction: column;
+align-items: center;
+position: relative;
+z-index: 60;
+}
+.notebook-container {
+width: 1040px;
+position: relative;
+margin: 0 auto;
+animation: notebookHardShake 0.75s cubic-bezier(0.25, 0.46, 0.45, 0.94) both !important;
+transform-origin: center center !important;
+}
+.notebook-bg-img {
+width: 100%;
+height: auto;
+display: block;
+filter: drop-shadow(0 30px 50px rgba(0,0,0,0.12));
+}
+@keyframes notebookHardShake {
+0% { transform: scale(0.99) rotate(0deg); opacity: 0; }
+50% { transform: scale(1.003) rotate(-0.2deg); opacity: 1; }
+75% { transform: scale(0.998) rotate(0.1deg); }
+100% { transform: scale(1) rotate(0deg); }
+}
+.sheet-page-left {
+position: absolute; left: 13.5%; top: 9%; width: 33.5%; height: 84%; z-index: 10;
+padding: 30px 10px 40px 20px;
+}
+.sheet-page-right {
+position: absolute; right: 11%; top: 9%; width: 33.5%; height: 84%; z-index: 10;
+padding: 30px 20px 40px 10px;
+}
+.page-title {
+font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #1e2d5a; font-weight: 700; margin-bottom: 30px;
+}
+.timeline-container { position: relative; padding-left: 10px; }
+.timeline-item {
+position: relative; border-left: 2px solid rgba(0, 0, 0, 0.08); padding-left: 25px; padding-bottom: 35px;
+}
+.timeline-item:last-child { border-left: 2px solid transparent; padding-bottom: 0; }
+.timeline-item:last-child::before {
+content: ""; position: absolute; left: 0; top: 0; width: 2px; height: 18px; background: rgba(0, 0, 0, 0.08); z-index: 1;
+}
+.timeline-dot {
+position: absolute; left: -19px; top: -2px; width: 36px; height: 36px; background: #ffffff;
+border: 1.5px solid #eaeaea; border-radius: 50%; display: flex; justify-content: center; align-items: center; overflow: hidden; z-index: 5;
+box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+}
+.timeline-dot img { width: 82%; height: 82%; object-fit: contain; border-radius: 50%; }
+.timeline-item:hover .timeline-dot { transform: scale(1.12) translateY(-2px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12); }
+.edu-date { font-size: 12px; color: #8c8c8c; font-weight: 500; margin-bottom: 4px; }
+.edu-title { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+.edu-desc { font-size: 12px; color: #666; line-height: 1.5; }
+.job-item { margin-bottom: 30px; position: relative; cursor: default; }
+.job-meta { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+.job-company { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+.job-date { font-size: 11px; color: #8c8c8c; }
+.job-role { font-size: 11px; font-weight: 500; color: #2c3e6b; margin-bottom: 6px; }
+.job-desc { font-size: 11.5px; color: #555; line-height: 1.6; }
+.highlight-trigger { position: relative; display: inline-block; }
+.highlight-streak {
+position: absolute; left: -4px; top: 2px; width: 100%; height: 90%; background: rgba(44, 62, 107, 0.1); z-index: -1;
+transform-origin: left center; transform: scaleX(0); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); border-radius: 2px;
+}
+.job-item:hover .highlight-streak { transform: scaleX(1); }
+.sheet-page-right .job-item { margin-bottom: 18px; }
+.sheet-page-right .job-desc { font-size: 10.8px; line-height: 1.45; }
+
+.pouch-wrapper { position: absolute; left: 30px; bottom: 45px; width: 220px; height: 100px; z-index: 20; }
+.pouch-label-outside {
+font-size: 10px; font-weight: 700; color: #1e2d5a; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 21px;
+display: flex; align-items: center; gap: 6px; user-select: none;
+}
+.pouch-body-container { position: relative; width: 100%; height: 85px; }
+.pouch-resume-paper {
+position: absolute; left: 15px; top: -10px; width: 190px; height: 85px; background: #ffffff;
+box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 12px 15px; display: flex; flex-direction: column;
+justify-content: center; text-decoration: none; transform: rotate(-1.5deg); cursor: pointer; z-index: 1;
+}
+.paper-text-center { font-size: 10px; font-weight: 600; color: #1a1a1a; letter-spacing: 0.5px; margin-top: 2px; }
+.pouch-pvc-front {
+position: absolute; left: 0; bottom: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.4);
+backdrop-filter: blur(2px); border: 1.5px solid rgba(255, 255, 255, 0.7);
+box-shadow: inset 0 8px 16px rgba(255,255,255,0.5), 0 6px 15px rgba(0,0,0,0.02); z-index: 2; pointer-events: none; border-radius: 2px;
+}
+.pouch-zip { position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: rgba(44, 62, 107, 0.3); }
+.mobile-experience-folder { display: none; }
+
+/* --- 6. Featured Projects: Mac OS Desktop Showcase --- */
+.projects-desktop-section {
+width: 100%;
+min-height: 110vh;
+padding: 60px 0 130px;
+background: transparent;
+position: relative;
+z-index: 58;
+display: flex;
+flex-direction: column;
+align-items: center;
+overflow: hidden;
+transition: opacity 0.85s cubic-bezier(0.25, 1, 0.5, 1), transform 0.85s cubic-bezier(0.25, 1, 0.5, 1), filter 0.85s cubic-bezier(0.25, 1, 0.5, 1);
+will-change: transform, opacity, filter;
+}
+
+.projects-desktop-section.ending-transition-out {
+opacity: 0;
+transform: translateY(-72px);
+filter: blur(8px);
+pointer-events: none;
+}
+
+.desktop-story-hint {
+font-family: "Courier New", Courier, monospace;
+font-size: 13px;
+font-weight: 600;
+letter-spacing: 0.05em;
+line-height: 1.7;
+color: #666;
+text-align: center;
+margin: 0 auto 30px;
+text-shadow: 0 1px 0 #fff;
+}
+
+.desktop-screen-area {
+width: 95%;
+max-width: 1500px;
+height: 800px;
+position: relative;
+margin: 0 auto;
+border-radius: 20px;
+cursor: grab;
+}
+
+.desktop-screen-area.is-dragging {
+cursor: grabbing;
+}
+
+.desktop-shortcut {
+position: absolute;
+right: 54px;
+bottom: 58px;
+z-index: 1;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 6px;
+user-select: none;
+cursor: grab;
+touch-action: none;
+will-change: left, top, transform;
+transition: filter 0.2s ease;
+}
+
+.desktop-shortcut.is-dragging {
+cursor: grabbing;
+filter: saturate(1.04);
+}
+
+.desktop-shortcut-icon {
+width: 56px;
+height: 56px;
+border-radius: 14px;
+background: rgba(255, 255, 255, 0.3);
+border: 1px solid rgba(255, 255, 255, 0.4);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+display: flex;
+align-items: center;
+justify-content: center;
+position: relative;
+transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.desktop-shortcut-icon svg {
+width: 24px;
+height: 24px;
+stroke: rgba(87, 83, 78, 0.9);
+transition: stroke 0.3s ease;
+}
+
+.desktop-shortcut-count {
+position: absolute;
+right: 6px;
+bottom: 4px;
+font-family: "Courier New", Courier, monospace;
+font-size: 7px;
+line-height: 1;
+font-weight: 700;
+color: #a8a29e;
+transition: color 0.3s ease;
+}
+
+.desktop-shortcut-label {
+font-family: "Courier New", Courier, monospace;
+font-size: 10px;
+font-weight: 600;
+letter-spacing: 0.025em;
+color: #57534e;
+background: rgba(245, 245, 244, 0.55);
+backdrop-filter: blur(8px);
+-webkit-backdrop-filter: blur(8px);
+border-radius: 5px;
+padding: 2px 8px;
+box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+transition: color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.desktop-shortcut:hover .desktop-shortcut-icon,
+.desktop-shortcut:focus-visible .desktop-shortcut-icon {
+transform: translateY(-2px);
+background: rgba(255, 255, 255, 0.82);
+border-color: #ffffff;
+box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.desktop-shortcut:hover .desktop-shortcut-icon svg,
+.desktop-shortcut:focus-visible .desktop-shortcut-icon svg {
+stroke: #1c1917;
+}
+
+.desktop-shortcut:hover .desktop-shortcut-count,
+.desktop-shortcut:focus-visible .desktop-shortcut-count {
+color: #92400e;
+}
+
+.desktop-shortcut:hover .desktop-shortcut-label,
+.desktop-shortcut:focus-visible .desktop-shortcut-label {
+color: #ffffff;
+background: #1c1917;
+box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+@media (min-width: 768px) {
+.desktop-shortcut {
+right: 92px;
+bottom: 72px;
+}
+}
+
+.mac-window {
+position: absolute;
+width: 440px;
+height: auto;
+min-height: 0;
+background: #ffffff;
+border-radius: 12px;
+box-shadow:
+0 10px 30px rgba(0, 0, 0, 0.06),
+0 1px 3px rgba(0, 0, 0, 0.05),
+0 0 0 1px rgba(0, 0, 0, 0.1);
+overflow: hidden;
+display: flex;
+flex-direction: column;
+user-select: none;
+transform: none;
+will-change: left, top, transform, opacity;
+transition: box-shadow 250ms cubic-bezier(0.16, 1, 0.3, 1), filter 180ms ease;
+}
+
+#project-window-1 {
+top: 8%;
+left: 4%;
+transform: none;
+z-index: 10;
+}
+
+#project-window-2 {
+top: 12%;
+right: 4%;
+transform: none;
+z-index: 9;
+}
+
+#project-window-3 {
+top: 25%;
+left: 34%;
+transform: none;
+z-index: 8;
+}
+
+.mac-window.active-window {
+box-shadow:
+0 30px 70px rgba(0, 0, 0, 0.15),
+0 10px 25px rgba(0, 0, 0, 0.08),
+0 0 0 1px rgba(0, 0, 0, 0.15);
+filter: saturate(1.02);
+}
+
+.mac-title-bar {
+background: #f0f0f0;
+border-bottom: 1px solid #e2e2e2;
+padding: 12px 16px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+position: relative;
+cursor: grab;
+user-select: none;
+touch-action: none;
+}
+
+.mac-title-bar:active,
+.mac-title-bar.is-dragging {
+cursor: grabbing;
+}
+
+.drag-hint-badge {
+font-family: "Courier New", monospace;
+font-size: 10px;
+font-weight: bold;
+line-height: 1;
+color: rgba(0, 0, 0, 0.35);
+background: rgba(0, 0, 0, 0.04);
+padding: 3px 8px;
+border-radius: 10px;
+margin-left: auto;
+white-space: nowrap;
+pointer-events: none;
+z-index: 1;
+}
+
+.mac-window-dots {
+display: flex;
+align-items: center;
+gap: 8px;
+z-index: 1;
+}
+
+.mac-dot {
+width: 12px;
+height: 12px;
+border-radius: 50%;
+box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+}
+
+.mac-dot.red { background: #ff5f57; }
+.mac-dot.yellow { background: #ffbd2e; }
+.mac-dot.green { background: #28c840; }
+
+.mac-window-title {
+position: absolute;
+left: 50%;
+top: 50%;
+transform: translate(-50%, -50%);
+font-size: 13px;
+font-weight: 500;
+color: #666666;
+text-align: center;
+pointer-events: none;
+}
+
+.project-banner-media {
+width: 100%;
+height: 210px;
+overflow: hidden;
+background: #eaeaea;
+border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.project-banner-media img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+display: block;
+}
+
+.mac-content-vertical {
+padding: 24px;
+display: flex;
+flex-direction: column;
+gap: 16px;
+background: #ffffff;
+min-width: 0;
+}
+
+.project-name {
+font-size: 21px;
+line-height: 1.12;
+font-weight: 700;
+letter-spacing: -0.02em;
+color: #1a1a1a;
+margin-bottom: 4px;
+}
+
+.star-box {
+display: flex;
+flex-direction: column;
+gap: 12px;
+}
+
+.star-row {
+display: flex;
+flex-direction: column;
+gap: 3px;
+}
+
+.star-label {
+font-size: 9px;
+font-weight: 700;
+letter-spacing: 0.06em;
+color: #8a8a8a;
+}
+
+.star-row p {
+margin: 0;
+font-size: 13px;
+line-height: 1.4;
+color: #4a4a4a;
+}
+
+.highlight-result {
+color: #111111 !important;
+font-weight: 600;
+}
+
+.project-btn {
+align-self: flex-start;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+appearance: none;
+padding: 8px 18px;
+border-radius: 20px;
+border: 1px solid #1a1a1a;
+background: #1a1a1a;
+color: #ffffff;
+text-decoration: none;
+font-size: 12px;
+font-weight: 600;
+letter-spacing: 0;
+font-family: inherit;
+cursor: pointer;
+box-shadow: none;
+transition: transform 160ms ease, color 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.project-btn:hover {
+transform: translateY(-1px);
+color: #ffffff;
+border-color: #007aff;
+background: #007aff;
+}
+
+.landing-project-modal-open {
+overflow: hidden;
+}
+
+.landing-project-close {
+position: fixed;
+top: 28px;
+right: 28px;
+z-index: 5000;
+display: inline-flex;
+align-items: center;
+gap: 8px;
+border: 0;
+background: transparent;
+color: rgba(87, 83, 78, 0.64);
+font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+font-size: 10px;
+font-weight: 600;
+letter-spacing: 0.28em;
+text-transform: uppercase;
+cursor: pointer;
+opacity: 0;
+pointer-events: none;
+transition: opacity 300ms cubic-bezier(0.25, 1, 0.5, 1), color 180ms ease;
+}
+
+.landing-project-close:hover {
+color: #1a1a1a;
+}
+
+.landing-project-close.is-visible {
+opacity: 1;
+pointer-events: auto;
+}
+
+.landing-project-close-icon {
+font-size: 12px;
+transition: transform 500ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.landing-project-close:hover .landing-project-close-icon {
+transform: rotate(90deg);
+}
+
+.landing-project-overlay {
+position: fixed;
+inset: 0;
+z-index: 2000;
+overflow-y: auto;
+background: rgba(255, 255, 255, 0.9);
+backdrop-filter: blur(22px);
+-webkit-backdrop-filter: blur(22px);
+opacity: 0;
+pointer-events: none;
+transition: opacity 700ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.landing-project-overlay.is-visible {
+opacity: 1;
+pointer-events: auto;
+}
+
+.landing-project-shell {
+width: min(100%, 1120px);
+margin: 0 auto;
+padding: 120px 36px 96px;
+}
+
+.landing-project-content {
+display: flex;
+flex-direction: column;
+gap: 44px;
+color: #292524;
+}
+
+.landing-project-kicker,
+.landing-project-section-label,
+.landing-project-caption,
+.landing-project-footer {
+font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+text-transform: uppercase;
+letter-spacing: 0.26em;
+}
+
+.landing-project-kicker {
+display: block;
+font-size: 10px;
+font-weight: 700;
+margin-bottom: 12px;
+}
+
+.landing-project-title {
+font-size: clamp(34px, 6vw, 58px);
+line-height: 1.02;
+font-weight: 300;
+letter-spacing: -0.045em;
+margin: 0;
+}
+
+.landing-project-subtitle {
+max-width: 720px;
+margin: 14px 0 0;
+font-size: 15px;
+line-height: 1.8;
+font-weight: 300;
+color: #78716c;
+}
+
+.landing-project-rule {
+border-top: 1px solid rgba(120, 113, 108, 0.22);
+padding-top: 32px;
+}
+
+.landing-project-section {
+display: flex;
+flex-direction: column;
+gap: 18px;
+}
+
+.landing-project-section-label {
+font-size: 11px;
+font-weight: 800;
+}
+
+.landing-project-body,
+.landing-project-body p,
+.landing-project-body li {
+font-size: 15px;
+line-height: 1.78;
+font-weight: 300;
+color: #57534e;
+}
+
+.landing-project-body strong,
+.landing-project-process-title {
+font-weight: 600;
+color: #292524;
+}
+
+.landing-project-stats {
+display: grid;
+grid-template-columns: repeat(4, minmax(0, 1fr));
+gap: 28px;
+padding: 34px 0;
+border-top: 1px solid rgba(120, 113, 108, 0.25);
+border-bottom: 1px solid rgba(120, 113, 108, 0.25);
+}
+
+.landing-project-stat-value {
+font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+font-size: clamp(25px, 4vw, 39px);
+font-weight: 300;
+line-height: 1;
+}
+
+.landing-project-stat-label {
+margin-top: 8px;
+font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+font-size: 9px;
+letter-spacing: 0.16em;
+text-transform: uppercase;
+color: #a8a29e;
+}
+
+.landing-project-process {
+border-top: 1px solid rgba(120, 113, 108, 0.16);
+border-bottom: 1px solid rgba(120, 113, 108, 0.16);
+}
+
+.landing-project-process-row {
+display: grid;
+grid-template-columns: minmax(160px, 0.36fr) 1fr;
+gap: 32px;
+padding: 24px 0;
+border-top: 1px solid rgba(120, 113, 108, 0.12);
+}
+
+.landing-project-process-row:first-child {
+border-top: 0;
+}
+
+.landing-project-grid-2 {
+display: grid;
+grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+gap: 48px;
+align-items: start;
+}
+
+.landing-project-card {
+padding: 22px;
+border: 1px solid rgba(120, 113, 108, 0.16);
+border-radius: 14px;
+background: rgba(250, 250, 249, 0.42);
+}
+
+.landing-project-list {
+display: flex;
+flex-direction: column;
+gap: 14px;
+padding: 0;
+margin: 0;
+list-style: none;
+}
+
+.landing-project-list li {
+position: relative;
+padding-left: 18px;
+}
+
+.landing-project-list li::before {
+content: "—";
+position: absolute;
+left: 0;
+color: currentColor;
+}
+
+.landing-project-media-button {
+display: block;
+width: 100%;
+padding: 0;
+border: 0;
+border-radius: 14px;
+background: transparent;
+overflow: hidden;
+cursor: zoom-in;
+box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 10px 30px rgba(0,0,0,0.045);
+transition: transform 500ms cubic-bezier(0.25, 1, 0.5, 1), box-shadow 500ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.landing-project-media-button:hover {
+transform: translateY(-2px);
+box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 16px 42px rgba(0,0,0,0.075);
+}
+
+.landing-project-media-frame {
+display: block;
+aspect-ratio: var(--media-ratio, 4 / 3);
+overflow: hidden;
+}
+
+.landing-project-media-frame img,
+.landing-project-media-frame video {
+display: block;
+width: 100%;
+height: 100%;
+object-fit: cover;
+}
+
+.landing-project-caption {
+display: block;
+margin-top: 10px;
+font-size: 9px;
+color: #a8a29e;
+text-align: right;
+}
+
+.landing-project-gallery {
+display: grid;
+gap: 14px;
+}
+
+.landing-project-gallery.cols-2 {
+grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.landing-project-gallery.cols-4 {
+grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.landing-heartbeat-visuals {
+display: flex;
+flex-direction: column;
+gap: 48px;
+}
+
+.landing-heartbeat-top-grid {
+display: grid;
+grid-template-columns: repeat(2, minmax(0, 1fr));
+gap: 32px;
+align-items: start;
+}
+
+.landing-heartbeat-group {
+display: flex;
+flex-direction: column;
+gap: 14px;
+}
+
+.landing-heartbeat-gallery {
+display: grid;
+gap: 14px;
+}
+
+.landing-heartbeat-gallery.covers,
+.landing-heartbeat-gallery.posters,
+.landing-heartbeat-gallery.wide {
+grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.landing-project-press a,
+.landing-project-link {
+text-decoration: underline;
+text-underline-offset: 4px;
+}
+
+.landing-project-footer {
+display: flex;
+justify-content: space-between;
+gap: 20px;
+padding-top: 44px;
+border-top: 1px solid rgba(120, 113, 108, 0.24);
+font-size: 10px;
+color: #a8a29e;
+}
+
+.landing-project-lightbox {
+position: fixed;
+inset: 0;
+z-index: 4000;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 32px;
+background: rgba(12, 10, 9, 0.9);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+opacity: 0;
+pointer-events: none;
+transition: opacity 300ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.landing-project-lightbox.is-visible {
+opacity: 1;
+pointer-events: auto;
+}
+
+.landing-project-lightbox img {
+max-width: 100%;
+max-height: 100%;
+object-fit: contain;
+box-shadow: 0 24px 80px rgba(0, 0, 0, 0.38);
+}
+
+.landing-project-lightbox-close {
+position: fixed;
+top: 28px;
+right: 28px;
+z-index: 4010;
+border: 0;
+background: transparent;
+color: rgba(255,255,255,0.68);
+font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+font-size: 10px;
+font-weight: 600;
+letter-spacing: 0.28em;
+text-transform: uppercase;
+cursor: pointer;
+}
+
+@media (max-width: 760px) {
+.landing-project-shell {
+padding: 92px 20px 72px;
+}
+.landing-project-stats,
+.landing-project-gallery.cols-4 {
+grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.landing-project-process-row,
+.landing-project-grid-2 {
+grid-template-columns: 1fr;
+gap: 16px;
+}
+.landing-project-gallery.cols-2 {
+grid-template-columns: 1fr;
+}
+.landing-heartbeat-top-grid {
+grid-template-columns: 1fr;
+}
+.landing-heartbeat-gallery.wide {
+grid-template-columns: 1fr;
+}
+.landing-project-footer {
+flex-direction: column;
+}
+.landing-project-close,
+.landing-project-lightbox-close {
+top: 18px;
+right: 18px;
+}
+}
+
+.dock-wrapper {
+position: relative;
+display: flex;
+justify-content: center;
+align-items: flex-end;
+padding: 0 24px 8px 24px;
+background: rgba(218, 226, 240, 0.28);
+border: 1px solid rgba(255, 255, 255, 0.38);
+box-shadow:
+0 15px 35px rgba(0, 0, 0, 0.04),
+0 5px 12px rgba(0, 0, 0, 0.02),
+inset 0 1px 0 rgba(255, 255, 255, 0.2);
+border-radius: 28px;
+height: 76px;
+overflow: visible !important;
+margin: 12px auto 0;
+z-index: 20;
+transform-origin: center bottom;
+opacity: 0;
+transform: scaleX(0.1);
+}
+
+.dock-container {
+display: flex;
+align-items: flex-end;
+gap: 14px;
+list-style: none;
+padding: 0;
+margin: 0;
+height: 100%;
+overflow: visible;
+}
+
+.dock-item {
+position: relative;
+transform-origin: bottom center;
+width: 56px;
+height: 56px;
+display: flex;
+justify-content: center;
+align-items: flex-end;
+margin-bottom: 4px;
+will-change: width, height;
+cursor: pointer;
+opacity: 0;
+transform: scale(0.6);
+}
+
+.dock-link {
+display: block;
+width: 100%;
+height: 100%;
+}
+
+.full-bleed {
+width: 100%;
+height: 100%;
+object-fit: cover;
+border-radius: 13px;
+display: block;
+}
+
+.full-bleed-id {
+width: 100%;
+height: 100%;
+object-fit: contain;
+border-radius: 13px;
+display: block;
+margin-top: 1px;
+}
+
+.dock-pod {
+width: 100%;
+height: 100%;
+background: #ffffff;
+border-radius: 13px;
+display: flex;
+justify-content: center;
+align-items: center;
+padding: 8px;
+box-shadow: 0 2px 4px rgba(0,0,0,0.03), 0 0 0 0.5px rgba(0,0,0,0.04);
+overflow: hidden;
+}
+
+.dock-pod img {
+width: 100%;
+height: 100%;
+object-fit: contain;
+display: block;
+}
+
+.dock-pod-flush {
+width: 100%;
+height: 100%;
+background: #ffffff;
+border-radius: 13px;
+display: flex;
+justify-content: center;
+align-items: center;
+padding: 0px !important;
+box-shadow: 0 2px 4px rgba(0,0,0,0.03), 0 0 0 0.5px rgba(0,0,0,0.04);
+overflow: hidden;
+}
+
+.dock-pod-flush img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+transform: scale(1.04);
+display: block;
+}
+
+.dock-pod-notion {
+width: 100%;
+height: 100%;
+background: #ffffff;
+border-radius: 13px;
+display: flex;
+justify-content: center;
+align-items: center;
+padding: 6px !important;
+box-shadow: 0 2px 4px rgba(0,0,0,0.03), 0 0 0 0.5px rgba(0,0,0,0.04);
+overflow: hidden;
+}
+
+.dock-pod-notion img {
+width: 100%;
+height: 100%;
+object-fit: contain;
+display: block;
+}
+
+.dock-tooltip {
+position: absolute;
+top: -68px;
+left: 50%;
+transform: translateX(-50%) scale(0.85);
+background: rgba(255, 255, 255, 0.94);
+backdrop-filter: blur(10px);
+-webkit-backdrop-filter: blur(10px);
+color: #151515;
+font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+font-size: 11px;
+line-height: 1.5;
+text-align: left;
+padding: 7px 12px;
+border-radius: 9px;
+white-space: nowrap;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05), 0 0 0 0.5px rgba(0, 0, 0, 0.08);
+opacity: 0;
+pointer-events: none;
+z-index: 9999;
+transition: opacity 0.15s cubic-bezier(0.25, 1, 0.5, 1), transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.dock-tooltip strong {
+display: block;
+font-size: 11.5px;
+font-weight: 700;
+letter-spacing: -0.01em;
+color: #111111;
+text-align: center;
+}
+
+.dock-tooltip span {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 5px;
+color: rgba(0, 0, 0, 0.55);
+font-size: 10.5px;
+font-weight: 500;
+letter-spacing: 0.01em;
+}
+
+.dock-tooltip span::before {
+content: "";
+width: 6px;
+height: 6px;
+border-radius: 50%;
+background: #28c840;
+box-shadow: 0 0 0 2px rgba(40, 200, 64, 0.14);
+flex: 0 0 auto;
+}
+
+.dock-tooltip::before {
+content: "";
+position: absolute;
+bottom: -5px;
+left: 50%;
+transform: translateX(-50%) rotate(45deg);
+width: 10px;
+height: 10px;
+background: rgba(255, 255, 255, 0.94);
+box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.04);
+}
+
+.dock-item:hover .dock-tooltip {
+opacity: 1;
+transform: translateX(-50%) scale(1) translateY(-3px);
+}
+
+/* --- 7. Immersive ending: return the backpack --- */
+.ending-section {
+width: 100%;
+min-height: 100vh;
+padding: 70px 6% 64px;
+display: flex;
+justify-content: center;
+align-items: center;
+position: relative;
+z-index: 56;
+background: transparent;
+}
+
+.ending-container {
+width: 100%;
+max-width: 1200px;
+display: flex;
+flex-direction: column;
+align-items: center;
+position: relative;
+}
+
+.ending-container.js-ending-ready #source-node,
+.ending-container.js-ending-ready #drop-zone,
+.ending-container.js-ending-ready #girl-lost,
+.ending-container.js-ending-ready #backpack,
+.ending-container.js-ending-ready .letter-universe,
+.ending-container.js-ending-ready .minimal-footer {
+will-change: transform, opacity, filter;
+}
+
+.ending-interactive-canvas {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 60px;
+width: 100%;
+height: 640px;
+position: relative;
+padding-left: 100px;
+box-sizing: border-box;
+}
+
+.ending-interactive-node {
+position: relative;
+width: 300px;
+height: 440px;
+display: flex;
+justify-content: center;
+align-items: center;
+z-index: 10;
+}
+
+#source-node {
+z-index: 50;
+flex-direction: column;
+transform: translate(-50px, -40px);
+}
+
+.ending-container.js-ending-ready #source-node {
+opacity: 0;
+transform: translate(-50px, 0);
+transition: opacity 0.85s cubic-bezier(0.25, 1, 0.5, 1), transform 0.85s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.ending-container.js-ending-ready.is-visible #source-node {
+opacity: 1;
+transform: translate(-50px, -40px);
+}
+
+.ending-container.js-ending-ready #drop-zone {
+opacity: 0;
+transform: translateY(40px);
+transition: opacity 0.9s cubic-bezier(0.25, 1, 0.5, 1), transform 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.ending-container.js-ending-ready.is-visible #drop-zone {
+opacity: 1;
+transform: translateY(0);
+}
+
+.node-floor {
+position: absolute;
+bottom: 45px;
+width: 140px;
+height: 10px;
+background: radial-gradient(ellipse at center, rgba(0,0,0,0.02) 0%, transparent 70%);
+border-radius: 50%;
+pointer-events: none;
+}
+
+.jester-bag {
+max-width: 85%;
+max-height: 85%;
+object-fit: contain;
+cursor: grab;
+position: absolute;
+bottom: 50px;
+z-index: 1000;
+touch-action: none;
+user-select: none;
+-webkit-user-drag: none;
+}
+
+.jester-bag.breathe { animation: endingSoftFloat 4.5s ease-in-out infinite; }
+.jester-bag:active { cursor: grabbing; }
+.jester-bag.dragging { transition: none !important; z-index: 9999 !important; }
+
+.jester-bag.returned {
+opacity: 0;
+pointer-events: none;
+transform: scale(0.4) translateY(-60px) !important;
+transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.ending-drag-hint {
+position: absolute;
+bottom: 15px;
+font-size: 0.75rem;
+color: #b0b0b5;
+letter-spacing: 1px;
+font-weight: 500;
+pointer-events: none;
+opacity: 0.8;
+transition: opacity 0.4s ease, transform 0.4s ease;
+animation: endingHintFloat 3s ease-in-out infinite;
+}
+
+.ending-drag-hint.hidden {
+opacity: 0 !important;
+transform: translateY(5px);
+}
+
+.character-img {
+max-width: 90%;
+max-height: 90%;
+object-fit: contain;
+position: absolute;
+z-index: 5;
+transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#girl-lost { max-height: 86%; }
+#girl-happy { max-height: 108%; }
+#girl-happy:not(.hidden) { transform: scale(1.08); }
+.character-img.hidden {
+opacity: 0;
+pointer-events: none;
+transform: scale(0.95) translateY(10px);
+}
+
+.ending-container.js-ending-ready #girl-lost {
+opacity: 0;
+filter: blur(10px);
+transform: scale(0.95);
+transition: opacity 0.95s cubic-bezier(0.25, 1, 0.5, 1), filter 0.95s cubic-bezier(0.25, 1, 0.5, 1), transform 0.95s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.ending-container.js-ending-ready.is-visible #girl-lost {
+opacity: 1;
+filter: blur(0);
+transform: scale(1);
+}
+
+.ending-container.js-ending-ready.is-visible #girl-lost.hidden,
+#girl-lost.hidden {
+opacity: 0 !important;
+filter: blur(10px);
+pointer-events: none;
+transform: scale(0.95) translateY(10px) !important;
+}
+
+.ending-container.js-ending-ready #backpack:not(.dragging):not(.returned) {
+opacity: 0;
+transform: translate(var(--ending-backpack-start-x, 0px), var(--ending-backpack-start-y, -72vh)) scale(0.1);
+animation: none;
+transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 1.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ending-container.js-ending-ready.is-visible #backpack:not(.dragging):not(.returned) {
+opacity: 1;
+transform: translateY(0);
+}
+
+.ending-container.js-ending-ready.entrance-complete #backpack.breathe:not(.dragging):not(.returned) {
+animation: endingSoftFloat 4.5s ease-in-out infinite;
+}
+
+.ending-container.js-ending-ready:not(.is-visible) #girl-happy:not(.hidden) {
+opacity: 0;
+filter: blur(10px);
+transform: scale(0.95) translateY(10px);
+}
+
+.ending-container.js-ending-ready:not(.is-visible) .thank-you-bubble.show {
+opacity: 0;
+transform: translateY(10px) scale(0.9);
+}
+
+.thank-you-bubble {
+position: absolute;
+top: -45px;
+background: #ffffff;
+color: #1a1a1a;
+padding: 10px 20px;
+border-radius: 14px;
+font-weight: 600;
+font-size: 0.95rem;
+border: 2px solid rgba(0, 0, 0, 0.08);
+box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+opacity: 0;
+transform: translateY(10px) scale(0.9);
+transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+pointer-events: none;
+z-index: 110;
+}
+
+.thank-you-bubble::after {
+content: '';
+position: absolute;
+bottom: -8px;
+left: 50%;
+transform: translateX(-50%);
+width: 0;
+height: 0;
+border-left: 8px solid transparent;
+border-right: 8px solid transparent;
+border-top: 8px solid #ffffff;
+z-index: 2;
+}
+
+.thank-you-bubble::before {
+content: '';
+position: absolute;
+bottom: -10px;
+left: 50%;
+transform: translateX(-50%);
+width: 0;
+height: 0;
+border-left: 9px solid transparent;
+border-right: 9px solid transparent;
+border-top: 9px solid rgba(0, 0, 0, 0.06);
+z-index: 1;
+}
+
+.thank-you-bubble.show {
+opacity: 1;
+transform: translateY(0) scale(1);
+}
+
+.letter-universe {
+position: absolute;
+left: 210px;
+bottom: 85px;
+width: 310px;
+height: 480px;
+opacity: 0;
+transform: scale(0.9) translateY(30px);
+transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+z-index: 20;
+pointer-events: none;
+}
+
+.letter-universe.reveal {
+opacity: 1;
+transform: scale(1) translateY(0);
+}
+
+.ending-container.js-ending-ready .letter-universe.reveal {
+opacity: 0;
+filter: blur(8px);
+transform: scale(0.92) translateY(40px);
+transition: opacity 0.85s cubic-bezier(0.25, 1, 0.5, 1), filter 0.85s cubic-bezier(0.25, 1, 0.5, 1), transform 0.85s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.ending-container.js-ending-ready.is-visible .letter-universe.reveal {
+opacity: 1;
+filter: blur(0);
+transform: scale(1) translateY(0);
+}
+
+.envelope-wrapper {
+position: absolute;
+bottom: 0;
+width: 100%;
+height: 620px;
+overflow: hidden;
+transition: overflow 0.1s step-end;
+}
+
+.envelope-wrapper.released { overflow: visible; }
+
+.real-envelope-back {
+position: absolute;
+bottom: 0;
+width: 100%;
+height: 190px;
+background: #f4f4f6;
+border-radius: 4px;
+box-shadow: 0 8px 24px rgba(0,0,0,0.03);
+z-index: 10;
+}
+
+.envelope-flap {
+position: absolute;
+bottom: 190px;
+left: 0;
+width: 0;
+height: 0;
+border-left: 155px solid transparent;
+border-right: 155px solid transparent;
+border-bottom: 90px solid #fafafa;
+z-index: 11;
+}
+
+.envelope-front-pocket {
+position: absolute;
+bottom: 0;
+left: 0;
+width: 100%;
+height: 190px;
+background: #ffffff;
+border-radius: 0 0 4px 4px;
+z-index: 30;
+clip-path: polygon(0% 35%, 50% 78%, 100% 35%, 100% 100%, 0% 100%);
+box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+.scrapbook-paper {
+position: absolute;
+left: 15px;
+bottom: 30px;
+width: 280px;
+background: #ffffff;
+border-radius: 2px;
+padding: 30px 22px;
+box-sizing: border-box;
+z-index: 20;
+opacity: 0;
+transform: translateY(280px) scale(0.96);
+font-family: "Caveat", cursive;
+font-size: 16.5px;
+color: #222222;
+line-height: 1.45;
+box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+.letter-universe.reveal .scrapbook-paper {
+animation: endingSafePopUpAndFall 2.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+animation-delay: 0.3s;
+}
+
+.paper-tape {
+position: absolute;
+top: -10px;
+left: 50%;
+width: 80px;
+height: 18px;
+background: rgba(242, 240, 235, 0.9);
+backdrop-filter: blur(1px);
+border-left: 2px dashed rgba(255,255,255,0.6);
+border-right: 2px dashed rgba(255,255,255,0.6);
+transform-origin: center center;
+transform: translateX(-50%) rotate(0.5deg) scaleX(0) scaleY(1.1);
+opacity: 0;
+box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1), opacity 0.4s ease, box-shadow 0.5s ease;
+}
+
+.vintage-travel-stamp {
+position: absolute;
+bottom: -12px;
+right: 25px;
+width: 60px;
+height: 60px;
+background: #c3b091;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+box-shadow: 0 10px 20px rgba(195,176,145,0);
+color: #ffffff;
+z-index: 43;
+opacity: 0;
+transform: rotate(-5deg) scale(1.6);
+transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.15s ease, box-shadow 0.2s ease;
+}
+
+.stamp-date {
+font-family: "Playfair Display", serif;
+font-style: italic;
+font-size: 12px;
+font-weight: 700;
+letter-spacing: 0.5px;
+margin: 0;
+line-height: 1;
+text-align: center;
+}
+
+.letter-universe.tape-on .paper-tape {
+opacity: 1;
+transform: translateX(-50%) rotate(0.5deg) scaleX(1.1) scaleY(1);
+box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+}
+
+.letter-universe.stamp-on .vintage-travel-stamp {
+opacity: 1;
+transform: rotate(-5deg) scale(1);
+box-shadow: 0 4px 12px rgba(195,176,145,0.35);
+}
+
+.minimal-footer {
+width: 100%;
+max-width: 920px;
+background: rgba(255, 255, 255, 0.8);
+backdrop-filter: blur(20px);
+border: 1px solid rgba(0, 0, 0, 0.04);
+border-radius: 20px;
+padding: 16px 36px;
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 69px;
+margin-top: 30px;
+z-index: 95;
+box-sizing: border-box;
+}
+
+.ending-container.js-ending-ready .minimal-footer {
+opacity: 0;
+transform: translateY(20px);
+transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.18s, transform 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.18s;
+}
+
+.ending-container.js-ending-ready.is-visible .minimal-footer {
+opacity: 1;
+transform: translateY(0);
+}
+
+.footer-left,
+.footer-right {
+display: flex;
+align-items: center;
+}
+
+.footer-left {
+gap: 51px;
+}
+
+.footer-right {
+gap: 51px;
+}
+
+.footer-right::before {
+content: '';
+width: 1px;
+height: 18px;
+background: rgba(134, 134, 139, 0.34);
+display: block;
+}
+
+.footer-link {
+font-size: 0.9rem;
+color: #515154;
+text-decoration: none;
+font-weight: 500;
+transition: color 0.2s ease;
+}
+
+.footer-link.footer-link-linkedin:hover { color: #b55d9d; }
+.footer-link.footer-link-github:hover { color: #007aff; }
+.footer-link.footer-link-resume:hover { color: #d6a400; }
+.footer-link.footer-link-email:hover { color: #e85ba6; }
+
+.back-to-top-link {
+appearance: none;
+background: none;
+border: none;
+padding: 0;
+font: inherit;
+font-size: 0.9rem;
+font-weight: 500;
+color: #86868b;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 6px;
+transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.back-to-top-link svg {
+width: 13px;
+height: 13px;
+stroke: currentColor;
+transition: transform 0.25s ease;
+}
+
+.back-to-top-link:hover,
+.back-to-top-link:focus-visible {
+color: #1a1a1a;
+transform: translateY(-2px);
+}
+
+.back-to-top-link:hover svg,
+.back-to-top-link:focus-visible svg {
+transform: translateY(-1px);
+}
+
+.back-to-top-link:focus-visible {
+outline: 2px solid rgba(26, 26, 26, 0.22);
+outline-offset: 4px;
+border-radius: 999px;
+}
+
+.link-dot {
+width: 4px;
+height: 4px;
+background-color: #d2d2d7;
+border-radius: 50%;
+}
+
+@keyframes endingSafePopUpAndFall {
+0% { transform: translateY(280px) scale(0.96) rotate(0deg); opacity: 0; z-index: 20; }
+15% { opacity: 1; }
+45% { transform: translateY(-95px) scale(1.02) rotate(-1deg); z-index: 20; box-shadow: 0 12px 25px rgba(0,0,0,0.06); }
+52% { z-index: 40; }
+100% { transform: translateY(0) scale(1) rotate(-2deg); z-index: 40; opacity: 1; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06); }
+}
+
+@keyframes endingSoftFloat {
+0%, 100% { transform: translateY(0); }
+50% { transform: translateY(-10px); }
+}
+
+@keyframes endingHintFloat {
+0%, 100% { transform: translateY(0); opacity: 0.6; }
+50% { transform: translateY(-4px); opacity: 0.9; }
+}
+
+@media (max-width: 960px) {
+.ending-section {
+padding: 52px 5% 58px;
+}
+.ending-interactive-canvas {
+flex-direction: column;
+gap: 40px;
+height: auto;
+padding-left: 0;
+}
+#source-node {
+transform: none;
+}
+.ending-container.js-ending-ready #source-node {
+transform: translateY(40px);
+}
+.ending-container.js-ending-ready.is-visible #source-node {
+transform: none;
+}
+.letter-universe {
+position: relative;
+left: auto;
+bottom: auto;
+margin: 60px auto 0 auto;
+order: 3;
+}
+.minimal-footer {
+flex-wrap: wrap;
+gap: 12px;
+padding: 16px 18px;
+}
+.footer-left {
+flex-wrap: wrap;
+gap: 10px 14px;
+}
+.footer-right {
+margin-left: 0;
+}
+.footer-right::before {
+height: 16px;
+}
+}
+
+/* =======================================================
+📱 手机移动端样式（纯隔离，绝不影响上面的电脑端并排效果）
+======================================================= */
+@media (max-width: 768px) {
+  body, html { overflow-x: hidden !important; }
+  .site-header { padding: 20px 4% !important; }
+  .brand-name { font-size: 15px !important; }
+  .nav-links { gap: 14px !important; }
+  .nav-links a { font-size: 11px !important; }
+  
+  /* 背包手机端 */
+  .hero-container { height: 75vh; }
+  .bag-wrapper { width: 310px !important; height: 390px !important; }
+  .reality-eye-btn { bottom: 8% !important; left: 8% !important; }
+  
+  /* 悬浮卡片式简介面板 */
+  .info-panel {
+    position: fixed !important; top: 50% !important; left: 50% !important; right: auto !important; bottom: auto !important;
+    transform: translate(-50%, -40%) scale(0.9) !important; width: 85% !important; max-width: 320px;
+    background: rgba(255, 255, 255, 0.98) !important; backdrop-filter: blur(20px) !important;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15) !important; border: 1px solid rgba(0,0,0,0.1) !important;
+    border-radius: 12px !important; padding: 24px !important; z-index: 2000 !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+  .info-panel.show { opacity: 1 !important; pointer-events: auto !important; transform: translate(-50%, -50%) scale(1) !important; }
+
+  /* 📸 手机端拍立得自适应：纵向堆叠展示 */
+  .polaroid-group {
+    flex-direction: column !important;
+    gap: 15px !important;
+    margin-bottom: 30px !important;
+  }
+  .polaroid {
+    width: 160px !important; 
+    height: auto !important;
+  }
+  /* 修复手机端手写字与回形针便签的比例 */
+  .note-wrapper {
+    width: 92% !important;
+  }
+  .intro-note-card {
+    padding: 25px 15px !important;
+  }
+  .intro-note-card p {
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+  }
+}
+
+/* --- 响应式加强版：覆盖上面的手机规则，尽量保留桌面视觉而不是重排 UI --- */
+@media (max-width: 1100px) {
+  .notebook-container {
+    width: 1040px;
+    zoom: var(--notebook-mobile-scale);
+  }
+}
+
+@media (max-width: 900px) {
+  body {
+    background-attachment: scroll;
+  }
+
+  .site-header {
+    padding: 26px 5% !important;
+    gap: 18px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .nav-links {
+    gap: 18px !important;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    max-width: 70%;
+  }
+
+  .hero-container {
+    min-height: 100svh;
+    height: auto !important;
+    padding-top: 96px;
+  }
+
+  .bag-wrapper {
+    width: min(580px, calc(100vw - 28px)) !important;
+    height: auto !important;
+    aspect-ratio: 580 / 720;
+    max-height: calc(100svh - 150px);
+  }
+
+  .bag-image {
+    height: 100%;
+  }
+
+  .info-panel {
+    position: absolute !important;
+    left: 50% !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: 8% !important;
+    width: min(280px, calc(100vw - 40px)) !important;
+    transform: translateX(-50%) translateY(10px) !important;
+    border-radius: 8px !important;
+    z-index: 30 !important;
+  }
+
+  .info-panel.show {
+    transform: translateX(-50%) translateY(0) !important;
+  }
+
+  .tag-tooltip {
+    max-width: calc(100vw - 40px);
+    white-space: normal;
+  }
+
+  .polaroid-group {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 0 !important;
+    transform: scale(0.9);
+    transform-origin: center top;
+    margin-bottom: 48px !important;
+  }
+
+  .polaroid {
+    width: min(280px, 30vw) !important;
+  }
+
+  .handwritten-name {
+    font-size: clamp(42px, 12vw, 70px) !important;
+    bottom: -1.35em !important;
+  }
+
+  .note-wrapper {
+    width: min(680px, calc(100vw - 32px)) !important;
+  }
+
+  .intro-note-card {
+    padding: 36px 30px 30px 30px !important;
+  }
+
+  .intro-note-card p {
+    font-size: 16px !important;
+  }
+
+  .experience-section {
+    overflow: hidden;
+    padding-top: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .site-header {
+    padding: 22px 18px !important;
+  }
+
+  .brand-name {
+    font-size: 17px !important;
+  }
+
+  .nav-links {
+    gap: 10px 14px !important;
+    max-width: 100%;
+    justify-content: flex-start;
+  }
+
+  .nav-links a {
+    font-size: 12px !important;
+  }
+
+  .hero-container {
+    padding-top: 118px;
+  }
+
+  .hero-story-note {
+    display: block;
+    top: 150px;
+    width: calc(100vw - 48px);
+    font-size: 10px;
+    letter-spacing: 2px;
+    white-space: normal;
+    line-height: 1.7;
+  }
+
+  .reality-eye-btn {
+    width: 42px;
+    height: 42px;
+    bottom: 12% !important;
+    left: 12% !important;
+  }
+
+  .scroll-text {
+    font-size: 9px;
+    max-width: calc(100vw - 32px);
+    white-space: normal;
+    text-align: center;
+  }
+
+  .next-content-section {
+    padding: 100px 18px 70px 18px !important;
+    min-height: auto !important;
+  }
+
+  .polaroid-group {
+    display: grid !important;
+    grid-template-areas: "stack";
+    place-items: center;
+    width: calc(100vw - 36px) !important;
+    min-height: 270px;
+    transform: none;
+    margin-bottom: 108px !important;
+  }
+
+  .polaroid {
+    grid-area: stack;
+    width: min(230px, 62vw) !important;
+    min-width: 0;
+  }
+
+  .card-1-wrapper {
+    grid-area: stack;
+    position: relative;
+    z-index: 3;
+  }
+
+  .card-1 {
+    z-index: 3;
+  }
+
+  .card-3 {
+    z-index: 1;
+  }
+
+  .card-2 {
+    z-index: 1;
+  }
+
+  .handwritten-name {
+    font-size: clamp(34px, 13vw, 52px) !important;
+    left: 57% !important;
+    bottom: -4em !important;
+  }
+
+  .note-trigger-section {
+    margin-top: 28px !important;
+  }
+
+  .paperclip-anim {
+    top: -41px !important;
+    left: 34px !important;
+    transform: rotate(-8deg) scale(0.88) !important;
+  }
+
+  .bag-wrapper,
+  .polaroid,
+  .card-1-wrapper,
+  .note-wrapper,
+  .paperclip-anim {
+    backface-visibility: hidden;
+    will-change: transform, opacity;
+  }
+
+  .bag-image,
+  .polaroid {
+    image-rendering: auto;
+  }
+
+  .intro-note-card {
+    padding: 32px 24px 28px 24px !important;
+  }
+
+  .intro-note-card p {
+    font-size: 15px !important;
+    line-height: 1.55 !important;
+  }
+
+  .note-learn-more {
+    font-size: 15px !important;
+  }
+
+  .experience-section {
+    padding: 28px 0 88px 0;
+    min-height: auto;
+  }
+
+  .notebook-container {
+    display: none !important;
+  }
+
+  .mobile-experience-folder {
+    --folder-paper: #fdfbf7;
+    --folder-edge: rgba(26, 26, 26, 0.07);
+    --folder-muted: #8b8882;
+    --folder-ink: #2f2f2d;
+    --folder-accent: #b55d9d;
+    display: block;
+    width: min(92vw, 430px);
+    margin: 0 auto;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .folder-tabs {
+    display: flex;
+    align-items: flex-end;
+    gap: 0;
+    padding: 0 14px;
+    position: relative;
+    margin-bottom: -1px;
+  }
+
+  .folder-tab {
+    appearance: none;
+    position: relative;
+    min-width: 0;
+    flex: 1;
+    border: 1px solid var(--folder-edge);
+    border-bottom: none;
+    min-height: 36px;
+    margin: 0 -2px;
+    padding: 9px 6px 8px;
+    border-radius: 10px 10px 0 0;
+    background: #f7f4ed;
+    color: var(--folder-muted);
+    font-size: 10px;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+    font-weight: 500;
+    font-family: "Helvetica Neue", "Avenir Next", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+    transform-origin: bottom center;
+    z-index: 1;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      transform 160ms ease,
+      box-shadow 160ms ease,
+      background 160ms ease,
+      color 160ms ease,
+      border-color 160ms ease;
+  }
+
+  .folder-tab::before,
+  .folder-tab::after {
+    display: none;
+  }
+
+  .folder-tab:nth-child(1) {
+    transform: translateY(10px);
+    z-index: 1;
+  }
+
+  .folder-tab:nth-child(2) {
+    transform: translateY(11px);
+    background: #f4f1ea;
+    z-index: 1;
+  }
+
+  .folder-tab:nth-child(2)::before { display: none; }
+  .folder-tab:nth-child(2)::after { display: none; }
+
+  .folder-tab:active {
+    transform: translateY(12px);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.035);
+  }
+
+  .folder-tab.active {
+    min-height: 44px;
+    color: var(--folder-ink);
+    background: var(--folder-paper);
+    border-color: var(--folder-edge);
+    border-bottom: none;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.78);
+    transform: translateY(1px);
+    z-index: 3;
+  }
+
+  .folder-tab.active::after {
+    content: "";
+    display: block;
+    position: absolute;
+    left: -1px;
+    right: -1px;
+    bottom: -3px;
+    height: 5px;
+    background: var(--folder-paper);
+    z-index: 4;
+    pointer-events: none;
+  }
+
+  .folder-tab.active::before {
+    display: none;
+  }
+
+  .folder-body-card {
+    position: relative;
+    z-index: 2;
+    min-height: 390px;
+    margin-top: 0;
+    padding: 34px 22px 28px;
+    border-radius: 18px 18px 24px 24px;
+    background: var(--folder-paper);
+    border: 1px solid var(--folder-edge);
+    border-top-color: var(--folder-edge);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.72),
+      inset 0 7px 10px rgba(26,26,26,0.018),
+      0 12px 30px rgba(26,26,26,0.045),
+      0 1px 4px rgba(26,26,26,0.03);
+    overflow: hidden;
+  }
+
+  .folder-body-card.is-work-open {
+    padding-bottom: 72px;
+  }
+
+  .folder-body-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.055;
+    background-image:
+      radial-gradient(circle, rgba(26,26,26,0.22) 0 0.65px, transparent 0.8px);
+    background-size: 18px 18px;
+  }
+
+  .mobile-tab-panel {
+    display: none;
+    position: relative;
+    z-index: 1;
+    transform-origin: top center;
+  }
+
+  .mobile-resume-link {
+    position: absolute;
+    left: 50%;
+    bottom: 26px;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #77736d;
+    text-decoration: none;
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0.01em;
+    font-weight: 600;
+    padding: 4px 6px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  .mobile-resume-link:hover,
+  .mobile-resume-link:focus-visible {
+    color: var(--folder-accent);
+  }
+
+  .mobile-resume-link:active {
+    color: var(--folder-accent);
+    transform: translateX(-50%) translateY(1px);
+  }
+
+  .mobile-tab-panel.active {
+    display: block;
+    animation: folderPanelLift 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes folderPanelLift {
+    0% { opacity: 0; transform: translateY(8px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .mobile-experience-folder .page-title {
+    font-size: 13px !important;
+    margin-bottom: 22px !important;
+    color: #1e2d5a !important;
+  }
+
+  .mobile-experience-folder .timeline-container { padding-left: 11px; }
+  .mobile-experience-folder .timeline-item { padding-bottom: 32px; }
+  .mobile-experience-folder .timeline-dot { background: #ffffff; border-color: rgba(0,0,0,0.06); }
+  .mobile-experience-folder .highlight-streak { background: rgba(44, 62, 107, 0.1); opacity: 1; }
+  .mobile-experience-folder .edu-title,
+  .mobile-experience-folder .job-company { font-size: 15px !important; }
+  .mobile-experience-folder .edu-desc,
+  .mobile-experience-folder .job-desc { font-size: 12.5px !important; line-height: 1.6 !important; }
+  .mobile-experience-folder .job-date { white-space: nowrap; margin-left: 12px; }
+  .mobile-experience-folder .job-meta { gap: 12px; }
+}
+
+@supports not (zoom: 1) {
+  @media (max-width: 1100px) {
+    .notebook-container {
+      transform: scale(var(--notebook-mobile-scale));
+      transform-origin: top center !important;
+    }
+  }
+}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<header class="site-header">
+<a href="index.html" class="brand-name">Alisa Zhao</a>
+<nav class="nav-links">
+<a href="about.html" class="active" data-nav="about">About Me</a>
+<a href="projects.html" data-nav="projects">Projects</a>
+<a href="experience.html" data-nav="experience">Experience</a>
+<a href="off-the-record.html" data-nav="off-record">Off the Record</a>
+</nav>
+</header>
+
+<section class="hero-container">
+<div class="hero-story-note" id="heroStoryNote">A forgotten backpack.<br><span class="hero-story-accent">Tap the keychains</span> for clues.</div>
+<div class="bag-wrapper" id="bagWrapper">
+<img src="assets/hero-bag.png" alt="Studio Bag" class="bag-image img-studio">
+<img src="assets/real-bag.png" alt="Reality Bag" class="bag-image img-reality">
+<div class="reality-eye-btn" id="realityEyeBtn">
+<svg viewBox="0 0 24 24">
+<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+<circle cx="12" cy="12" r="3"></circle>
+</svg>
+<div class="tag-tooltip">Reality Check (Hold)</div>
+</div>
+<div class="hotspot spot-projects" onclick="window.location.href='projects.html'"><div class="tag-tooltip">explore selected projects ↗</div></div>
+<div class="hotspot spot-experience" onclick="window.location.href='experience.html'"><div class="tag-tooltip">view my resume & career achievements ↗</div></div>
+<div class="hotspot spot-journal" onclick="window.location.href='off-the-record.html'"><div class="tag-tooltip">off the record ↗</div></div>
+<div class="hotspot spot-about-me" onclick="window.location.href='about.html'"><div class="tag-tooltip">read my story ↗</div></div>
+<div class="hotspot spot-switch" data-panel="panel-switch"></div>
+<div class="hotspot spot-blue-bear" data-panel="panel-blue-bear"></div>
+<div class="hotspot spot-companion" data-panel="panel-plush-dog"></div>
+
+<div class="info-panel panel-left-dog" id="panel-plush-dog">
+<span class="panel-tag">Bamguet</span>
+<p class="panel-text">Beomgyu from TXT designed this little dog (bear?) and i ended up collecting every version. This is the original. Summer it turns into the one holding watermelon, come winter a snowman version. Yes i take this very seriously :) 🤍</p>
+</div>
+<div class="info-panel panel-right-bear" id="panel-blue-bear">
+<span class="panel-tag">Yukio</span>
+<p class="panel-text">I'm usually a fridge magnet souvenir person. Then this guy captured me at mount fuji and i didn't put up a fight.</p>
+</div>
+<div class="info-panel panel-right-switch" id="panel-switch">
+<span class="panel-tag">Nintendo Switch</span>
+<p class="panel-text">Favorite character ever: Toadette. 375 hours in animal crossing and my island's still not done. I will happily walk you through my whole cartridge collection.</p>
+</div>
+</div>
+<div class="scroll-hint-container" id="scrollHint">
+<div class="scroll-arrow-icon">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8c8c8c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+<line x1="12" y1="5" x2="12" y2="19"></line>
+<polyline points="19 12 12 19 5 12"></polyline>
+</svg>
+</div>
+<span class="scroll-text">scroll to open Alisa's backpack</span>
+</div>
+</section>
+
+<!-- 📸 完全恢复原代码嵌套与排布逻辑的拍立得和斜角撕边纸区块 -->
+<section class="next-content-section" style="width: 100%; min-height: 100vh; padding: 120px 6%; background: transparent; position: relative; z-index: 50; display: flex; flex-direction: column; align-items: center; box-sizing: border-box;">
+
+<!-- 拍立得组：在电脑上横向并排（向外倾斜），手机上自动纵向 -->
+<div class="polaroid-group">
+<img class="polaroid card-3" src="assets/polaroid-marketing.png" alt="Marketing Analyst" style="transform: rotate(-5deg); filter: drop-shadow(0 10px 20px rgba(0,0,0,0.06));">
+<div class="card-1-wrapper" style="position: relative; z-index: 2;">
+<img class="polaroid card-1" src="assets/polaroid-alisa.png" alt="Alisa Zhao" style="transform: rotate(0deg); filter: drop-shadow(0 12px 25px rgba(0,0,0,0.1));">
+<div class="handwritten-name" style="position: absolute; bottom: -120px; left: 50%; transform: translateX(-50%) rotate(-1deg); font-family: 'Gochi Hand', cursive; font-size: 70px; color: #3d3531; white-space: nowrap; pointer-events: none; z-index: 10; background: linear-gradient(to right, currentcolor 100%, transparent 100%) no-repeat; background-size: 0% 100%; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Alisa Zhao</div>
+</div>
+<img class="polaroid card-2" src="assets/polaroid-creative.png" alt="Creative Strategist" style="transform: rotate(5deg); filter: drop-shadow(0 10px 20px rgba(0,0,0,0.06));">
+</div>
+
+<!-- 便签纸触发区：名字、回形针、文字完美容纳在内 -->
+<div class="note-trigger-section" style="width: 100%; display: flex; justify-content: center; margin-top: -15px; margin-bottom: 60px; position: relative;">
+<div class="note-wrapper">
+<!-- 回形针 -->
+<div class="paperclip-anim" style="position: absolute; top: -32px; left: 65px; width: 22px; height: 72px; border: 2px solid #333333; border-radius: 11px; pointer-events: none; transform: rotate(-8deg); z-index: 99; background: transparent; opacity: 0;">
+<div style="position: absolute; top: 10px; left: 2px; right: 2px; bottom: 15px; border: 2px solid #333333; border-bottom: none; border-radius: 7px 7px 0 0;"></div>
+</div>
+<!-- 撕边形状便签主体 -->
+<div class="intro-note-card" style="width: 100%; background: #fdfbf7; box-shadow: 2px 15px 35px rgba(0,0,0,0.05); position: relative; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; padding: 40px 30px; clip-path: polygon(0% 2%, 4% 0%, 9% 3%, 13% 1%, 18% 4%, 22% 1%, 28% 3%, 33% 0%, 39% 4%, 45% 1%, 51% 3%, 56% 0%, 63% 4%, 68% 1%, 74% 3%, 80% 0%, 86% 4%, 92% 1%, 97% 3%, 100% 1%, 98% 12%, 100% 24%, 97% 35%, 99% 48%, 98% 62%, 100% 75%, 97% 88%, 99% 100%, 95% 98%, 91% 100%, 85% 97%, 80% 99%, 74% 97%, 68% 100%, 62% 98%, 55% 99%, 49% 97%, 43% 100%, 38% 98%, 32% 99%, 26% 97%, 20% 100%, 14% 98%, 9% 99%, 3% 97%, 0% 100%, 1% 87%, 3% 76%, 0% 64%, 2% 51%, 0% 39%, 2% 25%, 0% 12%);">
+<!-- 核心文案 -->
+<div style="text-align: center; margin-bottom: 25px; width: 100%;">
+<p style="font-size: 18px; line-height: 1.6; color: #2b2b2b; margin: 0; font-weight: 400; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; letter-spacing: -0.2px;">Data-driven marketing analyst. </p>
+<p style="font-size: 18px; line-height: 1.6; color: #2b2b2b; margin: 0; font-weight: 400; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; letter-spacing: -0.2px;">I help marketing teams find what is working and do more of it.</p>
+</div>
+<a href="about.html" class="note-learn-more" style="display: inline-block; color: #1a1a1a; text-decoration: none; font-size: 16px; font-weight: 700; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; letter-spacing: -0.3px; padding: 2px 4px; position: relative; transition: all 0.25s ease; border-bottom: 3.5px solid #1a1a1a;">Learn more</a>
+</div>
+</div>
+</div>
+</section>
+
+<!-- 活页手账本区域 -->
+<section class="experience-section">
+<div class="notebook-container">
+<img src="assets/binder.png" alt="Binder Notebook" class="notebook-bg-img">
+<div class="sheet-page-left" id="leftPage">
+<h3 class="page-title">Education</h3>
+<div class="timeline-container">
+<div class="timeline-item">
+<div class="timeline-dot"><img src="assets/northwestern-logo.png" alt="NU Logo"></div>
+<div class="edu-date">2025 - present</div>
+<div class="edu-title">Northwestern University</div>
+<div class="edu-desc">M.S. in Integrated Marketing Communication</div>
+<div class="edu-desc">Track: Data and Media</div>
+</div>
+<div class="timeline-item">
+<div class="timeline-dot"><img src="assets/bu-logo.png" alt="BU Logo"></div>
+<div class="edu-date">2021 - 2025</div>
+<div class="edu-title">Boston University</div>
+<div class="edu-desc">B.S. in Advertising, Minor in Psychology</div>
+<div class="edu-desc">Dean's Honor List for 4 semesters</div>
+</div>
+</div>
+<div class="pouch-wrapper" id="pouchWrapper">
+<div class="pouch-body-container">
+<a href="assets/Alisa_Zhao_Resume.pdf" target="_blank" class="pouch-resume-paper" id="resumePaper">
+<div class="paper-lines-group">
+<div class="paper-line" style="width: 35%; background: #2c3e6b;"></div>
+<div class="paper-line"></div>
+<div class="paper-line" style="width: 80%;"></div>
+</div>
+<div class="paper-text-center">Alisa_CV.pdf</div>
+</a>
+<div class="pouch-pvc-front"><div class="pouch-zip"></div></div>
+</div>
+<div class="pouch-label-outside" style="margin-top: 8px; margin-bottom: 0;">
+<span>Full Resume</span>
+<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+<polyline points="18 15 12 9 6 15"></polyline>
+</svg>
+</div>
+</div>
+</div>
+<div class="sheet-page-right" id="rightPage">
+<h3 class="page-title">Experience</h3>
+<div class="job-item">
+<div class="job-meta">
+<span class="job-company"><span class="highlight-trigger">Peace Players <span class="highlight-streak"></span></span></span>
+<span class="job-date">Jun. 2026 - present</span>
+</div>
+<div class="job-role">CRM Analyst</div>
+<p class="job-desc">Building a HubSpot CRM strategy to segment supporters, automate donor journeys, and track engagement and repeat donations. </p>
+</div>
+<div class="job-item">
+<div class="job-meta">
+<span class="job-company"><span class="highlight-trigger">Duke Kunshan University <span class="highlight-streak"></span></span></span>
+<span class="job-date">Mar. 2025 - Aug. 2025</span>
+</div>
+<div class="job-role">Marekting Intern</div>
+<p class="job-desc">Created SOPs, student entrepreneurship stories, and external-facing marketing materials to support website rebuild, event promotion, and program operations.</p>
+</div>
+<div class="job-item">
+<div class="job-meta">
+<span class="job-company"><span class="highlight-trigger">BU Libraries <span class="highlight-streak"></span></span></span>
+<span class="job-date">Sept. 2024 - Jan. 2025</span>
+</div>
+<div class="job-role">Communications Graphic Designer</div>
+<p class="job-desc">Created 40+ design assets across 12 projects, with selected work reused as template.</p>
+</div>
+<div class="job-item">
+<div class="job-meta">
+<span class="job-company"><span class="highlight-trigger">LabCentral <span class="highlight-streak"></span></span></span>
+<span class="job-date">Jun. 2024 - Aug. 2024</span>
+</div>
+<div class="job-role">Marketing & Creative Intern</div>
+<p class="job-desc">Helped increase website visitors by 25% through SEO, content optimization, and lead-funnel research.</p>
+</div>
+</div>
+</div>
+<div class="mobile-experience-folder" aria-label="Experience folder">
+<div class="folder-tabs" role="tablist" aria-label="Experience details">
+<button class="folder-tab active" type="button" role="tab" aria-selected="true" aria-controls="mobileEducationPanel" data-folder-tab="education">Education</button>
+<button class="folder-tab" type="button" role="tab" aria-selected="false" aria-controls="mobileWorkPanel" data-folder-tab="work">Work Experience</button>
+</div>
+<div class="folder-body-card">
+<a class="mobile-resume-link" href="assets/Alisa_Zhao_Resume.pdf" target="_blank" rel="noopener">View Full Resume ↗</a>
+<div class="mobile-tab-panel active" id="mobileEducationPanel" role="tabpanel" data-folder-panel="education">
+<h3 class="page-title">Education</h3>
+<div class="timeline-container">
+<div class="timeline-item">
+<div class="timeline-dot"><img src="assets/northwestern-logo.png" alt="NU Logo"></div>
+<div class="edu-date">2025 - present</div>
+<div class="edu-title">Northwestern University</div>
+<div class="edu-desc">M.S. in Integrated Marketing Communication</div>
+<div class="edu-desc">Track: Data and Media</div>
+</div>
+<div class="timeline-item">
+<div class="timeline-dot"><img src="assets/bu-logo.png" alt="BU Logo"></div>
+<div class="edu-date">2021 - 2025</div>
+<div class="edu-title">Boston University</div>
+<div class="edu-desc">B.S. in Advertising, Minor in Psychology</div>
+<div class="edu-desc">Dean's Honor List for 4 semesters</div>
+</div>
+</div>
+</div>
+<div class="mobile-tab-panel" id="mobileWorkPanel" role="tabpanel" data-folder-panel="work">
+<h3 class="page-title">Work Experience</h3>
+<div class="job-item">
+<div class="job-meta">
+<span class="job-company"><span class="highlight-trigger">Peace Players <span class="highlight-streak"></span></span></span>
+<span class="job-date">Jun. 2026 - present</span>
+</div>
+<div class="job-role">CRM Analyst</div>
+<p class="job-desc">Building a HubSpot CRM strategy to segment supporters, automate donor journeys, and track engagement and repeat donations. </p>
+</div>
+<div class="job-item">
+<div class="job-meta">
+<span class="job-company"><span class="highlight-trigger">Duke Kunshan University <span class="highlight-streak"></span></span></span>
+<span class="job-date">Mar. 2025 - Aug. 2025</span>
+</div>
+<div class="job-role">Marketing Intern</div>
+<p class="job-desc">Created SOPs, student entrepreneurship stories, and external-facing marketing materials to support website rebuild, event promotion, and program operations.</p>
+</div>
+<div class="job-item">
+<div class="job-meta">
+<span class="job-company"><span class="highlight-trigger">BU Libraries <span class="highlight-streak"></span></span></span>
+<span class="job-date">Sept. 2024 - Jan. 2025</span>
+</div>
+<div class="job-role">Communications Graphic Designer</div>
+<p class="job-desc">Created 40+ design assets across 12 projects, with selected work reused as template.</p>
+</div>
+<div class="job-item">
+<div class="job-meta">
+<span class="job-company"><span class="highlight-trigger">LabCentral <span class="highlight-streak"></span></span></span>
+<span class="job-date">Jun. 2024 - Aug. 2024</span>
+</div>
+<div class="job-role">Marketing & Creative Intern</div>
+<p class="job-desc">Helped increase website visitors by 25% through SEO, content optimization, and lead-funnel research.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Featured Projects: digital space desktop -->
+<section class="projects-desktop-section" id="projects" aria-label="Featured projects desktop showcase">
+<div class="desktop-screen-area" aria-label="Draggable project windows">
+<div class="desktop-shortcut" data-desktop-shortcut role="link" tabindex="0" aria-label="Open all projects">
+<div class="desktop-shortcut-icon" aria-hidden="true">
+<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg">
+<rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+<rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+<rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+<rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+</svg>
+<span class="desktop-shortcut-count">11</span>
+</div>
+<span class="desktop-shortcut-label">all.projects</span>
+</div>
+<article class="mac-window active-window" id="project-window-1" data-project-window>
+<div class="mac-title-bar" data-drag-handle>
+<div class="mac-window-dots" aria-hidden="true">
+<span class="mac-dot red"></span>
+<span class="mac-dot yellow"></span>
+<span class="mac-dot green"></span>
+</div>
+<div class="mac-window-title">Project / 01</div>
+<span class="drag-hint-badge">[ Drag to Move ]</span>
+</div>
+<div class="project-banner-media">
+<img src="assets/campaign_cover.png" alt="Marketing campaign response and segmentation preview">
+</div>
+<div class="mac-content-vertical">
+<h3 class="project-name">Marketing Campaign Response & Segmentation</h3>
+<div class="star-box">
+<div class="star-row"><span class="star-label">SITUATION</span><p>A retailer ran campaigns to its whole list at flat cost. Which customers were actually worth targeting?</p></div>
+<div class="star-row"><span class="star-label">RESULTS</span><p class="highlight-result">Built clustering and a propensity model in R that lifted response 3.3x over random, and found the most valuable customers were the least active online.</p></div>
+</div>
+<button class="project-btn" type="button" onclick="openLandingProject('proj-analytics-campaign')">View Project Detail →</button>
+</div>
+</article>
+
+<article class="mac-window" id="project-window-2" data-project-window>
+<div class="mac-title-bar" data-drag-handle>
+<div class="mac-window-dots" aria-hidden="true">
+<span class="mac-dot red"></span>
+<span class="mac-dot yellow"></span>
+<span class="mac-dot green"></span>
+</div>
+<div class="mac-window-title">Project / 02</div>
+<span class="drag-hint-badge">[ Drag to Move ]</span>
+</div>
+<div class="project-banner-media">
+<img src="assets/Heartbeat_BTS_4.JPG" alt="Heartbeat student dating show preview">
+</div>
+<div class="mac-content-vertical">
+<h3 class="project-name">Heartbeat — A Student Dating Show</h3>
+<div class="star-box">
+<div class="star-row"><span class="star-label">SITUATION</span><p>BU had no student-run dating show. Could a small team make one people actually watched?</p></div>
+<div class="star-row"><span class="star-label">RESULTS</span><p class="highlight-result">Co-led it to 300K+ views and 6x follower growth on a $420 budget, designed the full visual identity, then ran a data review of what drove reach.</p></div>
+</div>
+<button class="project-btn" type="button" onclick="openLandingProject('proj-heartbeat')">View Project Detail →</button>
+</div>
+</article>
+
+<article class="mac-window" id="project-window-3" data-project-window>
+<div class="mac-title-bar" data-drag-handle>
+<div class="mac-window-dots" aria-hidden="true">
+<span class="mac-dot red"></span>
+<span class="mac-dot yellow"></span>
+<span class="mac-dot green"></span>
+</div>
+<div class="mac-window-title">Project / 03</div>
+<span class="drag-hint-badge">[ Drag to Move ]</span>
+</div>
+<div class="project-banner-media">
+<img src="assets/peace_cover.png" alt="PeacePlayers CRM strategy preview">
+</div>
+<div class="mac-content-vertical">
+<h3 class="project-name">PeacePlayers CRM Strategy</h3>
+<div class="star-box">
+<div class="star-row"><span class="star-label">SITUATION</span><p>A nonprofit's CRM had 20K+ contacts but weak engagement. Deliverability problem, or targeting problem?</p></div>
+<div class="star-row"><span class="star-label">RESULTS</span><p class="highlight-result">Audited the full CRM, diagnosed targeting as the root cause, and designed a supporter segmentation framework to fix it.</p></div>
+</div>
+<button class="project-btn" type="button" onclick="openLandingProject('proj-analytics-peace')">View Project Detail →</button>
+</div>
+</article>
+</div>
+<div class="dock-wrapper" aria-label="Workspace applications dock">
+<ul class="dock-container">
+<li class="dock-item" data-name="R&#10;Expert · Regressions and ML on 219K-row datasets">
+<a class="dock-link"><div class="dock-pod"><img src="assets/RStudio.svg" alt="RStudio"></div></a>
+</li>
+<li class="dock-item" data-name="Tableau&#10;Proficient · Messy data into clean dashboards">
+<a class="dock-link"><div class="dock-pod"><img src="assets/Tableau_idW4GZaB-5_0.svg" alt="Tableau"></div></a>
+</li>
+<li class="dock-item" data-name="MySQL&#10;Expert · Queried datasets across 20K+ customers">
+<a class="dock-link"><div class="dock-pod"><img src="assets/MySQL.svg" alt="MySQL"></div></a>
+</li>
+<li class="dock-item" data-name="Excel&#10;Expert · Pivot tables, cleanups, number-crunching">
+<a class="dock-link"><div class="dock-pod-flush"><img src="assets/excel.svg" alt="Excel"></div></a>
+</li>
+<li class="dock-item" data-name="PowerPoint&#10;Proficient · Know my way around it">
+<a class="dock-link"><div class="dock-pod-flush"><img src="assets/powerpoint.svg" alt="PowerPoint"></div></a>
+</li>
+<li class="dock-item" data-name="Photoshop&#10;Expert · Retouching and visuals, 40+ assets">
+<a class="dock-link"><img src="assets/Adobe_Photoshop_CC_icon.svg" class="full-bleed" alt="Photoshop"></a>
+</li>
+<li class="dock-item" data-name="Illustrator&#10;Expert · Event collateral for 10+ events">
+<a class="dock-link"><img src="assets/Adobe_Illustrator_CC_icon.svg" class="full-bleed" alt="Illustrator"></a>
+</li>
+<li class="dock-item" data-name="InDesign&#10;Proficient · Magazine layout and editorial">
+<a class="dock-link"><img src="assets/Adobe_InDesign_CC_icon.svg" class="full-bleed-id" alt="InDesign"></a>
+</li>
+<li class="dock-item" data-name="CapCut&#10;Expert · My own content, 1.4M+ views">
+<a class="dock-link"><img src="assets/Capcut-icon.svg" class="full-bleed" alt="CapCut"></a>
+</li>
+<li class="dock-item" data-name="Codex&#10;Familiar · Workflow automation and vibe coding">
+<a class="dock-link"><div class="dock-pod"><img src="assets/codex-color.svg" alt="Codex"></div></a>
+</li>
+<li class="dock-item" data-name="Cursor&#10;Familiar · Coding and editing this site">
+<a class="dock-link"><img src="assets/cursor-ai-code-icon.svg" class="full-bleed" alt="Cursor"></a>
+</li>
+<li class="dock-item" data-name="Google Analytics&#10;Proficient · GA4 certified">
+<a class="dock-link"><div class="dock-pod"><img src="assets/google-analytics-icon.svg" alt="Google Analytics"></div></a>
+</li>
+<li class="dock-item" data-name="HubSpot&#10;Proficient · Segmentation and automation for a nonprofit CRM">
+<a class="dock-link"><div class="dock-pod"><img src="assets/hubspot-icon.svg" alt="HubSpot"></div></a>
+</li>
+<li class="dock-item" data-name="Notion&#10;Proficient · Personal tracking and project management">
+<a class="dock-link"><div class="dock-pod-notion"><img src="assets/notion-icon.svg" alt="Notion"></div></a>
+</li>
+<li class="dock-item" data-name="Canva&#10;Expert · Pitch decks for 5+ unscripted show">
+<a class="dock-link"><div class="dock-pod"><img src="assets/canva-icon.svg" alt="Canva"></div></a>
+</li>
+</ul>
+</div>
+</section>
+
+<section class="ending-section" id="off-the-record" aria-label="Return Alisa's backpack">
+<div class="ending-container" id="ending-container">
+<div class="ending-interactive-canvas">
+<div class="letter-universe" id="letter-universe">
+<div class="envelope-wrapper" id="envelope-wrapper">
+<div class="real-envelope-back"></div>
+<div class="envelope-flap"></div>
+<div class="scrapbook-paper">
+<div class="paper-tape"></div>
+Hi, you made it to the end!<br><br>
+Thank you for returning my backpack. Everything I care about hangs on it, so this means a lot.<br><br>
+If you enjoyed this site, or have ideas to make it better, I'd love to hear from you. And if you think we could work together, even better.<br><br>
+My contact is right below.<br><br>
+— Alisa
+<div class="vintage-travel-stamp">
+<span class="stamp-date" id="live-stamp-date">Jun 11</span>
+</div>
+</div>
+<div class="envelope-front-pocket"></div>
+</div>
+</div>
+
+<div class="ending-interactive-node" id="source-node">
+<div class="node-floor"></div>
+<img src="assets/hero-bag.png" id="backpack" class="jester-bag breathe" alt="Alisa's Backpack">
+<div class="ending-drag-hint" id="ending-drag-hint">[drag to return]</div>
+</div>
+
+<div class="ending-interactive-node" id="drop-zone">
+<div class="thank-you-bubble" id="thank-you-bubble">Thank you! ✨</div>
+<img src="assets/girl-without-bag.png" id="girl-lost" class="character-img" alt="Searching">
+<img src="assets/girl-with-bag.png" id="girl-happy" class="character-img hidden" alt="Reunited">
+</div>
+</div>
+
+<footer class="minimal-footer">
+<div class="footer-left">
+<a href="http://www.linkedin.com/in/alisa-zhao-92a644292" target="_blank" rel="noopener" class="footer-link footer-link-linkedin">LinkedIn</a>
+<div class="link-dot"></div>
+<a href="https://github.com/alsz322" target="_blank" rel="noopener" class="footer-link footer-link-github">GitHub</a>
+<div class="link-dot"></div>
+<a href="assets/Alisa_Zhao_Resume.pdf" target="_blank" rel="noopener" class="footer-link footer-link-resume">View Resume</a>
+<div class="link-dot"></div>
+<a href="mailto:azhao0322@gmail.com" class="footer-link footer-link-email">Email</a>
+</div>
+<div class="footer-right">
+<button id="back-to-top-btn" class="back-to-top-link" type="button">
+<span>Back to top</span>
+<svg viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+<path d="M8 13V3M8 3L3.75 7.25M8 3l4.25 4.25" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</button>
+</div>
+</footer>
+</div>
+</section>
+
+<button id="landing-project-close" class="landing-project-close" type="button" onclick="closeLandingProject()">
+<span>Close</span>
+<span class="landing-project-close-icon">✕</span>
+</button>
+<div id="landing-project-overlay" class="landing-project-overlay" aria-hidden="true">
+<div class="landing-project-shell">
+<div id="landing-project-content" class="landing-project-content"></div>
+</div>
+</div>
+
+<div id="landing-project-lightbox" class="landing-project-lightbox" aria-hidden="true" onclick="closeLandingLightbox()">
+<button class="landing-project-lightbox-close" type="button" onclick="event.stopPropagation(); closeLandingLightbox();">Close</button>
+<img id="landing-project-lightbox-img" src="" alt="" onclick="event.stopPropagation();">
+</div>
+
+<script>
+function updateNotebookMobileScale() {
+const availableWidth = Math.max(320, window.innerWidth) - 24;
+const scale = Math.min(1, Math.max(0.28, availableWidth / 1040));
+document.body.style.setProperty('--notebook-mobile-scale', scale.toFixed(4));
+}
+
+updateNotebookMobileScale();
+window.addEventListener('resize', () => {
+updateNotebookMobileScale();
+if (window.ScrollTrigger) ScrollTrigger.refresh();
+});
+
+// 1. 首屏初始化与背包动画
+window.addEventListener('DOMContentLoaded', () => {
+gsap.to(".img-studio", { opacity: 1, duration: 1.2, ease: "power2.out", delay: 0.2 });
+gsap.to("#realityEyeBtn", { opacity: 1, duration: 0.8, delay: 0.6 });
+gsap.to("#heroStoryNote", { opacity: 1, duration: 1, ease: "power2.out", delay: 0.75 });
+gsap.to("#scrollHint", { opacity: 1, duration: 1, ease: "power2.out", delay: 0.9 });
+});
+
+const wrapper = document.getElementById('bagWrapper');
+const eyeBtn = document.getElementById('realityEyeBtn');
+const studioBag = document.querySelector('.img-studio');
+const realityBag = document.querySelector('.img-reality');
+function showReality() {
+if (!wrapper) return;
+wrapper.classList.add('active-reality');
+if (studioBag) studioBag.style.opacity = '0';
+if (realityBag) {
+realityBag.style.opacity = '1';
+realityBag.style.zIndex = '3';
+}
+}
+function hideReality() {
+if (!wrapper) return;
+wrapper.classList.remove('active-reality');
+if (studioBag) studioBag.style.opacity = '1';
+if (realityBag) {
+realityBag.style.opacity = '0';
+realityBag.style.zIndex = '';
+}
+}
+
+eyeBtn.addEventListener('mousedown', showReality);
+window.addEventListener('mouseup', hideReality);
+eyeBtn.addEventListener('touchstart', (e) => { e.preventDefault(); showReality(); });
+window.addEventListener('touchend', hideReality);
+
+const storyHotspots = document.querySelectorAll('.hotspot[data-panel]');
+const allPanels = document.querySelectorAll('.info-panel');
+const isTouchMode = window.matchMedia("(max-width: 768px)");
+
+storyHotspots.forEach(spot => {
+const panelId = spot.getAttribute('data-panel');
+const targetPanel = document.getElementById(panelId);
+spot.addEventListener('mouseenter', () => { if (!isTouchMode.matches && targetPanel) targetPanel.classList.add('show'); });
+spot.addEventListener('mouseleave', () => { if (!isTouchMode.matches && targetPanel) targetPanel.classList.remove('show'); });
+spot.addEventListener('click', (e) => {
+e.stopPropagation(); 
+if (targetPanel) {
+const hasShow = targetPanel.classList.contains('show');
+allPanels.forEach(p => p.classList.remove('show'));
+if (!hasShow) targetPanel.classList.add('show');
+}
+});
+});
+document.addEventListener('click', () => { allPanels.forEach(p => p.classList.remove('show')); });
+
+// 2. 注册 GSAP 滚动触发插件
+gsap.registerPlugin(ScrollTrigger);
+const isMobileDevice = window.innerWidth <= 768;
+
+gsap.to("#bagWrapper", {
+scrollTrigger: { trigger: ".hero-container", start: "top top", end: "bottom top", scrub: isMobileDevice ? 0.35 : 1 },
+scale: isMobileDevice ? 1.02 : 1.06, opacity: 0, y: isMobileDevice ? 55 : 120, ease: "none",
+force3D: true
+});
+
+gsap.fromTo("#scrollHint",
+{ opacity: 1, y: 0 },
+{ scrollTrigger: { trigger: ".hero-container", start: "top top", end: "20% top", scrub: true }, opacity: 0, y: -20, immediateRender: false }
+);
+
+// 3. 拍立得照片组自适应飞入效果
+const photoDropY = () => -window.innerHeight * 0.75;
+const photoStackOffset = isMobileDevice ? 0 : 280;
+const mobilePhotoPeek = () => Math.min(96, window.innerWidth * 0.24);
+
+gsap.set(".card-1-wrapper", { scale: 0.1, opacity: 0, transformOrigin: "center center", y: photoDropY, x: 0 });
+gsap.set(".card-3", { scale: 0.1, opacity: 0, transformOrigin: "center center", y: photoDropY, x: photoStackOffset });
+gsap.set(".card-2", { scale: 0.1, opacity: 0, transformOrigin: "center center", y: photoDropY, x: -photoStackOffset });
+gsap.set(".note-wrapper", { y: 150, opacity: 0 });
+gsap.set(".paperclip-anim", { y: -200, opacity: 0 });
+
+const tl = gsap.timeline({
+scrollTrigger: { trigger: ".next-content-section", start: "top 48%", end: "top 8%", scrub: 1.5 }
+});
+
+tl.to([".card-3", ".card-2", ".card-1-wrapper"], { opacity: 1, scale: 1, y: 0, duration: 1.2, ease: "power2.out" })
+.to(".card-3", { x: isMobileDevice ? 0 : 10, y: isMobileDevice ? -mobilePhotoPeek() : 0, rotate: -5, duration: 0.8 }, "-=0.5")
+.to(".card-2", { x: isMobileDevice ? 0 : -10, y: isMobileDevice ? mobilePhotoPeek() : 0, rotate: 6, duration: 0.8 }, "-=0.5")
+.to(".card-1-wrapper", { x: 0, y: 0, rotate: isMobileDevice ? 0 : 1, duration: 0.8 }, "-=0.5")
+.to(".handwritten-name", { backgroundSize: "100% 100%", duration: 1.0, ease: "power1.inOut" }, "-=0.3")
+.to(".note-wrapper", { y: 0, opacity: 1, duration: 1.0, ease: "power2.out" }, "<")
+.to(".paperclip-anim", { y: 0, opacity: 1, duration: 0.7, ease: "power2.in" }, "<")
+.to(".note-wrapper", { rotate: 1, duration: 0.08, ease: "none" })
+.to(".note-wrapper", { rotate: -2, duration: 0.1, ease: "none" })
+.to(".note-wrapper", { rotate: 0, duration: 0.12, ease: "power1.out" });
+
+// 4. ✨ 活页本入场动效 (自适应手机/电脑)
+const isMobile = window.innerWidth <= 768;
+
+gsap.set(".notebook-bg-img", { opacity: 0, scale: isMobile ? 1 : 0.96, y: isMobile ? 20 : 80 });
+gsap.set("#leftPage", { opacity: 0, x: isMobile ? 0 : -25, y: isMobile ? 15 : 40 });
+gsap.set("#rightPage", { opacity: 0, x: isMobile ? 0 : 25, y: isMobile ? 15 : 40 });
+gsap.set("#pouchWrapper", { opacity: 0, y: 20 });
+if (isMobile) gsap.set(".mobile-experience-folder", { opacity: 0, y: 22 });
+
+const bookTimeline = gsap.timeline({
+scrollTrigger: {
+trigger: ".experience-section",
+start: "top 85%",
+end: "top 40%",
+scrub: 1.2,
+}
+});
+
+if (!isMobile) {
+bookTimeline
+.to(".notebook-bg-img", { opacity: 1, scale: 1, y: 0, duration: 1.5, ease: "power2.out" })
+.to("#leftPage", { opacity: 1, x: 0, y: 0, duration: 1.2, ease: "power1.out" }, "-=1.0")
+.to("#rightPage", { opacity: 1, x: 0, y: 0, duration: 1.2, ease: "power1.out" }, "-=1.0")
+.to("#pouchWrapper", { opacity: 1, y: 0, duration: 0.8, ease: "back.out(1.2)" }, "-=0.4");
+} else {
+bookTimeline
+.to(".mobile-experience-folder", { opacity: 1, y: 0, duration: 0.9, ease: "power2.out" });
+}
+
+const resumePaper = document.getElementById('resumePaper');
+resumePaper.addEventListener('mouseenter', () => { gsap.to(resumePaper, { y: -18, rotate: 0, duration: 0.35, ease: "power2.out" }); });
+resumePaper.addEventListener('mouseleave', () => { gsap.to(resumePaper, { y: 0, rotate: -1.5, duration: 0.35, ease: "power2.inOut" }); });
+
+function switchFolderTab(tabName) {
+const tabs = document.querySelectorAll(".folder-tab");
+const panels = document.querySelectorAll(".mobile-tab-panel");
+const folderBody = document.querySelector(".folder-body-card");
+
+if (folderBody) {
+folderBody.classList.toggle("is-work-open", tabName === "work");
+}
+
+tabs.forEach(tab => {
+const isActive = tab.dataset.folderTab === tabName;
+tab.classList.toggle("active", isActive);
+tab.setAttribute("aria-selected", isActive ? "true" : "false");
+});
+
+panels.forEach(panel => {
+const isActive = panel.dataset.folderPanel === tabName;
+panel.classList.toggle("active", isActive);
+if (isActive) {
+panel.style.animation = "none";
+void panel.offsetWidth;
+panel.style.animation = "";
+}
+});
+}
+
+document.querySelectorAll(".folder-tab").forEach(tab => {
+tab.addEventListener("click", () => switchFolderTab(tab.dataset.folderTab));
+});
+
+function initProjectWindowIntro() {
+if (window.innerWidth <= 768 || !window.gsap || !window.ScrollTrigger) return;
+
+const projectsSection = document.querySelector(".projects-desktop-section");
+if (!projectsSection) return;
+
+const windowPositions = {
+"project-window-1": { top: "8%", left: "5%" },
+"project-window-2": { top: "12%", left: "auto", right: "4%" },
+"project-window-3": { top: "25%", left: "34%" }
+};
+
+Object.keys(windowPositions).forEach(id => {
+const el = document.getElementById(id);
+const pos = windowPositions[id];
+if (!el) return;
+el.style.top = pos.top;
+if (pos.left) el.style.left = pos.left;
+if (pos.right) el.style.right = pos.right;
+});
+
+const introTl = gsap.timeline({
+scrollTrigger: {
+trigger: projectsSection,
+start: "top 85%",
+end: "top 35%",
+scrub: 1.2
+}
+});
+
+introTl.fromTo("#project-window-1", { scale: 0.85, opacity: 0, y: 40 }, { scale: 1, opacity: 1, y: 0, duration: 1 }, "-=0.3");
+introTl.fromTo("#project-window-2", { scale: 0.85, opacity: 0, y: 40 }, { scale: 1, opacity: 1, y: 0, duration: 1 }, "-=0.7");
+introTl.fromTo("#project-window-3", { scale: 0.85, opacity: 0, y: 50 }, { scale: 1, opacity: 1, y: 0, duration: 1 }, "-=0.7");
+}
+
+function initProjectDesktopDrag() {
+if (window.innerWidth <= 768) return;
+
+const desktopArea = document.querySelector(".desktop-screen-area");
+const projectWindows = document.querySelectorAll("[data-project-window]");
+const desktopShortcut = document.querySelector("[data-desktop-shortcut]");
+if (!desktopArea || !projectWindows.length) return;
+
+let highestZ = 10;
+let shortcutClickLocked = false;
+
+function clamp(value, min, max) {
+return Math.min(Math.max(value, min), max);
+}
+
+function activateWindow(projectWindow) {
+highestZ += 1;
+projectWindows.forEach(item => item.classList.remove("active-window"));
+projectWindow.classList.add("active-window");
+projectWindow.style.zIndex = highestZ;
+}
+
+if (desktopShortcut) {
+desktopShortcut.addEventListener("click", event => {
+if (shortcutClickLocked) {
+event.preventDefault();
+event.stopPropagation();
+return;
+}
+window.location.href = "projects.html";
+});
+
+desktopShortcut.addEventListener("keydown", event => {
+if (event.key === "Enter" || event.key === " ") {
+event.preventDefault();
+window.location.href = "projects.html";
+}
+});
+
+desktopShortcut.addEventListener("pointerdown", event => {
+if (window.innerWidth <= 768) return;
+
+event.preventDefault();
+event.stopPropagation();
+desktopShortcut.classList.add("is-dragging");
+desktopShortcut.setPointerCapture(event.pointerId);
+desktopArea.classList.add("is-dragging");
+document.body.style.cursor = "grabbing";
+
+const areaRect = desktopArea.getBoundingClientRect();
+const shortcutRect = desktopShortcut.getBoundingClientRect();
+const startPointerX = event.clientX;
+const startPointerY = event.clientY;
+const startLeft = desktopShortcut.offsetLeft;
+const startTop = desktopShortcut.offsetTop;
+const minLeft = 0;
+const maxLeft = areaRect.width - shortcutRect.width;
+const minTop = 0;
+const maxTop = areaRect.height - shortcutRect.height;
+let movedDistance = 0;
+
+function handleShortcutMove(moveEvent) {
+const deltaX = moveEvent.clientX - startPointerX;
+const deltaY = moveEvent.clientY - startPointerY;
+movedDistance = Math.max(movedDistance, Math.hypot(deltaX, deltaY));
+desktopShortcut.style.left = `${clamp(startLeft + deltaX, minLeft, maxLeft)}px`;
+desktopShortcut.style.top = `${clamp(startTop + deltaY, minTop, maxTop)}px`;
+desktopShortcut.style.right = "auto";
+desktopShortcut.style.bottom = "auto";
+}
+
+function handleShortcutUp(upEvent) {
+desktopShortcut.classList.remove("is-dragging");
+desktopArea.classList.remove("is-dragging");
+document.body.style.cursor = "";
+shortcutClickLocked = movedDistance > 4;
+if (desktopShortcut.hasPointerCapture(upEvent.pointerId)) {
+desktopShortcut.releasePointerCapture(upEvent.pointerId);
+}
+desktopShortcut.removeEventListener("pointermove", handleShortcutMove);
+desktopShortcut.removeEventListener("pointerup", handleShortcutUp);
+desktopShortcut.removeEventListener("pointercancel", handleShortcutUp);
+if (!shortcutClickLocked && upEvent.type !== "pointercancel") {
+window.location.href = "projects.html";
+return;
+}
+setTimeout(() => {
+shortcutClickLocked = false;
+}, 0);
+}
+
+desktopShortcut.addEventListener("pointermove", handleShortcutMove);
+desktopShortcut.addEventListener("pointerup", handleShortcutUp);
+desktopShortcut.addEventListener("pointercancel", handleShortcutUp);
+});
+}
+
+projectWindows.forEach(projectWindow => {
+projectWindow.addEventListener("pointerdown", () => {
+activateWindow(projectWindow);
+});
+
+const titleBar = projectWindow.querySelector("[data-drag-handle]");
+if (!titleBar) return;
+
+titleBar.addEventListener("pointerdown", event => {
+if (window.innerWidth <= 768) return;
+
+event.preventDefault();
+event.stopPropagation();
+activateWindow(projectWindow);
+titleBar.classList.add("is-dragging");
+titleBar.setPointerCapture(event.pointerId);
+
+const areaRect = desktopArea.getBoundingClientRect();
+const windowRect = projectWindow.getBoundingClientRect();
+const startPointerX = event.clientX;
+const startPointerY = event.clientY;
+const startLeft = projectWindow.offsetLeft;
+const startTop = projectWindow.offsetTop;
+const minLeft = 0;
+const maxLeft = areaRect.width - windowRect.width;
+const minTop = 0;
+const maxTop = areaRect.height - windowRect.height;
+const maxOvershoot = 25;
+const damping = 0.25;
+
+const hintBadge = titleBar.querySelector(".drag-hint-badge");
+if (hintBadge && !titleBar.dataset.hintDismissed) {
+titleBar.dataset.hintDismissed = "true";
+gsap.to(hintBadge, {
+opacity: 0,
+y: -5,
+duration: 0.28,
+ease: "power2.out",
+onComplete: () => hintBadge.remove()
+});
+}
+
+desktopArea.classList.add("is-dragging");
+document.body.style.cursor = "grabbing";
+
+function elasticClamp(value, min, max) {
+if (value < min) return Math.max(min - maxOvershoot, min + (value - min) * damping);
+if (value > max) return Math.min(max + maxOvershoot, max + (value - max) * damping);
+return value;
+}
+
+function handleMove(moveEvent) {
+const rawLeft = startLeft + moveEvent.clientX - startPointerX;
+const rawTop = startTop + moveEvent.clientY - startPointerY;
+const nextLeft = elasticClamp(rawLeft, minLeft, maxLeft);
+const nextTop = elasticClamp(rawTop, minTop, maxTop);
+projectWindow.style.left = `${nextLeft}px`;
+projectWindow.style.top = `${nextTop}px`;
+projectWindow.style.right = "auto";
+}
+
+function handleUp(upEvent) {
+titleBar.classList.remove("is-dragging");
+desktopArea.classList.remove("is-dragging");
+document.body.style.cursor = "";
+if (titleBar.hasPointerCapture(upEvent.pointerId)) {
+titleBar.releasePointerCapture(upEvent.pointerId);
+}
+titleBar.removeEventListener("pointermove", handleMove);
+titleBar.removeEventListener("pointerup", handleUp);
+titleBar.removeEventListener("pointercancel", handleUp);
+
+const safeLeft = clamp(projectWindow.offsetLeft, minLeft, maxLeft);
+const safeTop = clamp(projectWindow.offsetTop, minTop, maxTop);
+if (safeLeft !== projectWindow.offsetLeft || safeTop !== projectWindow.offsetTop) {
+gsap.to(projectWindow, {
+left: safeLeft,
+top: safeTop,
+duration: 0.4,
+ease: "back.out(1.5)"
+});
+}
+}
+
+titleBar.addEventListener("pointermove", handleMove);
+titleBar.addEventListener("pointerup", handleUp);
+titleBar.addEventListener("pointercancel", handleUp);
+});
+});
+}
+
+function initWorkspaceDock() {
+if (window.innerWidth <= 768) return;
+
+const dockItems = document.querySelectorAll(".dock-item");
+if (!dockItems.length) return;
+
+const BASE_SIZE = 56;
+const MAX_SIZE = 96;
+const RANGE = 160;
+
+dockItems.forEach(item => {
+const [appName, proficiency] = item.dataset.name.split("\n");
+const tooltip = document.createElement("span");
+tooltip.className = "dock-tooltip";
+tooltip.setAttribute("aria-hidden", "true");
+tooltip.innerHTML = `<strong>${appName}</strong><span>${proficiency || "Active · Ready"}</span>`;
+item.appendChild(tooltip);
+});
+
+const entranceTl = gsap.timeline({ paused: true, defaults: { overwrite: true } });
+entranceTl
+.to(".dock-wrapper", {
+scaleX: 1,
+opacity: 1,
+duration: 0.8,
+ease: "power4.inOut"
+})
+.to(".dock-item", {
+opacity: 1,
+scale: 1,
+duration: 0.52,
+ease: "power2.out",
+stagger: {
+each: 0.03,
+from: "center"
+}
+}, "-=0.48");
+
+if (window.ScrollTrigger) {
+let dockNeedsIntro = true;
+ScrollTrigger.create({
+trigger: ".dock-wrapper",
+start: "top 95%",
+onEnter: () => {
+if (!dockNeedsIntro) return;
+entranceTl.restart();
+dockNeedsIntro = false;
+}
+});
+ScrollTrigger.create({
+trigger: ".projects-desktop-section",
+start: "top 35%",
+onLeaveBack: () => {
+entranceTl.pause(0);
+dockNeedsIntro = true;
+}
+});
+} else {
+entranceTl.play();
+}
+
+document.addEventListener("mousemove", (e) => {
+const mouseX = e.clientX;
+const mouseY = e.clientY;
+
+dockItems.forEach(item => {
+const rect = item.getBoundingClientRect();
+const itemCenterX = rect.left + rect.width / 2;
+const itemBottomY = rect.top + rect.height;
+const distance = Math.sqrt(Math.pow(mouseX - itemCenterX, 2) + Math.pow(mouseY - itemBottomY, 2));
+
+let targetSize = BASE_SIZE;
+if (distance < RANGE) {
+const ratio = Math.cos((distance / RANGE) * Math.PI / 2);
+targetSize = BASE_SIZE + (MAX_SIZE - BASE_SIZE) * ratio;
+}
+
+gsap.to(item, {
+width: targetSize,
+height: targetSize,
+duration: 0.12,
+ease: "power1.out"
+});
+});
+});
+
+document.addEventListener("mouseleave", () => {
+dockItems.forEach(item => {
+gsap.to(item, {
+width: BASE_SIZE,
+height: BASE_SIZE,
+duration: 0.25,
+ease: "power2.out"
+});
+});
+});
+}
+
+function initEndingSection() {
+const backpack = document.getElementById('backpack');
+const dropZone = document.getElementById('drop-zone');
+const sourceNode = document.getElementById('source-node');
+const girlLost = document.getElementById('girl-lost');
+const girlHappy = document.getElementById('girl-happy');
+const thankBubble = document.getElementById('thank-you-bubble');
+const letterUniverse = document.getElementById('letter-universe');
+const envelopeWrapper = document.getElementById('envelope-wrapper');
+const liveStampDate = document.getElementById('live-stamp-date');
+const dragHint = document.getElementById('ending-drag-hint');
+const endingContainer = document.getElementById('ending-container');
+
+if (!backpack || !dropZone || !sourceNode || !girlLost || !girlHappy || !thankBubble || !letterUniverse || !envelopeWrapper || !liveStampDate || !dragHint || !endingContainer) return;
+
+let isDragging = false;
+let startX = 0;
+let startY = 0;
+
+backpack.addEventListener('pointerdown', (event) => {
+isDragging = true;
+backpack.classList.remove('breathe');
+backpack.classList.add('dragging');
+dragHint.classList.add('hidden');
+
+const rect = backpack.getBoundingClientRect();
+startX = event.clientX - rect.left;
+startY = event.clientY - rect.top;
+
+backpack.setPointerCapture(event.pointerId);
+});
+
+window.addEventListener('pointermove', (event) => {
+if (!isDragging) return;
+
+const nodeRect = sourceNode.getBoundingClientRect();
+const x = event.clientX - nodeRect.left - startX;
+const y = event.clientY - nodeRect.top - startY;
+
+backpack.style.left = `${x}px`;
+backpack.style.top = `${y}px`;
+backpack.style.bottom = 'auto';
+backpack.style.transform = 'scale(1.04)';
+});
+
+window.addEventListener('pointerup', (event) => {
+if (!isDragging) return;
+isDragging = false;
+
+backpack.classList.remove('dragging');
+if (backpack.hasPointerCapture(event.pointerId)) {
+backpack.releasePointerCapture(event.pointerId);
+}
+
+const dropRect = dropZone.getBoundingClientRect();
+const bagRect = backpack.getBoundingClientRect();
+const isReturned = bagRect.right > dropRect.left && bagRect.left < dropRect.right && bagRect.bottom > dropRect.top && bagRect.top < dropRect.bottom;
+
+if (isReturned) {
+handleEndingSuccess();
+return;
+}
+
+dragHint.classList.remove('hidden');
+backpack.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+backpack.style.left = '';
+backpack.style.top = '';
+backpack.style.bottom = '';
+backpack.style.transform = '';
+
+setTimeout(() => {
+if (!backpack.classList.contains('returned')) {
+backpack.style.transition = '';
+backpack.classList.add('breathe');
+}
+}, 400);
+});
+
+function handleEndingSuccess() {
+endingContainer.classList.add('interaction-complete', 'is-visible', 'entrance-complete');
+backpack.classList.add('returned');
+girlLost.classList.add('hidden');
+girlHappy.classList.remove('hidden');
+thankBubble.classList.add('show');
+dragHint.style.display = 'none';
+
+if (window.confetti) {
+window.confetti({ particleCount: 90, spread: 65, origin: { y: 0.6 } });
+}
+
+const today = new Date();
+liveStampDate.innerText = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+setTimeout(() => {
+letterUniverse.style.pointerEvents = 'auto';
+letterUniverse.classList.add('reveal');
+}, 300);
+
+setTimeout(() => {
+envelopeWrapper.classList.add('released');
+}, 1150);
+
+setTimeout(() => {
+letterUniverse.classList.add('tape-on');
+}, 2750);
+
+setTimeout(() => {
+letterUniverse.classList.add('stamp-on');
+}, 3250);
+}
+}
+
+function initEndingScrollTransition() {
+const endingContainer = document.getElementById('ending-container');
+const endingSection = endingContainer?.closest('.ending-section');
+const projectsSection = document.querySelector('.projects-desktop-section');
+const sourceNode = document.getElementById('source-node');
+const backpack = document.getElementById('backpack');
+if (!endingContainer || !endingSection || !projectsSection || !sourceNode || !backpack) return;
+
+endingContainer.classList.add('js-ending-ready');
+
+let entranceTimer = null;
+let isEndingVisible = false;
+let scrollTicking = false;
+
+function setBackpackDropOrigin() {
+if (endingContainer.classList.contains('interaction-complete') || backpack.classList.contains('returned')) return;
+
+const backpackRect = backpack.getBoundingClientRect();
+const sourceRect = sourceNode.getBoundingClientRect();
+const projectsStyle = window.getComputedStyle(projectsSection);
+const projectsRect = projectsSection.getBoundingClientRect();
+const finalCenterX = backpackRect.left + backpackRect.width / 2;
+const finalCenterY = sourceRect.bottom - 50 - backpackRect.height / 2;
+
+let originX = window.innerWidth / 2;
+let originY = finalCenterY - window.innerHeight * 0.72;
+
+if (projectsStyle.display !== 'none' && projectsRect.width > 0 && projectsRect.height > 0) {
+originX = projectsRect.left + projectsRect.width / 2;
+originY = projectsRect.top + projectsRect.height / 2;
+}
+
+backpack.style.setProperty('--ending-backpack-start-x', `${Math.round(originX - finalCenterX)}px`);
+backpack.style.setProperty('--ending-backpack-start-y', `${Math.round(originY - finalCenterY)}px`);
+}
+
+function showEnding() {
+if (isEndingVisible) return;
+isEndingVisible = true;
+projectsSection.classList.add('ending-transition-out');
+if (endingContainer.classList.contains('interaction-complete')) {
+endingContainer.classList.add('is-visible', 'entrance-complete');
+return;
+}
+setBackpackDropOrigin();
+endingContainer.classList.add('is-visible');
+endingContainer.classList.remove('entrance-complete');
+clearTimeout(entranceTimer);
+entranceTimer = setTimeout(() => {
+endingContainer.classList.add('entrance-complete');
+}, 950);
+}
+
+function hideEnding() {
+if (!isEndingVisible && !endingContainer.classList.contains('is-visible')) return;
+isEndingVisible = false;
+projectsSection.classList.remove('ending-transition-out');
+endingContainer.classList.remove('is-visible');
+if (!endingContainer.classList.contains('interaction-complete')) {
+endingContainer.classList.remove('entrance-complete');
+}
+clearTimeout(entranceTimer);
+}
+
+function getEndingVisibleRatio() {
+const rect = endingSection.getBoundingClientRect();
+const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+const visibleHeight = Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0);
+return Math.max(0, visibleHeight) / Math.min(viewportHeight, rect.height || viewportHeight);
+}
+
+function updateEndingVisibility() {
+const visibleRatio = getEndingVisibleRatio();
+if (isEndingVisible ? visibleRatio > 0.08 : visibleRatio >= 0.28) {
+showEnding();
+} else {
+hideEnding();
+}
+}
+
+function requestEndingVisibilityUpdate() {
+if (scrollTicking) return;
+scrollTicking = true;
+window.requestAnimationFrame(() => {
+scrollTicking = false;
+updateEndingVisibility();
+});
+}
+
+updateEndingVisibility();
+window.addEventListener('scroll', requestEndingVisibilityUpdate, { passive: true });
+window.addEventListener('resize', requestEndingVisibilityUpdate);
+}
+
+function initBackToTop() {
+const backToTopBtn = document.getElementById('back-to-top-btn');
+if (!backToTopBtn) return;
+
+backToTopBtn.addEventListener('click', () => {
+window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+}
+
+function initHeaderSurface() {
+const header = document.querySelector('.site-header');
+const hero = document.querySelector('.hero-container');
+if (!header || !hero) return;
+
+let ticking = false;
+
+function updateHeaderSurface() {
+const heroBottom = hero.offsetTop + hero.offsetHeight;
+const solidPoint = heroBottom - header.offsetHeight * 1.2;
+header.classList.toggle('is-solid', window.scrollY > solidPoint);
+}
+
+function requestHeaderSurfaceUpdate() {
+if (ticking) return;
+ticking = true;
+window.requestAnimationFrame(() => {
+ticking = false;
+updateHeaderSurface();
+});
+}
+
+updateHeaderSurface();
+window.addEventListener('scroll', requestHeaderSurfaceUpdate, { passive: true });
+window.addEventListener('resize', requestHeaderSurfaceUpdate);
+}
+
+const landingProjectDatabase = {
+'proj-analytics-campaign': {
+color: '#b55d9d',
+tag: 'CAMPAIGN ANALYTICS',
+title: 'Marketing Campaign Response & Segmentation',
+subtitle: 'Targeting strategy from customer response behavior',
+question: 'How should a marketing team decide who to target, and are they using the right signals to do it?',
+process: [
+{ title: 'RFM Segmentation', text: 'Built Recency, Frequency, and Monetary scores in R to group 2,240 customers into segments such as High-Value Loyalists and At-Risk High Value, then layered on channel preference and household composition.' },
+{ title: 'SQL Performance Ranking', text: 'Loaded the cleaned data into SQL to rank and profile segments by response and value.' },
+{ title: 'Web Engagement Clustering', text: 'Clustered customers on web visits and spend to test a standard marketing assumption: that more site activity signals a more valuable customer.' },
+{ title: 'Response Propensity Model', text: 'Trained logistic regression and random forest models in R to score customers by response likelihood, then ranked them into deciles to build a targeting list.' }
+],
+finding: 'Web activity was a weak signal. The highest spending cluster had the lowest web visits per month, while the most active browsers converted at just 8.4%, the lowest rate of any group. The strongest predictor of response was not clicks, it was history: customers who had accepted a past campaign responded at 40.7%, nearly 5x the 8.2% rate of those who never had. So targeting on site activity spends budget on the wrong people. Prior engagement, not clicks, is where the next campaign should start.',
+predictiveModel: 'A response propensity model scored every customer on likelihood to convert, using logistic regression and random forest. Ranked into deciles, the top-scored 10% responded at 68.2% and the top 20% at 50%, against a 15% baseline. So concentrating a campaign on the top-scored 20% delivers a 3.3x lift over random targeting, reaching most responders while contacting far fewer people.',
+takeaway: "The most valuable customers were the quietest online, and the busiest browsers barely converted. The lesson isn't about this one dataset, it's that engagement metrics are easy to over-trust. Better targeting comes from scoring customers on value and response history, not from whoever shows up most on the site.",
+slides: {
+analysis: 'assets/campaign_1.png',
+finding: 'assets/campaign_2.png',
+propensity: 'assets/campaign_3.png'
+},
+note: 'Dataset: Maven Analytics, Marketing Campaign (2,240 customers, 28 variables).',
+footer: 'R, SQL, Tableau · K-means, logistic regression, random forest'
+},
+'proj-heartbeat': {
+color: '#d29d00',
+tag: 'DATING REALITY SHOW',
+title: 'Heartbeat',
+subtitle: "BU's first student-run dating show. Co-produced, designed, and analyzed end to end.",
+stats: [
+{ value: '300K+', label: 'COMBINED VIEWS' },
+{ value: '900 → 5,800', label: 'SOCIAL FOLLOWERS' },
+{ value: '263', label: 'COMMUNITY MEMBERS' },
+{ value: '$420', label: 'TOTAL BUDGET' }
+],
+pressLink: 'https://dailyfreepress.com/04/11/23/188061/boston-university-gets-its-very-first-student-run-dating-show/',
+showDesc: "BU's first student-run dating show, made for the international student community. I co-led it across four teams from casting to release, and designed the full visual identity: episode covers, posters, and banners. All on a $420 budget.",
+trailer: 'assets/Heartbeat_trailer.mp4',
+gallery: {
+covers: ['assets/Heartbeat_videocover_1.jpg', 'assets/Heartbeat_videocover_2.jpg', 'assets/Heartbeat_videocover_3.jpg', 'assets/Heartbeat_videocover_4.jpg'],
+posters: ['assets/Heartbeat_poster_1.jpg', 'assets/Heartbeat_poster_2.jpg'],
+banners: ['assets/Heartbeat_banner_1.jpg', 'assets/Heartbeat_banner_2.jpg', 'assets/Heartbeat_banner_3.jpg', 'assets/Heartbeat_banner_4.jpg'],
+bts: ['assets/Heartbeat_BTS_1.JPG', 'assets/Heartbeat_BTS_2.JPG', 'assets/Heartbeat_BTS_3.JPG', 'assets/Heartbeat_BTS_4.JPG']
+},
+analysis: [
+{ title: "Traffic didn't convert.", desc: 'Early reach came from a discovery platform but never became subscribers. No handoff between channels.' },
+{ title: 'Format drove retention.', desc: 'The long-form platform held steady while short-form decayed. Each rewards different content.' },
+{ title: 'Headlines beat timing.', desc: 'Our top post won on its title alone, not when it went out.' }
+],
+footer: {
+role: 'Co-Project Lead, Designer, Post-launch Analyst',
+link: 'https://www.bilibili.com/video/BV1hu411i7Wk/?share_source=copy_web&vd_source=5772176b66b7bacdc97cbe3b3c0ddefa'
+}
+},
+'proj-analytics-peace': {
+color: '#b55d9d',
+tag: 'CRM STRATEGY',
+title: 'PeacePlayers CRM',
+subtitle: 'Audit, diagnosis & segmentation design',
+question: "A nonprofit's HubSpot CRM held 20K+ contacts across ~48 lists, but engagement was weak. The question was whether it was a deliverability problem, or a targeting one.",
+bullets: [
+{ bold: 'Audited', text: 'the full CRM across deliverability, list hygiene, and lifecycle data, finding only ~10,700 contacts actually reachable.' },
+{ bold: 'Diagnosed', text: 'the root cause as targeting, not deliverability, evidenced by targeted sends outperforming all-list sends 4x on open rate.' },
+{ bold: 'Designed', text: 'segmentation frameworks, defining the HubSpot properties and active-list logic that make each segment activatable.' }
+],
+next: "The framework is designed and goes live this cycle. Engagement impact will be measured against the audited baseline once it's running, so the results aren't in yet, the work so far is the diagnosis and the system to act on it.",
+footer: 'SQL, HubSpot'
+}
+};
+
+function landingProjectHeader(data) {
+return `
+<div>
+<span class="landing-project-kicker" style="color:${data.color}">${data.tag}</span>
+<h3 class="landing-project-title">${data.title}</h3>
+<p class="landing-project-subtitle">${data.subtitle}</p>
+</div>
+`;
+}
+
+function landingMediaButton(src, alt, ratio) {
+return `
+<button type="button" class="landing-project-media-button" onclick="openLandingLightbox('${src}', '${alt.replace(/'/g, "\\'")}')">
+<span class="landing-project-media-frame" style="--media-ratio:${ratio}">
+<img src="${src}" alt="${alt}" loading="lazy">
+</span>
+</button>
+`;
+}
+
+function renderCampaignProject(data) {
+return `
+${landingProjectHeader(data)}
+<section class="landing-project-section landing-project-rule">
+<h4 class="landing-project-section-label" style="color:#a8a29e">The Core Question</h4>
+<div class="landing-project-body"><p>${data.question}</p></div>
+</section>
+<section class="landing-project-section">
+<h4 class="landing-project-section-label" style="color:${data.color}">Approach & Process</h4>
+<div class="landing-project-process">
+${data.process.map(item => `
+<div class="landing-project-process-row">
+<strong class="landing-project-process-title">${item.title}</strong>
+<p class="landing-project-body">${item.text}</p>
+</div>
+`).join('')}
+</div>
+</section>
+<section class="landing-project-section">
+<h4 class="landing-project-section-label" style="color:#a8a29e">Analysis Slide</h4>
+${landingMediaButton(data.slides.analysis, 'Campaign Response & Customer Segmentation dashboard', '1448 / 1086')}
+<span class="landing-project-caption">Dashboard: Campaign Response & Customer Segmentation</span>
+</section>
+<section class="landing-project-section landing-project-rule">
+<h4 class="landing-project-section-label" style="color:${data.color}">Key Empirical Finding</h4>
+<div class="landing-project-body"><p>${data.finding}</p></div>
+${landingMediaButton(data.slides.finding, 'Campaign empirical finding slide', '1448 / 1086')}
+</section>
+<section class="landing-project-section landing-project-rule">
+<h4 class="landing-project-section-label" style="color:${data.color}">Predictive Model</h4>
+<div class="landing-project-body"><p>${data.predictiveModel}</p></div>
+${landingMediaButton(data.slides.propensity, 'Response Propensity Model Improves Targeting', '1448 / 1086')}
+<span class="landing-project-caption">Dashboard: Actual response rate by predicted decile.</span>
+</section>
+<section class="landing-project-section landing-project-rule">
+<h4 class="landing-project-section-label" style="color:${data.color}">The Takeaway</h4>
+<div class="landing-project-body"><p>${data.takeaway}</p></div>
+</section>
+<div class="landing-project-card landing-project-body"><p><strong>Data Note:</strong> ${data.note}</p></div>
+<footer class="landing-project-footer"><span>Tools / Models</span><strong>${data.footer}</strong></footer>
+`;
+}
+
+function renderHeartbeatGallery(label, images, ratio, layoutClass) {
+return `
+<div class="landing-heartbeat-group">
+<span class="landing-project-section-label" style="color:#a8a29e">— ${label}</span>
+<div class="landing-heartbeat-gallery ${layoutClass}">
+${images.map((img, index) => landingMediaButton(img, `Heartbeat ${label.toLowerCase()} ${index + 1}`, ratio)).join('')}
+</div>
+</div>
+`;
+}
+
+function renderHeartbeatProject(data) {
+return `
+${landingProjectHeader(data)}
+<div class="landing-project-stats">
+${data.stats.map(stat => `
+<div>
+<div class="landing-project-stat-value" style="color:${data.color}">${stat.value}</div>
+<div class="landing-project-stat-label">${stat.label}</div>
+</div>
+`).join('')}
+</div>
+<p class="landing-project-body landing-project-press">Featured in <a href="${data.pressLink}" target="_blank" rel="noopener" style="color:${data.color}">The Daily Free Press</a>, BU's independent student newspaper, which covered <em>Heartbeat</em> as the first student-run dating show on campus.</p>
+<section class="landing-project-grid-2 landing-project-rule">
+<div class="landing-project-section">
+<h4 class="landing-project-section-label" style="color:${data.color}">The Show</h4>
+<div class="landing-project-body"><p>${data.showDesc}</p></div>
+</div>
+<div class="landing-project-section">
+<h4 class="landing-project-section-label" style="color:${data.color}">The Trailer</h4>
+<div class="landing-project-media-frame" style="--media-ratio:16 / 9">
+<video controls preload="metadata" poster="${data.gallery.covers[0]}">
+<source src="${data.trailer}">
+</video>
+</div>
+<a href="${data.footer.link}" target="_blank" rel="noopener" class="landing-project-link landing-project-section-label" style="color:${data.color}">Watch full episodes on Bilibili ↗</a>
+</div>
+</section>
+<section class="landing-project-section landing-project-rule">
+<h4 class="landing-project-section-label" style="color:${data.color}">Visual Identity & Promotion</h4>
+<div class="landing-heartbeat-visuals">
+<div class="landing-heartbeat-top-grid">
+${renderHeartbeatGallery('Episode Video Covers', data.gallery.covers, '16 / 9', 'covers')}
+${renderHeartbeatGallery('Campaign Posters', data.gallery.posters, '2 / 3', 'posters')}
+</div>
+${renderHeartbeatGallery('Social Media Banners', data.gallery.banners, '1800 / 766', 'wide')}
+${renderHeartbeatGallery('Behind the Scenes', data.gallery.bts, '3 / 2', 'wide')}
+</div>
+</section>
+<section class="landing-project-grid-2 landing-project-rule">
+<h4 class="landing-project-section-label" style="color:${data.color}">The Analysis</h4>
+<div class="landing-project-section">
+${data.analysis.map(item => `
+<div class="landing-project-body"><p><strong>${item.title}</strong><br>${item.desc}</p></div>
+`).join('')}
+</div>
+</section>
+<footer class="landing-project-footer"><span>Role: <strong>${data.footer.role}</strong></span><a href="${data.footer.link}" target="_blank" rel="noopener" style="color:${data.color}">Watch the show →</a></footer>
+`;
+}
+
+function renderPeaceProject(data) {
+return `
+${landingProjectHeader(data)}
+<section class="landing-project-section landing-project-rule">
+<h4 class="landing-project-section-label" style="color:#a8a29e">The Problem</h4>
+<div class="landing-project-body"><p>${data.question}</p></div>
+</section>
+<section class="landing-project-section">
+<h4 class="landing-project-section-label" style="color:${data.color}">What I Did</h4>
+<ul class="landing-project-list landing-project-body">
+${data.bullets.map(item => `<li><strong>${item.bold}:</strong> ${item.text}</li>`).join('')}
+</ul>
+</section>
+<section class="landing-project-section">
+<h4 class="landing-project-section-label" style="color:#a8a29e">What's Next</h4>
+<div class="landing-project-body"><p>${data.next}</p></div>
+</section>
+<footer class="landing-project-footer"><span>Tools</span><strong>${data.footer}</strong></footer>
+`;
+}
+
+function renderLandingProject(id, data) {
+if (id === 'proj-analytics-campaign') return renderCampaignProject(data);
+if (id === 'proj-heartbeat') return renderHeartbeatProject(data);
+if (id === 'proj-analytics-peace') return renderPeaceProject(data);
+return '';
+}
+
+function openLandingProject(id) {
+const data = landingProjectDatabase[id];
+const overlay = document.getElementById('landing-project-overlay');
+const content = document.getElementById('landing-project-content');
+const closeBtn = document.getElementById('landing-project-close');
+if (!data || !overlay || !content || !closeBtn) return;
+content.innerHTML = renderLandingProject(id, data);
+overlay.scrollTop = 0;
+overlay.classList.add('is-visible');
+overlay.setAttribute('aria-hidden', 'false');
+closeBtn.classList.add('is-visible');
+document.body.classList.add('landing-project-modal-open');
+window.requestAnimationFrame(() => overlay.scrollTo({ top: 0, left: 0, behavior: 'auto' }));
+}
+
+function closeLandingProject() {
+const overlay = document.getElementById('landing-project-overlay');
+const closeBtn = document.getElementById('landing-project-close');
+closeLandingLightbox();
+if (!overlay || !closeBtn) return;
+overlay.classList.remove('is-visible');
+overlay.setAttribute('aria-hidden', 'true');
+closeBtn.classList.remove('is-visible');
+document.body.classList.remove('landing-project-modal-open');
+}
+
+function openLandingLightbox(src, alt) {
+const lightbox = document.getElementById('landing-project-lightbox');
+const image = document.getElementById('landing-project-lightbox-img');
+const closeBtn = document.getElementById('landing-project-close');
+if (!lightbox || !image) return;
+image.src = src;
+image.alt = alt || 'Project image';
+lightbox.classList.add('is-visible');
+lightbox.setAttribute('aria-hidden', 'false');
+if (closeBtn) closeBtn.classList.remove('is-visible');
+}
+
+function closeLandingLightbox() {
+const lightbox = document.getElementById('landing-project-lightbox');
+const image = document.getElementById('landing-project-lightbox-img');
+const overlay = document.getElementById('landing-project-overlay');
+const closeBtn = document.getElementById('landing-project-close');
+if (!lightbox || !image) return;
+lightbox.classList.remove('is-visible');
+lightbox.setAttribute('aria-hidden', 'true');
+if (overlay && overlay.classList.contains('is-visible') && closeBtn) closeBtn.classList.add('is-visible');
+window.setTimeout(() => {
+if (!lightbox.classList.contains('is-visible')) {
+image.removeAttribute('src');
+image.alt = '';
+}
+}, 300);
+}
+
+function initProtectedImageGuards() {
+document.querySelectorAll('.polaroid-group img').forEach((image) => {
+image.setAttribute('draggable', 'false');
+image.addEventListener('contextmenu', (event) => event.preventDefault());
+image.addEventListener('dragstart', (event) => event.preventDefault());
+});
+}
+
+window.addEventListener('keydown', (event) => {
+if (event.key !== 'Escape') return;
+const lightbox = document.getElementById('landing-project-lightbox');
+const overlay = document.getElementById('landing-project-overlay');
+if (lightbox && lightbox.classList.contains('is-visible')) {
+closeLandingLightbox();
+return;
+}
+if (overlay && overlay.classList.contains('is-visible')) {
+closeLandingProject();
+}
+});
+
+initProjectWindowIntro();
+initProjectDesktopDrag();
+initWorkspaceDock();
+initEndingSection();
+initEndingScrollTransition();
+initBackToTop();
+initHeaderSurface();
+initProtectedImageGuards();
+</script>
+</body>
+</html>

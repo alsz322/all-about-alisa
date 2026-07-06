@@ -1,0 +1,55 @@
+# Environment and local secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Vercel and deployment metadata
+.vercel/
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS/editor noise
+.DS_Store
+**/.DS_Store
+.vscode/
+.idea/
+
+# Public-safe repository rule:
+# Do not publish real personal photos, private screenshots, audio, video, or resume files.
+# SVG icons are intentionally not blocked, because they are non-private UI/tech-stack assets.
+assets/**/*.jpg
+assets/**/*.jpeg
+assets/**/*.png
+assets/**/*.JPG
+assets/**/*.JPEG
+assets/**/*.PNG
+assets/**/*.gif
+assets/**/*.webp
+assets/**/*.mov
+assets/**/*.mp4
+assets/**/*.mp3
+assets/**/*.wav
+assets/**/*.pdf
+
+# Explicit private media folders used by the portfolio narrative.
+assets/audio/
+assets/animalcrossing/
+assets/skating/
+assets/house/
+assets/BU Libraries/
+
